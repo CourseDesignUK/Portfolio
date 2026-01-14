@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Minimalist Experience</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --text-color: #ffffff;
+            --accent-color: #6366f1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none; /* Hide default cursor for custom one */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+        }
+
+        /* --- Custom Cursor --- */
+        #cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.2s ease;
+        }
+
+        /* --- Layout --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 100;
+            mix-blend-mode: difference;
+        }
+
+        .logo { font-weight: 700; letter-spacing: -1px; font-size: 1.2rem; }
+
+        section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 10%;
+        }
+
+        /* --- Hero Section --- */
+        .hero h1 {
+            font-size: clamp(3rem, 10vw, 8rem);
+            line-height: 0.9;
+            font-weight: 700;
+            overflow: hidden; /* For reveal effect */
+        }
+
+        .line { display: block; }
+
+        .hero p {
+            margin-top: 30px;
+            font-size: 1.2rem;
+            max-width: 400px;
+            opacity: 0.6;
+        }
+
+        /* --- Projects Section --- */
+        .projects {
+            background: #161616;
+        }
+
+        .project-item {
+            border-bottom: 1px solid #333;
+            padding: 40px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .project-item h2 { font-size: 3rem; font-weight: 300; }
+        .project-item:hover h2 { color: var(--accent-color); padding-left: 20px; transition: 0.4s; }
+
+        /* --- Noise Grain Effect --- */
+        .noise {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div class="noise"></div>
+
+    <nav>
+        <div class="logo">STUDIO.ALPHA</div>
+        <div class="nav-links">WORK — ABOUT</div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h1>
+                <span class="line">BEYOND</span>
+                <span class="line">MINIMAL.</span>
+            </h1>
+            <p>Creating digital artifacts that breathe and react to your touch.</p>
+        </section>
+
+        <section class="projects">
+            <div class="project-item">
+                <h2>Lumina</h2>
+                <span>Brand Identity</span>
+            </div>
+            <div class="project-item">
+                <h2>Vertex</h2>
+                <span>UI/UX Design</span>
+            </div>
+            <div class="project-item">
+                <h2>Nexus</h2>
+                <span>Development</span>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // 1. Custom Cursor Follower
+        const cursor = document.querySelector('#cursor');
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, {
+                x: e.clientX - 10,
+                y: e.clientY - 10,
+                duration: 0.1
+            });
+        });
+
+        // 2. Initial Hero Animation
+        const tl = gsap.timeline();
+
+        tl.from(".line", {
+            y: 200,
+            ease: "power4.out",
+            duration: 1.5,
+            skewY: 10,
+            stagger: 0.15
+        })
+        .from(".hero p", {
+            opacity: 0,
+            y: 20,
+            duration: 1
+        }, "-=1");
+
+        // 3. ScrollTrigger for Project Items
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.utils.toArray(".project-item").forEach((item) => {
+            gsap.to(item, {
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 90%",
+                },
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: "power2.out"
+            });
+        });
+
+        // 4. Hover effect on cursor
+        document.querySelectorAll('.project-item').forEach(link => {
+            link.addEventListener('mouseenter', () => {
+                gsap.to(cursor, { scale: 4, duration: 0.3 });
+            });
+            link.addEventListener('mouseleave', () => {
+                gsap.to(cursor, { scale: 1, duration: 0.3 });
+            });
+        });
+    </script>
+</body>
+</html>
