@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Minimalist Experience</title>
+    <title>XR Training Labs | Immersive Experiences</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+
     <style>
         :root {
             --bg-color: #0f0f0f;
@@ -20,7 +23,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            cursor: none; /* Hide default cursor for custom one */
+            cursor: none; 
         }
 
         body {
@@ -28,6 +31,7 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* --- Custom Cursor --- */
@@ -40,7 +44,7 @@
             pointer-events: none;
             z-index: 9999;
             mix-blend-mode: difference;
-            transition: transform 0.2s ease;
+            transition: transform 0.1s ease-out;
         }
 
         /* --- Layout --- */
@@ -58,47 +62,95 @@
         .logo { font-weight: 700; letter-spacing: -1px; font-size: 1.2rem; }
 
         section {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding: 0 10%;
+            position: relative;
         }
 
-        /* --- Hero Section --- */
+        /* --- Hero Section Fix --- */
         .hero h1 {
-            font-size: clamp(3rem, 10vw, 8rem);
-            line-height: 0.9;
+            /* clamp(min, preferred, max) ensures text scales without clipping */
+            font-size: clamp(2.5rem, 12vw, 8.5rem);
+            line-height: 1.05; 
             font-weight: 700;
-            overflow: hidden; /* For reveal effect */
+            letter-spacing: -0.02em;
         }
 
-        .line { display: block; }
+        .line-wrapper {
+            display: block;
+            overflow: hidden; /* Clips the reveal animation, not the letters */
+            padding-bottom: 0.1em; /* Buffer for descenders like 'y' and 'g' */
+        }
+
+        .line { 
+            display: block; 
+            will-change: transform;
+        }
 
         .hero p {
-            margin-top: 30px;
-            font-size: 1.2rem;
-            max-width: 400px;
+            margin-top: 40px;
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            max-width: 500px;
             opacity: 0.6;
+            line-height: 1.6;
         }
 
-        /* --- Projects Section --- */
+        /* --- Projects & AR Section --- */
         .projects {
             background: #161616;
+            padding-top: 100px;
+            padding-bottom: 100px;
         }
 
         .project-item {
             border-bottom: 1px solid #333;
-            padding: 40px 0;
-            display: flex;
-            justify-content: space-between;
+            padding: 60px 0;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
             align-items: center;
+            gap: 20px;
             opacity: 0;
-            transform: translateY(50px);
+            text-decoration: none;
+            color: inherit;
         }
 
-        .project-item h2 { font-size: 3rem; font-weight: 300; }
-        .project-item:hover h2 { color: var(--accent-color); padding-left: 20px; transition: 0.4s; }
+        .project-item h2 { 
+            font-size: clamp(2rem, 5vw, 4rem); 
+            font-weight: 300; 
+            transition: all 0.4s ease;
+        }
+
+        .project-item:hover h2 { 
+            color: var(--accent-color); 
+            transform: translateX(20px);
+        }
+
+        .ar-button {
+            background: white;
+            color: black;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .ar-button:hover {
+            transform: scale(1.05);
+            background: var(--accent-color);
+            color: white;
+        }
+
+        /* --- Hidden Model Viewer Elements --- */
+        /* These are triggered by the buttons */
+        model-viewer {
+            display: none; /* We only use them for the AR launch capability */
+        }
 
         /* --- Noise Grain Effect --- */
         .noise {
@@ -108,6 +160,13 @@
             opacity: 0.05;
             pointer-events: none;
             z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 20px; }
+            .project-item { grid-template-columns: 1fr; gap: 10px; }
+            #cursor { display: none; } /* Hide custom cursor on touch devices */
+            * { cursor: auto; }
         }
     </style>
 </head>
@@ -124,63 +183,91 @@
     <main>
         <section class="hero">
             <h1>
-                <span class="line">Virtual</span>
-                <span class="line">Reality Training.</span>
+                <span class="line-wrapper"><span class="line">Virtual</span></span>
+                <span class="line-wrapper"><span class="line">Reality Training.</span></span>
             </h1>
-            <p>Creating immersive, effective training.</p>
+            <p>Creating high-fidelity, immersive simulations for technical training and industrial safety.</p>
         </section>
 
         <section class="projects">
             <div class="project-item">
                 <h2>Lumina</h2>
-                <span>Brand Identity</span>
+                <span>Hardware Viz</span>
+                <model-viewer 
+                    id="model-1"
+                    src="models/lumina_engine.glb" 
+                    ios-src="models/lumina_engine.usdz"
+                    ar ar-modes="webxr scene-viewer quick-look" 
+                    camera-controls 
+                    alt="A 3D model of a Lumina Engine">
+                    <button slot="ar-button" class="ar-button">View in AR</button>
+                </model-viewer>
+                <div class="ar-button" onclick="triggerAR('model-1')">View in AR</div>
             </div>
+
             <div class="project-item">
                 <h2>Vertex</h2>
-                <span>UI/UX Design</span>
+                <span>Medical Training</span>
+                <model-viewer 
+                    id="model-2"
+                    src="models/vertex_tool.glb" 
+                    ios-src="models/vertex_tool.usdz"
+                    ar ar-modes="webxr scene-viewer quick-look" 
+                    alt="Medical Tool">
+                </model-viewer>
+                <div class="ar-button" onclick="triggerAR('model-2')">View in AR</div>
             </div>
+
             <div class="project-item">
                 <h2>Nexus</h2>
-                <span>Development</span>
+                <span>Data Centers</span>
+                <model-viewer 
+                    id="model-3"
+                    src="models/nexus_server.glb" 
+                    ios-src="models/nexus_server.usdz"
+                    ar ar-modes="webxr scene-viewer quick-look" 
+                    alt="Server Rack">
+                </model-viewer>
+                <div class="ar-button" onclick="triggerAR('model-3')">View in AR</div>
             </div>
         </section>
     </main>
 
     <script>
-        // 1. Custom Cursor Follower
+        // 1. Custom Cursor Logic (Disabled for Mobile)
         const cursor = document.querySelector('#cursor');
-        document.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, {
-                x: e.clientX - 10,
-                y: e.clientY - 10,
-                duration: 0.1
+        if (window.matchMedia("(pointer: fine)").matches) {
+            document.addEventListener('mousemove', (e) => {
+                gsap.to(cursor, {
+                    x: e.clientX - 10,
+                    y: e.clientY - 10,
+                    duration: 0.1
+                });
             });
-        });
+        }
 
         // 2. Initial Hero Animation
         const tl = gsap.timeline();
-
         tl.from(".line", {
-            y: 200,
+            y: "110%", 
             ease: "power4.out",
-            duration: 1.5,
-            skewY: 10,
-            stagger: 0.15
+            duration: 1.4,
+            skewY: 7,
+            stagger: 0.1
         })
         .from(".hero p", {
             opacity: 0,
-            y: 20,
-            duration: 1
-        }, "-=1");
+            y: 30,
+            duration: 0.8
+        }, "-=0.8");
 
         // 3. ScrollTrigger for Project Items
         gsap.registerPlugin(ScrollTrigger);
-
         gsap.utils.toArray(".project-item").forEach((item) => {
             gsap.to(item, {
                 scrollTrigger: {
                     trigger: item,
-                    start: "top 90%",
+                    start: "top 85%",
                 },
                 opacity: 1,
                 y: 0,
@@ -189,15 +276,24 @@
             });
         });
 
-        // 4. Hover effect on cursor
-        document.querySelectorAll('.project-item').forEach(link => {
-            link.addEventListener('mouseenter', () => {
-                gsap.to(cursor, { scale: 4, duration: 0.3 });
+        // 4. Cursor Hover Interactions
+        document.querySelectorAll('.project-item, .ar-button').forEach(elem => {
+            elem.addEventListener('mouseenter', () => {
+                gsap.to(cursor, { scale: 3.5, duration: 0.3 });
             });
-            link.addEventListener('mouseleave', () => {
+            elem.addEventListener('mouseleave', () => {
                 gsap.to(cursor, { scale: 1, duration: 0.3 });
             });
         });
+
+        // 5. AR Trigger Function
+        // This programmatically clicks the hidden model-viewer's AR button
+        function triggerAR(id) {
+            const modelViewer = document.getElementById(id);
+            if (modelViewer) {
+                modelViewer.activateAR();
+            }
+        }
     </script>
 </body>
 </html>
