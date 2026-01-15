@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Holographic Window – Single Camera GLB</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+  font-family: -apple-system, system-ui;
+  color: #00ffcc;
+}
+canvas { display: block; }
+
+#ui {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: rgba(0,0,0,0.85);
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #333;
+  font-size: 12px;
+}
+
+#loading {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: black;
+  z-index: 100;
+  flex-direction: column;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #333;
+  border-top: 4px solid #00ffcc;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+#v-prev {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 140px;
+  opacity: 0.5;
+  border: 1px solid #00ffcc;
+  border-radius: 8px;
+  transform: scaleX(-1);
+}
+</style>
+</head>
+
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  Loading model…
+</div>
+
+<div id="ui">
+  <b>HOLOGRAPHIC WINDOW</b><br>
+  Single Camera Mode<br>
+  Target Depth: 500 mm<br>
+  <span id="debug">Tracking…</span>
+</div>
+
+<video id="webcam" autoplay playsinline style="display:none"></video>
+<video id="v-prev" autoplay playsinline></video>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { FaceLandmarker, FilesetResolver }
+  from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.7";
+
+/* ───────── CONFIG ───────── */
+
+const SCREEN_W = 33.3;  // cm (15" MacBook Air)
+const TARGET_Z = 50.0;  // cm (500 mm)
+const LERP = 0.12;
+
+let raw = { x:0, y:0, z:TARGET_Z };
+let smooth = { x:0, y:0, z:TARGET_Z };
+
+/* ───────── THREE ───────── */
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x000000, 0.01);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setPixelRatio(devicePixelRatio);
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const camera = new THREE.PerspectiveCamera();
+
+/* Lighting */
+scene.add(new THREE.DirectionalLight(0xffffff, 3).position.set(10,20,20));
+scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+
+/* Grid (depth reference) */
+const grid = new THREE.GridHelper(500, 50, 0x00ffcc, 0x222222);
+grid.rotation.x = Math.PI/2;
+grid.position.z = -120;
+scene.add(grid);
+
+/* ───────── LOAD GLB ───────── */
+
+let model;
+const loader = new GLTFLoader();
+
+loader.load(
+  "model.glb",
+  gltf => {
+    model = gltf.scene;
+
+    // Center & scale model
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3()).length();
+    const scale = 30 / size; // ~30 cm visual size
+
+    model.scale.setScalar(scale);
+    box.setFromObject(model);
+    box.getCenter(model.position).multiplyScalar(-1);
+
+    model.position.z = -60; // 60 cm behind screen
+    scene.add(model);
+
+    document.getElementById("loading").style.display = "none";
+  },
+  undefined,
+  err => {
+    document.getElementById("loading").innerText = "MODEL LOAD FAILED";
+    console.error(err);
+  }
+);
+
+/* ───────── TRACKING ───────── */
+
+const video = document.getElementById("webcam");
+let landmarker;
+
+async function initTracking() {
+  const vision = await FilesetResolver.forVisionTasks(
+    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.7/wasm"
+  );
+
+  landmarker = await FaceLandmarker.createFromOptions(vision, {
+    baseOptions: {
+      modelAssetPath:
+        "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task"
+    },
+    runningMode: "VIDEO"
+  });
+
+  const stream = await navigator.mediaDevices.getUserMedia({ video:true });
+  video.srcObject = document.getElementById("v-prev").srcObject = stream;
+
+  video.onloadeddata = () => {
+    track();
+    animate();
+  };
+}
+
+function track() {
+  const r = landmarker.detectForVideo(video, performance.now());
+  if (r.faceLandmarks?.[0]) {
+    const lm = r.faceLandmarks[0];
+    const L = lm[33], R = lm[263];
+
+    const cx = (L.x + R.x)/2;
+    const cy = (L.y + R.y)/2;
+
+    const aspect = innerHeight / innerWidth;
+    const screenH = SCREEN_W * aspect;
+
+    raw.x = (cx - 0.5) * -SCREEN_W;
+    raw.y = (cy - 0.5) * -screenH;
+
+    const eyeDist = Math.hypot(L.x - R.x, L.y - R.y);
+    raw.z = THREE.MathUtils.clamp(
+      TARGET_Z + (0.085 - eyeDist) * 55,
+      35, 90
+    );
+
+    document.getElementById("debug").innerText =
+      `Z: ${raw.z.toFixed(1)} cm`;
+  }
+  requestAnimationFrame(track);
+}
+
+/* ───────── ANIMATE ───────── */
+
+function animate() {
+  smooth.x += (raw.x - smooth.x) * LERP;
+  smooth.y += (raw.y - smooth.y) * LERP;
+  smooth.z += (raw.z - smooth.z) * LERP;
+
+  const aspect = innerHeight / innerWidth;
+  const screenH = SCREEN_W * aspect;
+
+  const n = 10, f = 2000;
+  const z = smooth.z;
+
+  const l = ((-SCREEN_W/2) - smooth.x) * n / z;
+  const r = (( SCREEN_W/2) - smooth.x) * n / z;
+  const b = ((-screenH/2) - smooth.y) * n / z;
+  const t = (( screenH/2) - smooth.y) * n / z;
+
+  camera.projectionMatrix.makePerspective(l, r, t, b, n, f);
+  camera.position.set(smooth.x, smooth.y, z);
+  camera.quaternion.identity();
+  camera.updateMatrixWorld(true);
+
+  if (model) model.rotation.y += 0.002;
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+
+initTracking();
+addEventListener("resize", ()=>renderer.setSize(innerWidth, innerHeight));
+</script>
+</body>
+</html>
