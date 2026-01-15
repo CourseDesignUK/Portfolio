@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Immersive Excellence</title>
+    <title>Modern Minimalist Experience</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Space+Grotesk:wght@300;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
     <style>
         :root {
-            --bg-color: #080808;
+            --bg-color: #0f0f0f;
             --text-color: #ffffff;
-            --accent-color: #00f2ff; /* XR Cyan */
+            --accent-color: #6366f1;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            cursor: none;
+            cursor: none; /* Hide default cursor for custom one */
         }
 
         body {
@@ -30,27 +30,17 @@
             overflow-x: hidden;
         }
 
-        /* --- Custom XR Cursor --- */
+        /* --- Custom Cursor --- */
         #cursor {
             position: fixed;
-            width: 12px;
-            height: 12px;
-            background: var(--accent-color);
+            width: 20px;
+            height: 20px;
+            background: #fff;
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
-            box-shadow: 0 0 15px var(--accent-color);
-        }
-
-        #cursor-follower {
-            position: fixed;
-            width: 40px;
-            height: 40px;
-            border: 1px solid rgba(0, 242, 255, 0.3);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9998;
-            transition: transform 0.1s ease-out;
+            mix-blend-mode: difference;
+            transition: transform 0.2s ease;
         }
 
         /* --- Layout --- */
@@ -58,100 +48,64 @@
             position: fixed;
             top: 0;
             width: 100%;
-            padding: 40px 60px;
+            padding: 30px 50px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
             z-index: 100;
+            mix-blend-mode: difference;
         }
 
-        .logo { 
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 500; 
-            letter-spacing: 2px; 
-            font-size: 0.9rem;
-            text-transform: uppercase;
-        }
-
-        .nav-links {
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            opacity: 0.7;
-        }
+        .logo { font-weight: 700; letter-spacing: -1px; font-size: 1.2rem; }
 
         section {
             height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 0 12%;
+            padding: 0 10%;
         }
 
         /* --- Hero Section --- */
         .hero h1 {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 7rem);
-            line-height: 1.1;
-            font-weight: 300;
-            text-transform: uppercase;
-        }
-
-        .hero h1 b {
+            font-size: clamp(3rem, 10vw, 8rem);
+            line-height: 0.9;
             font-weight: 700;
-            color: var(--accent-color);
-            display: block;
+            overflow: hidden; /* For reveal effect */
         }
 
-        .line-parent { overflow: hidden; }
-        .line-child { display: block; }
+        .line { display: block; }
 
         .hero p {
-            margin-top: 40px;
-            font-size: 1.1rem;
-            max-width: 500px;
-            opacity: 0.5;
-            line-height: 1.6;
+            margin-top: 30px;
+            font-size: 1.2rem;
+            max-width: 400px;
+            opacity: 0.6;
         }
 
-        /* --- Training Modules Section --- */
-        .modules { background: #0c0c0c; }
-        
-        .section-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            margin-bottom: 40px;
-            color: var(--accent-color);
+        /* --- Projects Section --- */
+        .projects {
+            background: #161616;
         }
 
-        .module-item {
-            border-bottom: 1px solid #222;
-            padding: 50px 0;
+        .project-item {
+            border-bottom: 1px solid #333;
+            padding: 40px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
         }
 
-        .module-item h2 { 
-            font-size: clamp(2rem, 4vw, 4rem); 
-            font-weight: 300; 
-            transition: all 0.5s ease;
-        }
+        .project-item h2 { font-size: 3rem; font-weight: 300; }
+        .project-item:hover h2 { color: var(--accent-color); padding-left: 20px; transition: 0.4s; }
 
-        .module-item:hover h2 { 
-            transform: translateX(30px);
-            color: var(--accent-color);
-        }
-
-        .module-num { font-family: 'Space Grotesk'; opacity: 0.3; font-size: 0.9rem; }
-
-        /* --- Background Noise --- */
+        /* --- Noise Grain Effect --- */
         .noise {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: url('https://grainy-gradients.vercel.app/noise.svg');
-            opacity: 0.04;
+            opacity: 0.05;
             pointer-events: none;
             z-index: 1;
         }
@@ -160,94 +114,87 @@
 <body>
 
     <div id="cursor"></div>
-    <div id="cursor-follower"></div>
     <div class="noise"></div>
 
     <nav>
-        <div class="logo">XR Training Labs // 2026</div>
-        <div class="nav-links">SOLUTIONS &nbsp; • &nbsp; SIMULATIONS &nbsp; • &nbsp; CONTACT</div>
+        <div class="logo">STUDIO.ALPHA</div>
+        <div class="nav-links">WORK — ABOUT</div>
     </nav>
 
     <main>
         <section class="hero">
             <h1>
-                <div class="line-parent"><span class="line-child">TRAIN IN</span></div>
-                <div class="line-parent"><span class="line-child"><b>NEW REALITIES.</b></span></div>
+                <span class="line">BEYOND</span>
+                <span class="line">MINIMAL.</span>
             </h1>
-            <p>Deploying high-fidelity XR environments for enterprise-level skill acquisition and precision training.</p>
+            <p>Creating digital artifacts that breathe and react to your touch.</p>
         </section>
 
-        <section class="modules">
-            <span class="section-label">Core Modules</span>
-            
-            <div class="module-item">
-                <span class="module-num">01</span>
-                <h2>Medical VR</h2>
-                <span>View Specs</span>
+        <section class="projects">
+            <div class="project-item">
+                <h2>Lumina</h2>
+                <span>Brand Identity</span>
             </div>
-
-            <div class="module-item">
-                <span class="module-num">02</span>
-                <h2>Industrial AR</h2>
-                <span>View Specs</span>
+            <div class="project-item">
+                <h2>Vertex</h2>
+                <span>UI/UX Design</span>
             </div>
-
-            <div class="module-item">
-                <span class="module-num">03</span>
-                <h2>Flight Sim Pro</h2>
-                <span>View Specs</span>
+            <div class="project-item">
+                <h2>Nexus</h2>
+                <span>Development</span>
             </div>
         </section>
     </main>
 
     <script>
-        // Custom Cursor Logic
+        // 1. Custom Cursor Follower
         const cursor = document.querySelector('#cursor');
-        const follower = document.querySelector('#cursor-follower');
-
         document.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
-            gsap.to(follower, { x: e.clientX - 14, y: e.clientY - 14, duration: 0.3 });
+            gsap.to(cursor, {
+                x: e.clientX - 10,
+                y: e.clientY - 10,
+                duration: 0.1
+            });
         });
 
-        // Entrance Animations
+        // 2. Initial Hero Animation
         const tl = gsap.timeline();
 
-        tl.from(".line-child", {
-            y: "100%",
+        tl.from(".line", {
+            y: 200,
             ease: "power4.out",
             duration: 1.5,
-            stagger: 0.2
+            skewY: 10,
+            stagger: 0.15
         })
-        .from(".hero p, nav", {
+        .from(".hero p", {
             opacity: 0,
+            y: 20,
             duration: 1
-        }, "-=0.5");
+        }, "-=1");
 
-        // Scroll Reveal for Modules
+        // 3. ScrollTrigger for Project Items
         gsap.registerPlugin(ScrollTrigger);
 
-        gsap.utils.toArray(".module-item").forEach((item) => {
-            gsap.from(item, {
+        gsap.utils.toArray(".project-item").forEach((item) => {
+            gsap.to(item, {
                 scrollTrigger: {
                     trigger: item,
-                    start: "top 95%",
+                    start: "top 90%",
                 },
-                opacity: 0,
-                x: -50,
-                duration: 1.2,
-                ease: "power3.out"
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: "power2.out"
             });
         });
 
-        // Hover States
-        document.querySelectorAll('.module-item, .nav-links').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                gsap.to(follower, { scale: 2, backgroundColor: "rgba(0, 242, 255, 0.1)", duration: 0.3 });
-                gsap.to(cursor, { scale: 0.5, duration: 0.3 });
+        // 4. Hover effect on cursor
+        document.querySelectorAll('.project-item').forEach(link => {
+            link.addEventListener('mouseenter', () => {
+                gsap.to(cursor, { scale: 4, duration: 0.3 });
             });
-            el.addEventListener('mouseleave', () => {
-                gsap.to(follower, { scale: 1, backgroundColor: "transparent", duration: 0.3 });
+            link.addEventListener('mouseleave', () => {
                 gsap.to(cursor, { scale: 1, duration: 0.3 });
             });
         });
