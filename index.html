@@ -3,92 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Immersive Skill Acquisition</title>
+    <title>XR Training Labs | Immersive Excellence</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Space+Grotesk:wght@300;500&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
     <style>
         :root {
-            --bg: #050505;
-            --cyan: #00f2ff;
-            --text: #e0e0e0;
-            --grid-color: rgba(0, 242, 255, 0.07);
+            --bg-color: #080808;
+            --text-color: #ffffff;
+            --accent-color: #00f2ff; /* XR Cyan */
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
 
         body {
-            font-family: 'Space Grotesk', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             overflow-x: hidden;
-            background-image: 
-                linear-gradient(var(--grid-color) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 50px 50px; /* VR Grid */
         }
 
-        /* --- HUD Elements --- */
-        .hud-bracket {
-            position: fixed;
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--cyan);
-            z-index: 50;
-            opacity: 0.5;
-        }
-        .top-left { top: 20px; left: 20px; border-right: none; border-bottom: none; }
-        .bottom-right { bottom: 20px; right: 20px; border-left: none; border-top: none; }
-
+        /* --- Custom XR Cursor --- */
         #cursor {
             position: fixed;
-            width: 8px;
-            height: 8px;
-            background: var(--cyan);
+            width: 12px;
+            height: 12px;
+            background: var(--accent-color);
             border-radius: 50%;
-            z-index: 10000;
             pointer-events: none;
-            box-shadow: 0 0 15px var(--cyan);
+            z-index: 9999;
+            box-shadow: 0 0 15px var(--accent-color);
         }
 
-        #cursor-aura {
+        #cursor-follower {
             position: fixed;
             width: 40px;
             height: 40px;
-            border: 1px solid var(--cyan);
+            border: 1px solid rgba(0, 242, 255, 0.3);
             border-radius: 50%;
-            z-index: 9999;
             pointer-events: none;
-            transition: transform 0.15s ease-out;
+            z-index: 9998;
+            transition: transform 0.1s ease-out;
         }
 
+        /* --- Layout --- */
         nav {
             position: fixed;
-            top: 0; width: 100%;
+            top: 0;
+            width: 100%;
             padding: 40px 60px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             z-index: 100;
+        }
+
+        .logo { 
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 500; 
+            letter-spacing: 2px; 
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
             font-size: 0.8rem;
-            letter-spacing: 2px;
-        }
-
-        .status-dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background: var(--cyan);
-            border-radius: 50%;
-            margin-right: 8px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,242,255,0.7); }
-            70% { opacity: 0.5; box-shadow: 0 0 0 10px rgba(0,242,255,0); }
-            100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,242,255,0); }
+            letter-spacing: 1px;
+            opacity: 0.7;
         }
 
         section {
@@ -96,141 +84,171 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 0 10%;
-            position: relative;
+            padding: 0 12%;
         }
 
-        /* --- Hero --- */
+        /* --- Hero Section --- */
         .hero h1 {
-            font-size: clamp(3rem, 10vw, 8rem);
-            font-weight: 700;
-            line-height: 0.85;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 7rem);
+            line-height: 1.1;
+            font-weight: 300;
             text-transform: uppercase;
         }
 
-        .hero h1 span {
+        .hero h1 b {
+            font-weight: 700;
+            color: var(--accent-color);
             display: block;
-            color: transparent;
-            -webkit-text-stroke: 1px var(--text);
         }
 
-        .hero h1 .filled {
-            color: var(--cyan);
-            -webkit-text-stroke: 0px;
-            text-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
+        .line-parent { overflow: hidden; }
+        .line-child { display: block; }
+
+        .hero p {
+            margin-top: 40px;
+            font-size: 1.1rem;
+            max-width: 500px;
+            opacity: 0.5;
+            line-height: 1.6;
         }
 
-        .glitch-text:hover {
-            animation: glitch 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
+        /* --- Training Modules Section --- */
+        .modules { background: #0c0c0c; }
+        
+        .section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 40px;
+            color: var(--accent-color);
         }
 
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-3px, 3px); color: #ff00c1; }
-            40% { transform: translate(-3px, -3px); color: var(--cyan); }
-            60% { transform: translate(3px, 3px); }
-            80% { transform: translate(3px, -3px); }
-            100% { transform: translate(0); }
-        }
-
-        /* --- Modules --- */
-        .module-list { width: 100%; max-width: 900px; }
-        .module-card {
-            padding: 40px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+        .module-item {
+            border-bottom: 1px solid #222;
+            padding: 50px 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.4s;
+            position: relative;
         }
 
-        .module-card:hover {
-            padding-left: 20px;
-            background: linear-gradient(90deg, rgba(0,242,255,0.05) 0%, transparent 100%);
+        .module-item h2 { 
+            font-size: clamp(2rem, 4vw, 4rem); 
+            font-weight: 300; 
+            transition: all 0.5s ease;
         }
 
-        .tag {
-            font-size: 0.7rem;
-            border: 1px solid var(--cyan);
-            padding: 4px 12px;
-            border-radius: 20px;
-            color: var(--cyan);
+        .module-item:hover h2 { 
+            transform: translateX(30px);
+            color: var(--accent-color);
+        }
+
+        .module-num { font-family: 'Space Grotesk'; opacity: 0.3; font-size: 0.9rem; }
+
+        /* --- Background Noise --- */
+        .noise {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
 
     <div id="cursor"></div>
-    <div id="cursor-aura"></div>
-    
-    <div class="hud-bracket top-left"></div>
-    <div class="hud-bracket bottom-right"></div>
+    <div id="cursor-follower"></div>
+    <div class="noise"></div>
 
     <nav>
-        <div class="logo"><b>XR</b> TRAINING LABS</div>
-        <div><span class="status-dot"></span>SYSTEM ACTIVE</div>
+        <div class="logo">XR Training Labs // 2026</div>
+        <div class="nav-links">SOLUTIONS &nbsp; • &nbsp; SIMULATIONS &nbsp; • &nbsp; CONTACT</div>
     </nav>
 
-    <section class="hero">
-        <h1 class="glitch-text">
-            <span>IMMERSIVE</span>
-            <span class="filled">STRATEGY.</span>
-            <span>001 // ARCH</span>
-        </h1>
-        <p style="margin-top: 2rem; opacity: 0.6; max-width: 450px;">
-            High-fidelity synthetic environments for elite technical training and cognitive data analysis.
-        </p>
-    </section>
+    <main>
+        <section class="hero">
+            <h1>
+                <div class="line-parent"><span class="line-child">TRAIN IN</span></div>
+                <div class="line-parent"><span class="line-child"><b>NEW REALITIES.</b></span></div>
+            </h1>
+            <p>Deploying high-fidelity XR environments for enterprise-level skill acquisition and precision training.</p>
+        </section>
 
-    <section class="modules">
-        <div class="module-list">
-            <div class="module-card">
-                <h2>NEURAL OVERLAY</h2>
-                <span class="tag">ACTIVE</span>
+        <section class="modules">
+            <span class="section-label">Core Modules</span>
+            
+            <div class="module-item">
+                <span class="module-num">01</span>
+                <h2>Medical VR</h2>
+                <span>View Specs</span>
             </div>
-            <div class="module-card">
-                <h2>FLIGHT PATH SIM</h2>
-                <span class="tag">LOCKED</span>
+
+            <div class="module-item">
+                <span class="module-num">02</span>
+                <h2>Industrial AR</h2>
+                <span>View Specs</span>
             </div>
-            <div class="module-card">
-                <h2>BIO-LAB XR</h2>
-                <span class="tag">ACTIVE</span>
+
+            <div class="module-item">
+                <span class="module-num">03</span>
+                <h2>Flight Sim Pro</h2>
+                <span>View Specs</span>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <script>
-        // Smooth Cursor
+        // Custom Cursor Logic
         const cursor = document.querySelector('#cursor');
-        const aura = document.querySelector('#cursor-aura');
+        const follower = document.querySelector('#cursor-follower');
 
         document.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0 });
-            gsap.to(aura, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.2 });
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            gsap.to(follower, { x: e.clientX - 14, y: e.clientY - 14, duration: 0.3 });
         });
 
-        // Entrance
-        gsap.from(".hero h1 span", {
-            y: 100,
-            opacity: 0,
-            stagger: 0.2,
+        // Entrance Animations
+        const tl = gsap.timeline();
+
+        tl.from(".line-child", {
+            y: "100%",
+            ease: "power4.out",
             duration: 1.5,
-            ease: "power4.out"
-        });
+            stagger: 0.2
+        })
+        .from(".hero p, nav", {
+            opacity: 0,
+            duration: 1
+        }, "-=0.5");
 
-        // Grid Movement on Scroll
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            document.body.style.backgroundPosition = `0px ${scrolled * 0.5}px`;
-        });
+        // Scroll Reveal for Modules
+        gsap.registerPlugin(ScrollTrigger);
 
-        // Interaction
-        document.querySelectorAll('.module-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                gsap.to(aura, { scale: 1.5, borderColor: "#fff", duration: 0.3 });
+        gsap.utils.toArray(".module-item").forEach((item) => {
+            gsap.from(item, {
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 95%",
+                },
+                opacity: 0,
+                x: -50,
+                duration: 1.2,
+                ease: "power3.out"
             });
-            card.addEventListener('mouseleave', () => {
-                gsap.to(aura, { scale: 1, borderColor: "var(--cyan)", duration: 0.3 });
+        });
+
+        // Hover States
+        document.querySelectorAll('.module-item, .nav-links').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                gsap.to(follower, { scale: 2, backgroundColor: "rgba(0, 242, 255, 0.1)", duration: 0.3 });
+                gsap.to(cursor, { scale: 0.5, duration: 0.3 });
+            });
+            el.addEventListener('mouseleave', () => {
+                gsap.to(follower, { scale: 1, backgroundColor: "transparent", duration: 0.3 });
+                gsap.to(cursor, { scale: 1, duration: 0.3 });
             });
         });
     </script>
