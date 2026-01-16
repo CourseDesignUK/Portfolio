@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Immersive Experiences</title>
+    <title>XR Training Labs | Persistent Expansion</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
@@ -46,7 +46,7 @@
             transition: transform 0.1s ease-out;
         }
 
-        /* --- Layout --- */
+        /* --- Navigation --- */
         nav {
             position: fixed;
             top: 0;
@@ -60,32 +60,27 @@
 
         .logo { font-weight: 700; letter-spacing: -1px; font-size: 1.2rem; }
 
-        section {
+        /* --- Hero Section --- */
+        section.hero {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             padding: 0 10%;
-            position: relative;
         }
 
         .hero h1 {
             font-size: clamp(2.5rem, 12vw, 8.5rem);
             line-height: 1.05; 
             font-weight: 700;
-            letter-spacing: -0.02em;
         }
 
         .line-wrapper {
             display: block;
             overflow: hidden;
-            padding-bottom: 0.1em;
         }
 
-        .line { 
-            display: block; 
-            will-change: transform;
-        }
+        .line { display: block; will-change: transform; }
 
         .hero p {
             margin-top: 40px;
@@ -95,10 +90,10 @@
             line-height: 1.6;
         }
 
-        /* --- Projects Expansion Section --- */
+        /* --- Projects Section --- */
         .projects {
             background: #161616;
-            padding: 100px 10%;
+            padding: 0 10% 100px 10%;
         }
 
         .project-item {
@@ -107,8 +102,7 @@
             display: flex;
             flex-direction: column;
             opacity: 0;
-            transform: translateY(30px);
-            will-change: transform, opacity;
+            transform: translateY(50px);
         }
 
         .item-header {
@@ -139,21 +133,13 @@
             letter-spacing: 1px;
             transition: 0.3s;
             white-space: nowrap;
-            pointer-events: auto;
         }
 
-        .ar-button:hover {
-            transform: scale(1.05);
-            background: var(--accent-color);
-            color: white;
-        }
-
-        /* --- Expanding Content Area --- */
+        /* --- Video Expansion --- */
         .expanded-content {
             height: 0;
             overflow: hidden;
             opacity: 0;
-            will-change: height;
         }
 
         .video-grid {
@@ -163,45 +149,29 @@
             padding: 50px 0;
         }
 
-        .video-card {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
         .video-wrapper {
             position: relative;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            padding-bottom: 56.25%;
             height: 0;
-            overflow: hidden;
             border-radius: 12px;
             background: #000;
             border: 1px solid #333;
+            overflow: hidden;
         }
 
         .video-wrapper iframe {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
+            top: 0; left: 0; width: 100%; height: 100%; border: 0;
         }
 
         .video-card span {
+            display: block;
+            margin-top: 15px;
             font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
             color: var(--accent-color);
             font-weight: 700;
+            letter-spacing: 1px;
         }
-
-        .video-card p {
-            font-size: 0.9rem;
-            opacity: 0.6;
-        }
-
-        model-viewer { display: none; }
 
         .noise {
             position: fixed;
@@ -212,10 +182,12 @@
             z-index: 1;
         }
 
+        model-viewer { display: none; }
+
         @media (max-width: 768px) {
             #cursor { display: none; }
             * { cursor: auto; }
-            .item-header { grid-template-columns: 1fr; gap: 10px; }
+            .item-header { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -242,55 +214,43 @@
             <div class="project-item">
                 <div class="item-header">
                     <h2>Virtual</h2>
-                    <span>Industrial Labs</span>
+                    <span>Immersive Ops</span>
                     <div class="ar-button" onclick="triggerAR('model-1')">View Engine AR</div>
                 </div>
                 <div class="expanded-content">
                     <div class="video-grid">
                         <div class="video-card">
-                            <div class="video-wrapper">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                            </div>
-                            <span>VR Safety Training</span>
-                            <p>Interactive hazard identification in industrial environments.</p>
+                            <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe></div>
+                            <span>Hazard Awareness VR</span>
                         </div>
                         <div class="video-card">
-                            <div class="video-wrapper">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                            </div>
-                            <span>Engine Assembly VR</span>
-                            <p>Step-by-step mechanical training for complex turbine systems.</p>
+                            <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe></div>
+                            <span>Engine Maintenance</span>
                         </div>
                     </div>
                 </div>
-                <model-viewer id="model-1" src="models/lumina_engine.glb" ar ar-modes="webxr quick-look"></model-viewer>
+                <model-viewer id="model-1" src="models/lumina_engine.glb" ar></model-viewer>
             </div>
 
             <div class="project-item">
                 <div class="item-header">
                     <h2>Augmented</h2>
-                    <span>On-Site Support</span>
+                    <span>Spatial Overlay</span>
                     <div class="ar-button" onclick="triggerAR('model-2')">View Tool AR</div>
                 </div>
                 <div class="expanded-content">
                     <div class="video-grid">
                         <div class="video-card">
-                            <div class="video-wrapper">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                            </div>
-                            <span>AR Remote Assist</span>
-                            <p>Live technical support with spatial annotations.</p>
+                            <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe></div>
+                            <span>Field Technician AR</span>
                         </div>
                         <div class="video-card">
-                            <div class="video-wrapper">
-                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
-                            </div>
-                            <span>Warehouse Viz</span>
-                            <p>Visualizing inventory layout in real-time space.</p>
+                            <div class="video-wrapper"><iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe></div>
+                            <span>Inventory Flow Viz</span>
                         </div>
                     </div>
                 </div>
-                <model-viewer id="model-2" src="models/vertex_tool.glb" ar ar-modes="webxr quick-look"></model-viewer>
+                <model-viewer id="model-2" src="models/vertex_tool.glb" ar></model-viewer>
             </div>
         </section>
     </main>
@@ -298,49 +258,38 @@
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // 1. Custom Cursor
+        // 1. Cursor Logic
         const cursor = document.querySelector('#cursor');
         if (window.matchMedia("(pointer: fine)").matches) {
             document.addEventListener('mousemove', (e) => {
-                gsap.to(cursor, { x: e.clientX - 10, y: e.clientY - 10, duration: 0.15 });
+                gsap.to(cursor, { x: e.clientX - 10, y: e.clientY - 10, duration: 0.1 });
             });
         }
 
-        // 2. Hero Animation
+        // 2. Hero Reveal
         const tl = gsap.timeline();
-        tl.from(".line", { y: "110%", ease: "power4.out", duration: 1.4, skewY: 7, stagger: 0.1 })
-          .from(".hero p", { opacity: 0, y: 30, duration: 0.8 }, "-=0.8");
+        tl.from(".line", { y: "110%", ease: "power4.out", duration: 1.2, stagger: 0.1 })
+          .from(".hero p", { opacity: 0, y: 20, duration: 0.8 }, "-=0.6");
 
-        // 3. Auto-Expand / Auto-Close Logic
+        // 3. Persistent Auto-Expand Logic
         gsap.utils.toArray(".project-item").forEach((item) => {
             const content = item.querySelector(".expanded-content");
 
-            // Animation for expanding height
-            const expandAnimation = gsap.timeline({ paused: true });
-            expandAnimation.to(content, { 
-                height: "auto", 
-                opacity: 1, 
-                duration: 0.8, 
-                ease: "power3.inOut" 
+            const expand = gsap.timeline({
+                scrollTrigger: {
+                    trigger: item,
+                    start: "top 80%",
+                    // "play none none none" means once it plays, it never reverses or re-triggers
+                    toggleActions: "play none none none" 
+                }
             });
 
-            // Trigger to manage the state
-            ScrollTrigger.create({
-                trigger: item,
-                start: "top 75%", // Opens when item is near middle
-                end: "bottom 15%", // Closes when it scrolls past top
-                onEnter: () => {
-                    gsap.to(item, { opacity: 1, y: 0, duration: 0.6 });
-                    expandAnimation.play();
-                },
-                onLeave: () => expandAnimation.reverse(),
-                onEnterBack: () => expandAnimation.play(),
-                onLeaveBack: () => expandAnimation.reverse()
-            });
+            expand.to(item, { opacity: 1, y: 0, duration: 0.8 })
+                  .to(content, { height: "auto", opacity: 1, duration: 1, ease: "power3.out" }, "-=0.4");
         });
 
-        // 4. Cursor Hovers for all clickable items
-        document.querySelectorAll('.project-item h2, .ar-button, iframe').forEach(elem => {
+        // 4. Cursor Scaling
+        document.querySelectorAll('.ar-button, h2, iframe').forEach(elem => {
             elem.addEventListener('mouseenter', () => gsap.to(cursor, { scale: 3.5, duration: 0.3 }));
             elem.addEventListener('mouseleave', () => gsap.to(cursor, { scale: 1, duration: 0.3 }));
         });
