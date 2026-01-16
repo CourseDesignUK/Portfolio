@@ -139,6 +139,7 @@
             letter-spacing: 1px;
             transition: 0.3s;
             white-space: nowrap;
+            pointer-events: auto;
         }
 
         .ar-button:hover {
@@ -155,41 +156,48 @@
             will-change: height;
         }
 
-        .yt-link-container {
+        .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            padding: 40px 0;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 50px 0;
         }
 
-        .yt-card {
-            text-decoration: none;
-            color: white;
-            display: block;
+        .video-card {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        .img-reveal {
-            width: 100%;
-            height: 200px;
-            overflow: hidden;
-            border-radius: 8px;
-            margin-bottom: 15px;
+        .video-wrapper {
             position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #000;
+            border: 1px solid #333;
         }
 
-        .yt-card img {
-            width: 100%;
-            height: 130%; /* Taller for parallax */
-            object-fit: cover;
+        .video-wrapper iframe {
             position: absolute;
-            top: -15%;
-            will-change: transform;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
         }
 
-        .yt-card span {
-            font-size: 0.85rem;
+        .video-card span {
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        .video-card p {
+            font-size: 0.9rem;
             opacity: 0.6;
         }
 
@@ -208,7 +216,6 @@
             #cursor { display: none; }
             * { cursor: auto; }
             .item-header { grid-template-columns: 1fr; gap: 10px; }
-            .ar-button { align-self: flex-start; }
         }
     </style>
 </head>
@@ -235,23 +242,25 @@
             <div class="project-item">
                 <div class="item-header">
                     <h2>Virtual</h2>
-                    <span>Headset</span>
-                    <div class="ar-button" onclick="triggerAR('model-1')">View in AR</div>
+                    <span>Industrial Labs</span>
+                    <div class="ar-button" onclick="triggerAR('model-1')">View Engine AR</div>
                 </div>
                 <div class="expanded-content">
-                    <div class="yt-link-container">
-                        <a href="#" class="yt-card">
-                            <div class="img-reveal"><img src="https://picsum.photos/seed/vr1/600/400" class="parallax-img"></div>
-                            <span>Safety Simulation Demo</span>
-                        </a>
-                        <a href="#" class="yt-card">
-                            <div class="img-reveal"><img src="https://picsum.photos/seed/vr2/600/400" class="parallax-img"></div>
-                            <span>Industrial Maintenance</span>
-                        </a>
-                        <a href="#" class="yt-card">
-                            <div class="img-reveal"><img src="https://picsum.photos/seed/vr3/600/400" class="parallax-img"></div>
-                            <span>Emergency Response</span>
-                        </a>
+                    <div class="video-grid">
+                        <div class="video-card">
+                            <div class="video-wrapper">
+                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            </div>
+                            <span>VR Safety Training</span>
+                            <p>Interactive hazard identification in industrial environments.</p>
+                        </div>
+                        <div class="video-card">
+                            <div class="video-wrapper">
+                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            </div>
+                            <span>Engine Assembly VR</span>
+                            <p>Step-by-step mechanical training for complex turbine systems.</p>
+                        </div>
                     </div>
                 </div>
                 <model-viewer id="model-1" src="models/lumina_engine.glb" ar ar-modes="webxr quick-look"></model-viewer>
@@ -260,51 +269,28 @@
             <div class="project-item">
                 <div class="item-header">
                     <h2>Augmented</h2>
-                    <span>Mobile / Glass</span>
-                    <div class="ar-button" onclick="triggerAR('model-2')">View in AR</div>
+                    <span>On-Site Support</span>
+                    <div class="ar-button" onclick="triggerAR('model-2')">View Tool AR</div>
                 </div>
                 <div class="expanded-content">
-                    <div class="yt-link-container">
-                        <a href="#" class="yt-card">
-                            <div class="img-reveal"><img src="https://picsum.photos/seed/ar1/600/400" class="parallax-img"></div>
-                            <span>AR Overlay Guides</span>
-                        </a>
-                        <a href="#" class="yt-card">
-                            <div class="img-reveal"><img src="https://picsum.photos/seed/ar2/600/400" class="parallax-img"></div>
-                            <span>Remote Expert Help</span>
-                        </a>
-                        <a href="#" class="yt-card">
-                            <div class="img-reveal"><img src="https://picsum.photos/seed/ar3/600/400" class="parallax-img"></div>
-                            <span>Inventory Tracking</span>
-                        </a>
+                    <div class="video-grid">
+                        <div class="video-card">
+                            <div class="video-wrapper">
+                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            </div>
+                            <span>AR Remote Assist</span>
+                            <p>Live technical support with spatial annotations.</p>
+                        </div>
+                        <div class="video-card">
+                            <div class="video-wrapper">
+                                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                            </div>
+                            <span>Warehouse Viz</span>
+                            <p>Visualizing inventory layout in real-time space.</p>
+                        </div>
                     </div>
                 </div>
                 <model-viewer id="model-2" src="models/vertex_tool.glb" ar ar-modes="webxr quick-look"></model-viewer>
-            </div>
-
-            <div class="project-item">
-                <div class="item-header">
-                    <h2>3D Desktop</h2>
-                    <span>PC / Web</span>
-                    <div class="ar-button" onclick="triggerAR('model-3')">View in AR</div>
-                </div>
-                <div class="expanded-content">
-                    <div class="yt-link-container">
-                        <a href="#" class="yt-card">
-                            <div class="img-reveal"><img src="https://picsum.photos/seed/d31/600/400" class="parallax-img"></div>
-                            <span>Web-Based Training</span>
-                        </a>
-                        <a href="#" class="yt-card">
-                            <div class="img-reveal"><img src="https://picsum.photos/seed/d32/600/400" class="parallax-img"></div>
-                            <span>Nexus Server Viz</span>
-                        </a>
-                        <a href="#" class="yt-card">
-                            <div class="img-reveal"><img src="https://picsum.photos/seed/d33/600/400" class="parallax-img"></div>
-                            <span>Data Architecture 3D</span>
-                        </a>
-                    </div>
-                </div>
-                <model-viewer id="model-3" src="models/nexus_server.glb" ar ar-modes="webxr quick-look"></model-viewer>
             </div>
         </section>
     </main>
@@ -316,7 +302,7 @@
         const cursor = document.querySelector('#cursor');
         if (window.matchMedia("(pointer: fine)").matches) {
             document.addEventListener('mousemove', (e) => {
-                gsap.to(cursor, { x: e.clientX - 10, y: e.clientY - 10, duration: 0.1 });
+                gsap.to(cursor, { x: e.clientX - 10, y: e.clientY - 10, duration: 0.15 });
             });
         }
 
@@ -328,17 +314,21 @@
         // 3. Auto-Expand / Auto-Close Logic
         gsap.utils.toArray(".project-item").forEach((item) => {
             const content = item.querySelector(".expanded-content");
-            const images = item.querySelectorAll(".parallax-img");
 
             // Animation for expanding height
             const expandAnimation = gsap.timeline({ paused: true });
-            expandAnimation.to(content, { height: "auto", opacity: 1, duration: 0.8, ease: "power2.inOut" });
+            expandAnimation.to(content, { 
+                height: "auto", 
+                opacity: 1, 
+                duration: 0.8, 
+                ease: "power3.inOut" 
+            });
 
             // Trigger to manage the state
             ScrollTrigger.create({
                 trigger: item,
-                start: "top 65%",
-                end: "bottom 35%",
+                start: "top 75%", // Opens when item is near middle
+                end: "bottom 15%", // Closes when it scrolls past top
                 onEnter: () => {
                     gsap.to(item, { opacity: 1, y: 0, duration: 0.6 });
                     expandAnimation.play();
@@ -347,24 +337,10 @@
                 onEnterBack: () => expandAnimation.play(),
                 onLeaveBack: () => expandAnimation.reverse()
             });
-
-            // Parallax effect for images inside the expanding section
-            images.forEach(img => {
-                gsap.to(img, {
-                    y: "20%",
-                    ease: "none",
-                    scrollTrigger: {
-                        trigger: item,
-                        start: "top bottom",
-                        end: "bottom top",
-                        scrub: true
-                    }
-                });
-            });
         });
 
-        // 4. Cursor Hovers
-        document.querySelectorAll('.project-item, .ar-button, .yt-card').forEach(elem => {
+        // 4. Cursor Hovers for all clickable items
+        document.querySelectorAll('.project-item h2, .ar-button, iframe').forEach(elem => {
             elem.addEventListener('mouseenter', () => gsap.to(cursor, { scale: 3.5, duration: 0.3 }));
             elem.addEventListener('mouseleave', () => gsap.to(cursor, { scale: 1, duration: 0.3 }));
         });
