@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Source+Code+Pro&display=swap" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
 
@@ -29,7 +28,6 @@
             background-color: var(--bg-color); 
             color: var(--text-color); 
             overflow-x: hidden;
-            /* Technical Blueprint Grid Background */
             background-image: 
                 linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
@@ -40,18 +38,12 @@
         .logo { font-weight: 700; font-family: 'Source Code Pro', monospace; color: var(--accent-color); }
 
         section { padding: 100px 5%; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
-        
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 20px; text-transform: uppercase; letter-spacing: -2px; }
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; }
 
-        /* --- Video Gallery --- */
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 40px; }
-        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); background: #000; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; opacity: 0.8; }
-
         /* --- Interaction UI --- */
         #hand-ui { margin-top: 30px; display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
-        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 15px 30px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 15px 30px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
         
         #preview-wrapper { position: relative; width: 160px; height: 120px; display: none; }
         #v-preview { width: 100%; height: 100%; border-radius: 4px; border: 1px solid var(--accent-color); transform: scaleX(-1); filter: grayscale(1) contrast(1.2); }
@@ -73,7 +65,6 @@
         
         model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
 
-        /* --- HUD Panel --- */
         #tech-hud {
             position: absolute;
             top: 25px;
@@ -86,24 +77,26 @@
             font-size: 0.7rem;
             pointer-events: none;
             opacity: 0;
-            transform: translateX(-20px);
-            transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: 0.4s ease;
             z-index: 5;
         }
-        #tech-hud.active { opacity: 1; transform: translateX(0); }
+        #tech-hud.active { opacity: 1; }
 
         .ar-launch-btn {
             margin-top: 20px;
             background: #fff;
             color: #000;
             border: none;
-            padding: 15px 40px;
+            padding: 18px 45px;
             border-radius: 4px;
             font-weight: 700;
             cursor: pointer;
             text-transform: uppercase;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+            transition: 0.3s;
         }
+        .ar-launch-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -112,21 +105,7 @@
 
     <section>
         <h1>Spatial Computing<br>Training Systems</h1>
-    </section>
-
-    <section>
-        <div class="ar-content">LIVE_FEED_ARCHIVE</div>
-        <div class="video-grid">
-            <div class="video-container"><iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?mute=1&loop=1&playlist=_ckPvnl4HQI"></iframe></div>
-            <div class="video-container"><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?mute=1"></iframe></div>
-            <div class="video-container"><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?mute=1"></iframe></div>
-            <div class="video-container"><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?mute=1"></iframe></div>
-        </div>
-    </section>
-
-    <section>
         <div class="ar-content">OBJECT_ID: CHINOOK_CH47D</div>
-        <p>Rotate hand to <strong>Orbit</strong>. Clench fist for <strong>X-Ray Structural Analysis</strong>.</p>
         
         <div id="hand-ui">
             <button class="cam-btn" id="t-btn">INITIALIZE SENSORS</button>
@@ -140,24 +119,24 @@
                 <div>[SYSTEM STATUS: X-RAY ACTIVE]</div>
                 <div>---------------------------</div>
                 <div>STRUCTURAL INTEGRITY: 98.4%</div>
-                <div>INTERNAL COMPONENT SYNC... OK</div>
-                <div>TRACKING_AXIS: HORIZONTAL_ONLY</div>
             </div>
 
             <model-viewer id="xr-model" 
                 src="models/chinook-2.glb" 
                 ios-src="models/Chinook-2.usdz"
                 ar 
-                ar-modes="webxr quick-look scene-viewer" 
+                ar-modes="quick-look webxr scene-viewer" 
+                ar-placement="floor"
                 camera-controls 
                 shadow-intensity="1" 
+                shadow-softness="1"
                 camera-orbit="0deg 75deg 12m"
                 touch-action="none">
             </model-viewer>
         </div>
 
-        <button class="ar-launch-btn" onclick="document.querySelector('#xr-model').activateAR()">
-            Launch iOS/Android AR
+        <button class="ar-launch-btn" id="ar-trigger">
+            🚀 Launch iOS AR Experience
         </button>
     </section>
 
@@ -167,12 +146,17 @@
         const trackBtn = document.getElementById("t-btn");
         const previewWrapper = document.getElementById("preview-wrapper");
         const hud = document.getElementById("tech-hud");
+        const arBtn = document.getElementById("ar-trigger");
 
         let isTracking = false;
         let detectionModel = null;
         let xRayEnabled = false;
 
-        // Model loading logic
+        // Force AR trigger for iOS
+        arBtn.addEventListener('click', () => {
+            modelViewer.activateAR();
+        });
+
         handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.5 }).then(m => {
             detectionModel = m;
             trackBtn.innerText = "SENSORS READY";
@@ -197,7 +181,7 @@
         });
 
         function applyXRay(enable) {
-            if (enable === xRayEnabled) return;
+            if (enable === xRayEnabled || !modelViewer.model) return;
             xRayEnabled = enable;
             hud.classList.toggle('active', enable);
 
@@ -205,7 +189,6 @@
             materials.forEach(mat => {
                 if (enable) {
                     mat.setAlphaMode("BLEND");
-                    // Blue-ish transparent x-ray look
                     mat.pbrMetallicRoughness.setBaseColorFactor([0.2, 0.4, 1.0, 0.25]);
                 } else {
                     mat.setAlphaMode("OPAQUE");
@@ -219,14 +202,9 @@
                 const hand = predictions.find(p => p.label !== 'face');
                 if (hand) {
                     const [x, y, w, h] = hand.bbox;
-                    
-                    // HORIZONTAL ROTATION ONLY
                     const rY = ((x + w/2) / 160) * 360 - 180;
-                    
-                    // Removed zoom logic - using fixed distance (12m)
                     modelViewer.cameraOrbit = `${rY}deg 75deg 12m`;
                     
-                    // X-RAY TOGGLE (FIST)
                     if (["closed", "fist"].includes(hand.label)) {
                         applyXRay(true);
                     } else {
