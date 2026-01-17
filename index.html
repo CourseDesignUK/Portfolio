@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Large Gesture Interface</title>
+    <title>XR Training Labs | Persistent Expansion</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
@@ -41,72 +41,19 @@
         .video-container { position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 20px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); transform-style: preserve-3d; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
-        /* --- LARGE GESTURE WINDOW --- */
-        #hand-ui { 
-            margin-top: 30px; 
-            display: flex; 
-            flex-direction: column;
-            gap: 20px; 
-        }
-
-        .cam-btn { 
-            background: var(--accent-color); 
-            color: white; 
-            border: none; 
-            padding: 15px 30px; 
-            border-radius: 30px; 
-            font-weight: bold; 
-            cursor: pointer;
-            width: fit-content;
-            letter-spacing: 1px;
-            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
-        }
-
-        /* The enlarged tracking window */
-        .video-hud {
-            position: relative;
-            width: 480px; /* Larger Width */
-            height: 360px; /* Larger Height */
-            border-radius: 20px;
-            border: 2px solid var(--accent-color);
-            background: #000;
-            overflow: hidden;
-            display: none; /* Shown only when active */
-            box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
-        }
-
-        #v-preview { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover;
-            transform: scaleX(-1); 
-        }
-
-        /* Digital Crosshair/HUD Overlay */
-        .video-hud::before {
-            content: "";
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%; height: 80%;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: 10px;
-            pointer-events: none;
-            z-index: 2;
-        }
+        /* --- Hand Tracking Controls --- */
+        #hand-ui { margin-top: 30px; display: flex; align-items: center; gap: 20px; }
+        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: bold; cursor: pointer; }
+        #v-preview { width: 160px; height: 120px; border-radius: 12px; border: 2px solid var(--accent-color); display: none; transform: scaleX(-1); }
 
         /* --- 3D Model Card --- */
         .model-card { width: 100%; height: 600px; background: var(--glass-bg); border-radius: 40px; border: 1px solid var(--glass-border); position: relative; }
         model-viewer { width: 100%; height: 100%; }
         
+        /* --- Hotspots --- */
         .hotspot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; background: var(--accent-color); cursor: pointer; }
         .hotspot-annotation { visibility: hidden; background: #fff; color: #000; border-radius: 8px; padding: 12px; position: absolute; left: 30px; width: 200px; opacity: 0; transition: 0.3s; pointer-events: none; }
         .hotspot:hover .hotspot-annotation, .hotspot.active .hotspot-annotation { visibility: visible; opacity: 1; }
-
-        @media (max-width: 768px) {
-            .video-hud { width: 100%; height: 240px; }
-            h1 { font-size: 3rem; }
-        }
     </style>
 </head>
 <body>
@@ -137,13 +84,11 @@
             <div class="model-info">
                 <div class="ar-content"><h3>GESTURE CONTROL</h3></div>
                 <h2>Interactive Digital Twin</h2>
-                <p>Move your hand inside the tracking zone to rotate the asset. <strong>Close your fist</strong> to open technical annotations.</p>
+                <p>Move your hand to rotate. <strong>Close your fist</strong> to toggle technical hotspots.</p>
                 
                 <div id="hand-ui">
                     <button class="cam-btn" id="t-btn">INITIALIZING AI...</button>
-                    <div class="video-hud" id="hud-container">
-                        <video id="v-preview" autoplay></video>
-                    </div>
+                    <video id="v-preview" autoplay></video>
                 </div>
             </div>
 
@@ -151,9 +96,6 @@
                 <model-viewer id="xr-model" src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb" camera-controls shadow-intensity="1">
                     <button class="hotspot" id="hs1" slot="hotspot-1" data-position="0.16m 0.1m 0.15m" data-normal="0m 0m 1m">
                         <div class="hotspot-annotation"><strong>Optics:</strong> 4K Micro-OLED</div>
-                    </button>
-                    <button class="hotspot" id="hs2" slot="hotspot-2" data-position="-0.1m 0.05m -0.1m" data-normal="-1m 0m 0m">
-                        <div class="hotspot-annotation"><strong>Comms:</strong> Sub-millisecond Bio-Link</div>
                     </button>
                 </model-viewer>
             </div>
@@ -163,20 +105,12 @@
     <script>
         // --- Hand Tracking + Gestures ---
         const video = document.getElementById("v-preview");
-        const hud = document.getElementById("hud-container");
         const modelViewer = document.querySelector("#xr-model");
         const trackBtn = document.getElementById("t-btn");
         let isTracking = false;
         let detectionModel = null;
 
-        // Optimized parameters for the larger window
-        const handtrackParams = {
-            flipHorizontal: true,
-            maxNumBoxes: 1,
-            scoreThreshold: 0.7, // Slightly higher for better precision in large window
-        };
-
-        handTrack.load(handtrackParams).then(m => {
+        handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.6 }).then(m => {
             detectionModel = m;
             trackBtn.innerText = "START GESTURE CONTROL";
         });
@@ -186,7 +120,7 @@
                 handTrack.startVideo(video).then(status => {
                     if (status) {
                         isTracking = true;
-                        hud.style.display = "block";
+                        video.style.display = "block";
                         trackBtn.innerText = "STOP SENSING";
                         detect();
                     }
@@ -194,7 +128,7 @@
             } else {
                 handTrack.stopVideo(video);
                 isTracking = false;
-                hud.style.display = "none";
+                video.style.display = "none";
                 trackBtn.innerText = "START GESTURE CONTROL";
             }
         });
@@ -205,12 +139,13 @@
                     const hand = predictions[0];
                     const [x, y, w, h] = hand.bbox;
                     
-                    // Improved Rotation mapping for 480x360 window
-                    const rY = ((x + w/2) / 480) * 360 - 180;
-                    const rX = ((y + h/2) / 360) * 90 - 45;
+                    // Rotation mapping
+                    const rY = ((x + w/2) / 160) * 360 - 180;
+                    const rX = ((y + h/2) / 120) * 90 - 45;
                     modelViewer.cameraOrbit = `${rY}deg ${rX + 75}deg auto`;
 
-                    // Gesture Logic
+                    // Gesture: Closed Fist Toggles Hotspots
+                    // Handtrack label "closed" or "fist" depending on model version
                     if (hand.label === "closed" || hand.label === "fist") {
                         document.querySelectorAll('.hotspot').forEach(h => h.classList.add('active'));
                     } else {
@@ -227,8 +162,9 @@
         document.addEventListener('mousemove', (e) => {
             gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
             
-            const tiltX = (window.innerWidth / 2 - e.pageX) / 60;
-            const tiltY = (window.innerHeight / 2 - e.pageY) / 60;
+            // 3D Tilt for videos
+            const tiltX = (window.innerWidth / 2 - e.pageX) / 50;
+            const tiltY = (window.innerHeight / 2 - e.pageY) / 50;
             gsap.to(".video-container", { rotationY: tiltX, rotationX: -tiltY, duration: 0.8 });
         });
     </script>
