@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Chinook-2 Tech Interface</title>
+    <title>XR Training Labs | Chinook-2 Interface</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Source+Code+Pro&display=swap" rel="stylesheet">
@@ -29,7 +29,7 @@
             background-color: var(--bg-color); 
             color: var(--text-color); 
             overflow-x: hidden;
-            /* Technical Blueprint Grid */
+            /* Technical Blueprint Grid Background */
             background-image: 
                 linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
@@ -55,7 +55,6 @@
         
         #preview-wrapper { position: relative; width: 160px; height: 120px; display: none; }
         #v-preview { width: 100%; height: 100%; border-radius: 4px; border: 1px solid var(--accent-color); transform: scaleX(-1); filter: grayscale(1) contrast(1.2); }
-        #zoom-status { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--hud-green); transition: 0.1s; }
 
         /* --- Model Card --- */
         .model-card { 
@@ -127,13 +126,12 @@
 
     <section>
         <div class="ar-content">OBJECT_ID: CHINOOK_CH47D</div>
-        <p>Rotate hand to <strong>Orbit</strong>. Proximity to camera controls <strong>Z-Axis Zoom</strong>. Fist clench triggers <strong>X-Ray Analysis</strong>.</p>
+        <p>Rotate hand to <strong>Orbit</strong>. Clench fist for <strong>X-Ray Structural Analysis</strong>.</p>
         
         <div id="hand-ui">
             <button class="cam-btn" id="t-btn">INITIALIZE SENSORS</button>
             <div id="preview-wrapper">
                 <video id="v-preview" autoplay playsinline></video>
-                <div id="zoom-status"></div>
             </div>
         </div>
 
@@ -143,7 +141,7 @@
                 <div>---------------------------</div>
                 <div>STRUCTURAL INTEGRITY: 98.4%</div>
                 <div>INTERNAL COMPONENT SYNC... OK</div>
-                <div>DEPTH SENSING: ACTIVE</div>
+                <div>TRACKING_AXIS: HORIZONTAL_ONLY</div>
             </div>
 
             <model-viewer id="xr-model" 
@@ -154,8 +152,6 @@
                 camera-controls 
                 shadow-intensity="1" 
                 camera-orbit="0deg 75deg 12m"
-                min-camera-orbit="auto auto 2m"
-                max-camera-orbit="auto auto 25m"
                 touch-action="none">
             </model-viewer>
         </div>
@@ -170,7 +166,6 @@
         const modelViewer = document.querySelector("#xr-model");
         const trackBtn = document.getElementById("t-btn");
         const previewWrapper = document.getElementById("preview-wrapper");
-        const zoomStatus = document.getElementById("zoom-status");
         const hud = document.getElementById("tech-hud");
 
         let isTracking = false;
@@ -225,23 +220,13 @@
                 if (hand) {
                     const [x, y, w, h] = hand.bbox;
                     
-                    // 1. HORIZONTAL ROTATION
+                    // HORIZONTAL ROTATION ONLY
                     const rY = ((x + w/2) / 160) * 360 - 180;
                     
-                    // 2. DEPTH ZOOM (Z-AXIS)
-                    // We use the area of the hand bounding box as a depth proxy
-                    const handArea = w * h;
-                    const minArea = 2000; 
-                    const maxArea = 9000;
-                    const clampedArea = Math.min(Math.max(handArea, minArea), maxArea);
+                    // Removed zoom logic - using fixed distance (12m)
+                    modelViewer.cameraOrbit = `${rY}deg 75deg 12m`;
                     
-                    // Map area to camera distance (25m to 3m)
-                    const distance = 25 - ((clampedArea - minArea) / (maxArea - minArea)) * 22;
-                    
-                    zoomStatus.style.width = `${((clampedArea - minArea) / (maxArea - minArea)) * 100}%`;
-                    modelViewer.cameraOrbit = `${rY}deg 75deg ${distance}m`;
-                    
-                    // 3. X-RAY TOGGLE (FIST)
+                    // X-RAY TOGGLE (FIST)
                     if (["closed", "fist"].includes(hand.label)) {
                         applyXRay(true);
                     } else {
