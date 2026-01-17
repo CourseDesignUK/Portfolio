@@ -42,21 +42,27 @@
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 20px; text-transform: uppercase; letter-spacing: -2px; }
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; }
 
-        /* --- Netflix Style Expanding Shelf --- */
-        .shelf-container { width: 100%; padding: 60px 0; overflow: visible; }
-        .video-shelf { display: flex; gap: 15px; padding: 0 50px; }
+        /* --- 2 x 2 Video Grid --- */
+        .grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 30px; 
+            max-width: 1200px; 
+            margin: 40px auto; 
+            perspective: 1000px;
+        }
 
         .video-card { 
             position: relative; 
-            flex: 0 0 300px; 
+            width: 100%;
             aspect-ratio: 16/9; 
-            border-radius: 8px; 
+            border-radius: 12px; 
             overflow: hidden; 
             background: #111;
             border: 1px solid var(--glass-border);
             cursor: pointer;
             z-index: 1;
-            transform-origin: center center;
+            transition: box-shadow 0.3s ease;
         }
 
         .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.05); }
@@ -112,30 +118,32 @@
             text-transform: uppercase;
             font-size: 0.8rem;
         }
+
+        @media (max-width: 768px) {
+            .grid-container { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-    <nav><div class="logo">// XR_Training_Labs</div></nav>
+    <nav><div class="logo">// XR_LAB_SENSING</div></nav>
 
     <section>
         <h1>Spatial Computing<br>Training Systems</h1>
-        <div class="ar-content">VIDEO_FEED_ARCHIVE</div>
+        <div class="ar-content">LIVE_FEED_ARCHIVE</div>
         
-        <div class="shelf-container">
-            <div class="video-shelf">
-                <div class="video-card" data-video="_ckPvnl4HQI">
-                    <iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?controls=0&mute=1&enablejsapi=1"></iframe>
-                </div>
-                <div class="video-card" data-video="2OvfLt13D6Y">
-                    <iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe>
-                </div>
-                <div class="video-card" data-video="8kNXOVutOJc">
-                    <iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe>
-                </div>
-                <div class="video-card" data-video="0m-LbA8E97Q">
-                    <iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe>
-                </div>
+        <div class="grid-container">
+            <div class="video-card" data-video="_ckPvnl4HQI">
+                <iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?controls=0&mute=1&enablejsapi=1"></iframe>
+            </div>
+            <div class="video-card" data-video="2OvfLt13D6Y">
+                <iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe>
+            </div>
+            <div class="video-card" data-video="8kNXOVutOJc">
+                <iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe>
+            </div>
+            <div class="video-card" data-video="0m-LbA8E97Q">
+                <iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe>
             </div>
         </div>
     </section>
@@ -145,7 +153,7 @@
         <p>Rotate hand to <strong>Orbit</strong>. Clench fist for <strong>X-Ray Structural Analysis</strong>.</p>
         
         <div id="hand-ui">
-            <button class="cam-btn" id="t-btn">CLICK_TO ALLOW_CAMERA_ACCESS FOR HAND_CONTROL</button>
+            <button class="cam-btn" id="t-btn">INITIALIZE SENSORS</button>
             <div id="preview-wrapper">
                 <video id="v-preview" autoplay playsinline></video>
             </div>
@@ -177,32 +185,40 @@
     </section>
 
     <script>
-        // --- Netflix Shelf Animation Logic ---
+        // --- Grid Animation Logic ---
         const cards = document.querySelectorAll('.video-card');
         
-        cards.forEach((card, index) => {
+        cards.forEach((card) => {
             const iframe = card.querySelector('iframe');
             const videoId = card.getAttribute('data-video');
             const originalSrc = iframe.src;
 
             card.addEventListener('mouseenter', () => {
-                cards.forEach((c, i) => {
-                    if (i === index) {
-                        gsap.to(c, { scale: 1.4, zIndex: 100, x: 0, duration: 0.4, ease: "power2.out" });
-                        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`;
-                    } else if (i < index) {
-                        gsap.to(c, { scale: 0.85, x: -45, duration: 0.4, ease: "power2.out" });
-                    } else if (i > index) {
-                        gsap.to(c, { scale: 0.85, x: 45, duration: 0.4, ease: "power2.out" });
-                    }
+                // Scale up and play
+                gsap.to(card, { 
+                    scale: 1.15, 
+                    zIndex: 100, 
+                    boxShadow: "0 20px 40px rgba(0,0,0,0.6)",
+                    duration: 0.4, 
+                    ease: "power2.out" 
+                });
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`;
+                
+                // Dim neighbors
+                cards.forEach(other => {
+                    if (other !== card) gsap.to(other, { opacity: 0.4, scale: 0.95, duration: 0.4 });
                 });
             });
 
             card.addEventListener('mouseleave', () => {
-                cards.forEach((c) => {
-                    gsap.to(c, { scale: 1.0, x: 0, zIndex: 1, duration: 0.3, ease: "power2.inOut" });
-                });
+                // Reset this card
+                gsap.to(card, { scale: 1.0, zIndex: 1, boxShadow: "0 0 0 rgba(0,0,0,0)", duration: 0.3 });
                 iframe.src = originalSrc;
+                
+                // Reset neighbors
+                cards.forEach(other => {
+                    gsap.to(other, { opacity: 1, scale: 1.0, duration: 0.3 });
+                });
             });
         });
 
