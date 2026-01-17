@@ -72,10 +72,17 @@
         h2 { font-size: 3rem; margin-bottom: 20px; color: var(--accent-color); }
         p { font-size: 1.2rem; color: #888; max-width: 600px; line-height: 1.6; }
 
-        /* --- COOL VIDEO CONTAINER --- */
+        /* --- VIDEO GRID --- */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+            perspective: 1000px;
+        }
+
         .video-wrapper {
-            perspective: 1000px; /* Enables 3D tilt */
-            margin-top: 50px;
+            perspective: 1000px;
             display: flex;
             justify-content: center;
         }
@@ -83,7 +90,6 @@
         .video-container {
             position: relative;
             width: 100%;
-            max-width: 850px;
             padding-bottom: 56.25%; /* 16:9 ratio */
             height: 0;
             border-radius: 20px;
@@ -92,6 +98,11 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             transform-style: preserve-3d;
             box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            transition: border 0.3s ease;
+        }
+
+        .video-container:hover {
+            border: 1px solid var(--accent-color);
         }
 
         /* Background Glow Leak */
@@ -102,12 +113,12 @@
             z-index: -1;
             background: var(--accent-color);
             filter: blur(100px);
-            opacity: 0.2;
+            opacity: 0.1;
             transition: opacity 0.5s ease;
         }
 
         .video-container:hover::before {
-            opacity: 0.5;
+            opacity: 0.4;
         }
 
         /* Moving Scanning Line */
@@ -153,6 +164,11 @@
             background: rgba(99, 102, 241, 0.05);
         }
 
+        @media (max-width: 768px) {
+            h1 { font-size: 3rem; }
+            .video-grid { grid-template-columns: 1fr; }
+        }
+
     </style>
 </head>
 <body>
@@ -173,17 +189,48 @@
             <div class="ar-content">
                 <h3>AUGMENTED REALITY</h3>
             </div>
-            <h2>Immersive Simulation</h2>
-            <p>Our training modules utilize spatial computing to provide hands-on experience in a risk-free digital environment.</p>
+            <h2>Immersive Simulations</h2>
+            <p>Our training modules utilize spatial computing to provide hands-on experience in risk-free digital environments.</p>
 
-            <div class="video-wrapper">
-                <div class="video-container" id="videoCard">
-                    <iframe 
-                        src="https://www.youtube.com/embed/_ckPvnl4HQI?si=UJoXgWHDHu7UG1ec&autoplay=1&mute=1&loop=1&playlist=_ckPvnl4HQI" 
-                        title="XR Training Video" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                        allowfullscreen>
-                    </iframe>
+            <div class="video-grid">
+                <div class="video-wrapper">
+                    <div class="video-container">
+                        <iframe 
+                            src="https://www.youtube.com/embed/_ckPvnl4HQI?si=UJoXgWHDHu7UG1ec&autoplay=1&mute=1&loop=1&playlist=_ckPvnl4HQI" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+
+                <div class="video-wrapper">
+                    <div class="video-container">
+                        <iframe 
+                            src="https://www.youtube.com/embed/2OvfLt13D6Y?si=r8WVHWKuQK9lwSCs&mute=1" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+
+                <div class="video-wrapper">
+                    <div class="video-container">
+                        <iframe 
+                            src="https://www.youtube.com/embed/8kNXOVutOJc?si=7hZ_Uc5eIRwabunc&mute=1" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+
+                <div class="video-wrapper">
+                    <div class="video-container">
+                        <iframe 
+                            src="https://www.youtube.com/embed/0m-LbA8E97Q?si=Oh1ACXX3OsfvLo-O&mute=1" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
                 </div>
             </div>
         </div>
@@ -204,32 +251,38 @@
             });
         });
 
-        // 3D Tilt Effect on Video
-        const videoCard = document.getElementById('videoCard');
+        // 3D Tilt Effect on all Video Containers
+        const videoCards = document.querySelectorAll('.video-container');
+        
         document.addEventListener('mousemove', (e) => {
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 40;
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 40;
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 60;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 60;
             
-            gsap.to(videoCard, {
-                rotationY: xAxis,
-                rotationX: -yAxis,
-                ease: "power2.out",
-                duration: 0.8
+            videoCards.forEach(card => {
+                gsap.to(card, {
+                    rotationY: xAxis,
+                    rotationX: -yAxis,
+                    ease: "power2.out",
+                    duration: 0.8
+                });
             });
         });
 
-        // Scroll Reveal for Video
-        gsap.from(".video-container", {
-            scrollTrigger: {
-                trigger: ".video-container",
-                start: "top 90%",
-                end: "bottom 20%",
-                toggleActions: "play none none reverse"
-            },
-            scale: 0.8,
-            opacity: 0,
-            duration: 1.5,
-            ease: "expo.out"
+        // Scroll Reveal for Video Grid Items
+        videoCards.forEach((card, index) => {
+            gsap.from(card, {
+                scrollTrigger: {
+                    trigger: card,
+                    start: "top 90%",
+                    end: "bottom 20%",
+                    toggleActions: "play none none reverse"
+                },
+                scale: 0.8,
+                opacity: 0,
+                duration: 1.2,
+                delay: index * 0.1, // Staggered entrance
+                ease: "expo.out"
+            });
         });
 
         // Subtle Logo Parallax
