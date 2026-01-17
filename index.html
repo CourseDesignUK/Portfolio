@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Persistent Expansion</title>
+    <title>XR Training Labs | Chinook-2 Technical Interface</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
             --bg-color: #0f0f0f;
             --text-color: #ffffff;
             --accent-color: #6366f1;
-            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-bg: rgba(255, 255, 255, 0.05);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
@@ -36,21 +36,44 @@
 
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); }
 
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-top: 60px; }
-        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 20px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); transform-style: preserve-3d; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        /* --- Tech Document Panel --- */
+        #tech-doc {
+            position: absolute;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%) translateX(100px);
+            width: 350px;
+            padding: 40px;
+            background: rgba(15, 15, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 10;
+        }
+        #tech-doc.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-50%) translateX(0);
+        }
+        .doc-header { color: var(--accent-color); font-weight: 700; margin-bottom: 15px; border-bottom: 1px solid var(--glass-border); padding-bottom: 10px; }
+        .spec-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; }
+        .spec-label { color: #666; }
 
+        /* --- UI Controls --- */
         #hand-ui { margin-top: 30px; display: flex; align-items: center; gap: 20px; }
-        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .cam-btn:hover { opacity: 0.8; transform: scale(1.05); }
+        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: bold; cursor: pointer; }
         #v-preview { width: 160px; height: 120px; border-radius: 12px; border: 2px solid var(--accent-color); display: none; transform: scaleX(-1); }
 
-        .model-card { width: 100%; height: 600px; background: var(--glass-bg); border-radius: 40px; border: 1px solid var(--glass-border); position: relative; }
+        .model-card { width: 100%; height: 700px; background: var(--glass-bg); border-radius: 40px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; }
         model-viewer { width: 100%; height: 100%; }
         
+        /* --- Hotspots --- */
         .hotspot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; background: var(--accent-color); cursor: pointer; }
-        .hotspot-annotation { visibility: hidden; background: #fff; color: #000; border-radius: 8px; padding: 12px; position: absolute; left: 30px; width: 200px; opacity: 0; transition: 0.3s; pointer-events: none; }
-        .hotspot:hover .hotspot-annotation, .hotspot.active .hotspot-annotation { visibility: visible; opacity: 1; }
+        .hotspot-annotation { visibility: hidden; background: #fff; color: #000; border-radius: 8px; padding: 12px; position: absolute; left: 30px; width: 180px; opacity: 0; transition: 0.3s; pointer-events: none; font-size: 0.8rem; }
+        .hotspot.active .hotspot-annotation { visibility: visible; opacity: 1; }
     </style>
 </head>
 <body>
@@ -59,64 +82,55 @@
 
     <nav>
         <div class="logo">XR TRAINING LABS</div>
-        <div class="menu">EXPLORE</div>
+        <div class="menu">VIRTUAL HANGAR</div>
     </nav>
 
-    <section class="hero">
-        <h1>Technology Enhanced<br>Sensing & Training</h1>
-    </section>
-
-    <section>
-        <div class="ar-content"><h3>SIMULATION LIBRARY</h3></div>
-        <div class="video-grid">
-            <div class="video-container"><iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?mute=1&loop=1&playlist=_ckPvnl4HQI"></iframe></div>
-            <div class="video-container"><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?mute=1"></iframe></div>
-            <div class="video-container"><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?mute=1"></iframe></div>
-            <div class="video-container"><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?mute=1"></iframe></div>
-        </div>
-    </section>
-
     <section class="section-model">
-        <div class="model-interface">
-            <div class="model-info">
-                <div class="ar-content"><h3>GESTURE CONTROL</h3></div>
-                <h2>Interactive Digital Twin</h2>
-                <p>Move your hand to rotate. <strong>Close your fist</strong> to toggle technical hotspots.</p>
-                
-                <div id="hand-ui">
-                    <button class="cam-btn" id="t-btn">INITIALIZING AI...</button>
-                    <video id="v-preview" autoplay></video>
-                </div>
+        <div class="ar-content"><h3>CHINOOK CH-47D</h3></div>
+        <h2>Interactive Flight Systems</h2>
+        <p>Rotate hand horizontally to inspect airframe. <strong>Close fist</strong> to pull technical specifications.</p>
+        
+        <div id="hand-ui">
+            <button class="cam-btn" id="t-btn">INITIALIZING AI...</button>
+            <video id="v-preview" autoplay></video>
+        </div>
+
+        <div class="model-card">
+            <div id="tech-doc">
+                <div class="doc-header">CH-47 TECHNICAL DATA</div>
+                <div class="spec-row"><span class="spec-label">Max Speed</span><span>170 knots</span></div>
+                <div class="spec-row"><span class="spec-label">Payload</span><span>24,000 lbs</span></div>
+                <div class="spec-row"><span class="spec-label">Engines</span><span>2x T55-GA-714A</span></div>
+                <div class="spec-row"><span class="spec-label">Rotor System</span><span>Tandem 3-Blade</span></div>
+                <div class="spec-row"><span class="spec-label">Range</span><span>400 nmi</span></div>
+                <p style="font-size: 0.8rem; margin-top: 20px;">The Chinook is a heavy-lift helicopter that is among the heaviest lifting of Western helicopters.</p>
             </div>
 
-            <div class="model-card">
-                <model-viewer id="xr-model" src="models/chinook-2.glb" camera-controls shadow-intensity="1">
-                    <button class="hotspot" id="hs1" slot="hotspot-1" data-position="0.16m 0.1m 0.15m" data-normal="0m 0m 1m">
-                        <div class="hotspot-annotation"><strong>Optics:</strong> 4K Micro-OLED</div>
-                    </button>
-                </model-viewer>
-            </div>
+            <model-viewer id="xr-model" src="models/chinook-2.glb" camera-controls shadow-intensity="1" camera-orbit="0deg 75deg auto">
+                <button class="hotspot" slot="hotspot-cockpit" data-position="0m 0.8m 3.5m" data-normal="0m 0m 1m">
+                    <div class="hotspot-annotation"><strong>Cockpit:</strong> Triple-redundant digital flight controls.</div>
+                </button>
+                <button class="hotspot" slot="hotspot-engine" data-position="0m 1.5m -3.5m" data-normal="0m 1m 0m">
+                    <div class="hotspot-annotation"><strong>Engine:</strong> T55-GA-714A Turboshaft.</div>
+                </button>
+                <button class="hotspot" slot="hotspot-rotor" data-position="0m 2.2m 0m" data-normal="0m 1m 0m">
+                    <div class="hotspot-annotation"><strong>Rotors:</strong> Counter-rotating tandem system.</div>
+                </button>
+            </model-viewer>
         </div>
     </section>
 
     <script>
-        // --- Hand Tracking + Gestures ---
         const video = document.getElementById("v-preview");
         const modelViewer = document.querySelector("#xr-model");
         const trackBtn = document.getElementById("t-btn");
+        const techDoc = document.getElementById("tech-doc");
         let isTracking = false;
         let detectionModel = null;
 
-        // Configuration to prioritize hands and lower confidence slightly for better capture
-        const modelParams = {
-            flipHorizontal: true,   
-            maxNumBoxes: 1,        
-            scoreThreshold: 0.6,    
-        };
-
-        handTrack.load(modelParams).then(m => {
+        handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.6 }).then(m => {
             detectionModel = m;
-            trackBtn.innerText = "START GESTURE CONTROL";
+            trackBtn.innerText = "START SENSING";
         });
 
         trackBtn.addEventListener("click", () => {
@@ -133,51 +147,40 @@
                 handTrack.stopVideo(video);
                 isTracking = false;
                 video.style.display = "none";
-                trackBtn.innerText = "START GESTURE CONTROL";
+                trackBtn.innerText = "START SENSING";
             }
         });
 
         function detect() {
             detectionModel.detect(video).then(predictions => {
-                // FILTER: Explicitly find a prediction that is NOT a face
+                // Ignore the face, look for the hand
                 const hand = predictions.find(p => p.label !== 'face');
 
                 if (hand) {
                     const [x, y, w, h] = hand.bbox;
+                    const centerX = x + w/2;
                     
-                    // Center-point tracking for smoother rotation
-                    const centerX = x + (w / 2);
-                    const centerY = y + (h / 2);
-
-                    // Map 160x120 video area to degrees
+                    // Horizontal mapping only
                     const rY = (centerX / 160) * 360 - 180;
-                    const rX = (centerY / 120) * 90 - 45;
-                    
-                    // Smoothly update the camera orbit
-                    modelViewer.cameraOrbit = `${rY}deg ${rX + 75}deg auto`;
+                    modelViewer.cameraOrbit = `${rY}deg 75deg auto`;
 
-                    // Gesture Logic
+                    // GESTURE: Fist opens document and shows hotspots
                     if (hand.label === "closed" || hand.label === "fist") {
+                        techDoc.classList.add('active');
                         document.querySelectorAll('.hotspot').forEach(h => h.classList.add('active'));
                     } else {
+                        techDoc.classList.remove('active');
                         document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
                     }
                 }
-                
                 if (isTracking) requestAnimationFrame(detect);
             });
         }
 
-        // --- Standard GSAP Visuals ---
-        gsap.registerPlugin(ScrollTrigger);
+        // GSAP Cursor
         const cursor = document.getElementById('cursor');
-        
         document.addEventListener('mousemove', (e) => {
             gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
-            
-            const tiltX = (window.innerWidth / 2 - e.pageX) / 50;
-            const tiltY = (window.innerHeight / 2 - e.pageY) / 50;
-            gsap.to(".video-container", { rotationY: tiltX, rotationX: -tiltY, duration: 0.8 });
         });
     </script>
 </body>
