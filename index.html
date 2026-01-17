@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Chinook-2 Interface</title>
+    <title>XR Training Labs | Chinook-2 Digital Twin</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Source+Code+Pro:wght@400&display=swap" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
@@ -16,9 +15,10 @@
 
     <style>
         :root {
-            --bg-color: #0f0f0f;
+            --bg-color: #0a0a0a;
             --text-color: #ffffff;
             --accent-color: #6366f1;
+            --matrix-color: rgba(0, 255, 70, 0.12);
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
@@ -32,22 +32,21 @@
 
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; position: relative; }
 
-        /* --- Matrix Background Canvas --- */
+        /* --- Binary Waterfall Canvas --- */
         #matrix-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Places it behind everything */
-            pointer-events: none; /* Ensures it doesn't block clicks */
-            opacity: 0.7; /* Global subtlety control */
+            z-index: -2;
+            pointer-events: none;
         }
 
-        nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 100; background: linear-gradient(to bottom, #0f0f0f, transparent); }
+        nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 100; background: linear-gradient(to bottom, #0a0a0a, transparent); }
         .logo { font-weight: 700; letter-spacing: -1px; font-size: 1rem; }
 
-        section { padding: 100px 5%; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        section { padding: 100px 5%; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1; }
         
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1.1; margin-bottom: 20px; }
         h2 { font-size: clamp(1.8rem, 5vw, 3.5rem); margin-bottom: 20px; color: var(--accent-color); }
@@ -62,18 +61,17 @@
 
         /* --- UI Controls --- */
         #hand-ui { margin-top: 30px; display: flex; flex-wrap: wrap; align-items: center; gap: 15px; }
-        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 12px 28px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .cam-btn:hover { background: #4f46e5; }
+        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         
         #preview-wrapper { position: relative; width: 140px; height: 105px; display: none; }
         #v-preview { width: 100%; height: 100%; border-radius: 10px; border: 2px solid var(--accent-color); transform: scaleX(-1); }
 
-        /* --- Model Card & AR Button --- */
+        /* --- Model Card - Opaque to hide matrix inside --- */
         .model-card { 
             width: 100%; 
-            height: 60vh; 
-            min-height: 400px;
-            background: var(--glass-bg); 
+            height: 65vh; 
+            min-height: 450px;
+            background: #0a0a0a; /* Solid background hides the matrix waterfall */
             border-radius: 30px; 
             border: 1px solid var(--glass-border); 
             position: relative; 
@@ -82,37 +80,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Ensure content stands out from matrix bg */
-            backdrop-filter: blur(5px); 
         }
         
-        model-viewer { 
-            width: 100%; 
-            height: 100%; 
-            background-color: transparent;
-            --poster-color: transparent;
-        }
+        model-viewer { width: 100%; height: 100%; }
 
-        .ar-controls {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            padding-bottom: 40px;
-        }
-
-        .ar-launch-btn {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 40px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
+        .ar-controls { display: flex; justify-content: center; margin-top: 20px; padding-bottom: 40px; }
+        .ar-launch-btn { background: #fff; color: #000; border: none; padding: 15px 40px; border-radius: 40px; font-weight: 700; cursor: pointer; }
 
         /* --- HUD Document --- */
         #tech-doc {
@@ -121,7 +94,7 @@
             top: 20px;
             width: 280px;
             padding: 20px;
-            background: rgba(15, 15, 15, 0.9);
+            background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
@@ -131,24 +104,16 @@
             z-index: 10;
         }
         #tech-doc.active { opacity: 1; visibility: visible; }
-        .doc-header { color: var(--accent-color); font-weight: 700; margin-bottom: 10px; font-size: 0.8rem; letter-spacing: 1px; }
-        .spec-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.8rem; }
-
-        @media (max-width: 768px) {
-            .model-card { height: 50vh; }
-            #tech-doc { top: auto; bottom: 20px; left: 20px; right: 20px; width: auto; }
-        }
     </style>
 </head>
 <body>
     <canvas id="matrix-bg"></canvas>
-
     <div id="cursor"></div>
 
     <nav><div class="logo">XR TRAINING LABS</div></nav>
 
-    <section class="hero">
-        <h1>Technology Enhanced<br>Sensing & Training</h1>
+    <section>
+        <h1>Aviation Sensing<br>& Digital Twins</h1>
     </section>
 
     <section>
@@ -163,8 +128,8 @@
 
     <section class="section-model">
         <div class="ar-content"><h3>CHINOOK CH-47D</h3></div>
-        <h2>Interactive Digital Twin</h2>
-        <p>Rotate hand horizontally to inspect airframe. <strong>Fist clench</strong> triggers technical HUD.</p>
+        <h2>Interactive Inspection</h2>
+        <p>Horizontal hand movement orbits the craft. Clench fist to access diagnostics.</p>
         
         <div id="hand-ui">
             <button class="cam-btn" id="t-btn">INITIALIZING AI...</button>
@@ -175,19 +140,16 @@
 
         <div class="model-card">
             <div id="tech-doc">
-                <div class="doc-header">CH-47 TECHNICAL HUD</div>
-                <div class="spec-row"><span>Status</span><span style="color:#4ade80">Synchronized</span></div>
-                <div class="spec-row"><span>Airframe</span><span>Chinook-2</span></div>
-                <div class="spec-row"><span>System</span><span>Tandem Rotor</span></div>
+                <div style="color:var(--accent-color); font-weight:700; margin-bottom:10px;">DIAGNOSTIC HUD</div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>Airframe</span><span>CH-47D</span></div>
+                <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>Payload</span><span>24,000 lbs</span></div>
             </div>
 
             <model-viewer id="xr-model" 
                 src="models/chinook-2.glb" 
                 ios-src="models/chinook-2.usdz"
-                ar 
-                ar-modes="webxr scene-viewer quick-look" 
+                ar ar-modes="webxr scene-viewer quick-look" 
                 camera-controls 
-                auto-rotate
                 shadow-intensity="1" 
                 camera-orbit="0deg 75deg auto" 
                 touch-action="none">
@@ -196,8 +158,7 @@
 
         <div class="ar-controls">
             <button class="ar-launch-btn" onclick="document.querySelector('#xr-model').activateAR()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-                VIEW IN YOUR SPACE (AR)
+                ACTIVATE SPATIAL AR
             </button>
         </div>
     </section>
@@ -206,60 +167,36 @@
         const canvas = document.getElementById('matrix-bg');
         const ctx = canvas.getContext('2d');
 
-        // Set canvas dimensions to window size
-        function resizeCanvas() {
+        function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
+        resize();
+        window.addEventListener('resize', resize);
 
-        // Matrix characters (numbers and uppercase letters for simplicity)
-        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        const charArray = chars.split('');
-        
-        const fontSize = 14;
+        const fontSize = 16;
         const columns = canvas.width / fontSize;
+        const drops = Array(Math.ceil(columns)).fill(1);
 
-        // An array to keep track of the y position of each dropping column
-        const drops = [];
-        for (let i = 0; i < columns; i++) {
-            drops[i] = 1;
-        }
-
-        function drawMatrix() {
-            // Translucent black fill over previous frame to create trail effect
-            // Use a very low opacity (e.g., 0.05) for long, subtle trails
-            ctx.fillStyle = 'rgba(15, 15, 15, 0.05)'; 
+        function draw() {
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.08)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Text color and style - using low opacity green for subtlety
-            ctx.fillStyle = 'rgba(0, 255, 70, 0.15)'; 
+            ctx.fillStyle = 'rgba(0, 255, 70, 0.12)';
             ctx.font = fontSize + 'px "Source Code Pro", monospace';
 
             for (let i = 0; i < drops.length; i++) {
-                // Pick a random character
-                const text = charArray[Math.floor(Math.random() * charArray.length)];
-                
-                const x = i * fontSize;
-                const y = drops[i] * fontSize;
-                
-                // Draw the character
-                ctx.fillText(text, x, y);
+                // Binary Only: Randomly pick 1 or 0
+                const text = Math.round(Math.random());
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-                // Reset drop to top randomly after it crossed screen
-                // Adding Math.random() > 0.975 adds randomness to the reset time
-                if (y > canvas.height && Math.random() > 0.975) {
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
-
-                // Increment y coordinate
                 drops[i]++;
             }
         }
-
-        // Run the animation loop roughly every 50ms for that digital look
-        setInterval(drawMatrix, 50);
+        setInterval(draw, 50);
     </script>
 
     <script>
@@ -300,8 +237,7 @@
                 const hand = predictions.find(p => p.label !== 'face');
                 if (hand) {
                     const [x, y, w, h] = hand.bbox;
-                    const centerX = x + w/2;
-                    const rY = (centerX / 160) * 360 - 180;
+                    const rY = ((x + w/2) / 160) * 360 - 180;
                     modelViewer.cameraOrbit = `${rY}deg 75deg auto`;
                     
                     if (["closed", "fist", "point"].includes(hand.label)) {
@@ -314,12 +250,10 @@
             });
         }
 
-        // GSAP: Cursor and Video Tilt
         if (window.matchMedia("(pointer: fine)").matches) {
             const cursor = document.getElementById('cursor');
             document.addEventListener('mousemove', (e) => {
                 gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
-                
                 const tiltX = (window.innerWidth / 2 - e.pageX) / 50;
                 const tiltY = (window.innerHeight / 2 - e.pageY) / 50;
                 gsap.to(".video-container", { rotationY: tiltX, rotationX: -tiltY, duration: 0.8 });
