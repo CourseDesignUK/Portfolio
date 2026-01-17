@@ -29,52 +29,72 @@
             color: var(--text-color); 
             overflow-x: hidden;
             background-image: 
-                linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
         }
 
-        nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 100; backdrop-filter: blur(10px); }
+        nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 1000; backdrop-filter: blur(10px); }
         .logo { font-weight: 700; font-family: 'Source Code Pro', monospace; color: var(--accent-color); }
 
-        section { padding: 100px 5%; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
-        h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 20px; text-transform: uppercase; letter-spacing: -2px; }
-        .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; }
+        section { padding: 100px 5%; min-height: 80vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        h1 { font-size: clamp(2rem, 6vw, 4rem); font-weight: 700; line-height: 1; margin-bottom: 40px; text-transform: uppercase; letter-spacing: -1px; }
+
+        /* --- Netflix Style Video Grid --- */
+        .video-shelf { display: flex; gap: 20px; overflow-x: auto; padding: 40px 0; scrollbar-width: none; }
+        .video-shelf::-webkit-scrollbar { display: none; }
+
+        .video-card { 
+            position: relative; 
+            flex: 0 0 350px; 
+            aspect-ratio: 16/9; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            background: #111;
+            border: 1px solid var(--glass-border);
+            transition: z-index 0.3s;
+            z-index: 1;
+        }
+
+        .video-card iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: 0; 
+            pointer-events: none; /* Allows hover to trigger on the card */
+            transform: scale(1.1); /* Slight zoom to hide player controls */
+        }
 
         /* --- Interaction UI --- */
-        #hand-ui { margin-top: 30px; display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
-        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 15px 30px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+        #hand-ui { margin-top: 30px; display: flex; align-items: center; gap: 20px; }
+        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 12px 24px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; }
         
-        #preview-wrapper { position: relative; width: 160px; height: 120px; display: none; }
-        #v-preview { width: 100%; height: 100%; border-radius: 4px; border: 1px solid var(--accent-color); transform: scaleX(-1); filter: grayscale(1) contrast(1.2); }
+        #preview-wrapper { position: relative; width: 140px; height: 105px; display: none; }
+        #v-preview { width: 100%; height: 100%; border-radius: 4px; border: 1px solid var(--accent-color); transform: scaleX(-1); filter: grayscale(1); }
 
-        /* --- Model Card --- */
+        /* --- Model Interface --- */
         .model-card { 
             width: 100%; 
-            height: 70vh; 
-            background: rgba(0, 0, 0, 0.6);
+            height: 65vh; 
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 20px; 
             border: 1px solid var(--glass-border); 
             position: relative; 
             overflow: hidden; 
             margin-top: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
-        model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
+        model-viewer { width: 100%; height: 100%; }
 
         #tech-hud {
             position: absolute;
             top: 25px;
             left: 25px;
-            padding: 20px;
+            padding: 15px;
             background: rgba(5, 7, 10, 0.9);
             border: 1px solid var(--hud-green);
             color: var(--hud-green);
             font-family: 'Source Code Pro', monospace;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             pointer-events: none;
             opacity: 0;
             transition: 0.4s ease;
@@ -92,11 +112,8 @@
             font-weight: 700;
             cursor: pointer;
             text-transform: uppercase;
-            font-size: 0.9rem;
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
-            transition: 0.3s;
+            font-size: 0.8rem;
         }
-        .ar-launch-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -104,8 +121,25 @@
     <nav><div class="logo">// XR_LAB_SENSING</div></nav>
 
     <section>
-        <h1>Spatial Computing<br>Training Systems</h1>
-        <div class="ar-content">OBJECT_ID: CHINOOK_CH47D</div>
+        <h1>Training Archives</h1>
+        <div class="video-shelf">
+            <div class="video-card" data-video="_ckPvnl4HQI">
+                <iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?controls=0&mute=1&enablejsapi=1"></iframe>
+            </div>
+            <div class="video-card" data-video="2OvfLt13D6Y">
+                <iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe>
+            </div>
+            <div class="video-card" data-video="8kNXOVutOJc">
+                <iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe>
+            </div>
+            <div class="video-card" data-video="0m-LbA8E97Q">
+                <iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="logo" style="margin-bottom:10px;">OBJECT_ID: CHINOOK_CH47D</div>
         
         <div id="hand-ui">
             <button class="cam-btn" id="t-btn">INITIALIZE SENSORS</button>
@@ -118,7 +152,7 @@
             <div id="tech-hud">
                 <div>[SYSTEM STATUS: X-RAY ACTIVE]</div>
                 <div>---------------------------</div>
-                <div>STRUCTURAL INTEGRITY: 98.4%</div>
+                <div>ANALYSIS: TANDEM ROTOR SYSTEM</div>
             </div>
 
             <model-viewer id="xr-model" 
@@ -129,33 +163,50 @@
                 ar-placement="floor"
                 camera-controls 
                 shadow-intensity="1" 
-                shadow-softness="1"
                 camera-orbit="0deg 75deg 12m"
                 touch-action="none">
             </model-viewer>
         </div>
 
-        <button class="ar-launch-btn" id="ar-trigger">
-            🚀 Launch iOS AR Experience
+        <button class="ar-launch-btn" onclick="document.querySelector('#xr-model').activateAR()">
+            Launch Spatial AR
         </button>
     </section>
 
     <script>
+        // --- Netflix Video Logic ---
+        const cards = document.querySelectorAll('.video-card');
+        
+        cards.forEach(card => {
+            const iframe = card.querySelector('iframe');
+            const videoId = card.getAttribute('data-video');
+            const originalSrc = iframe.src;
+
+            card.addEventListener('mouseenter', () => {
+                // Scale up card and push z-index
+                gsap.to(card, { scale: 1.25, zIndex: 100, duration: 0.4, ease: "power2.out" });
+                // Swap src to add autoplay
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                // Scale back down
+                gsap.to(card, { scale: 1.0, zIndex: 1, duration: 0.3, ease: "power2.in" });
+                // Reset src to original (stops video)
+                iframe.src = originalSrc;
+            });
+        });
+
+        // --- Hand Tracking & X-Ray Logic ---
         const video = document.getElementById("v-preview");
         const modelViewer = document.querySelector("#xr-model");
         const trackBtn = document.getElementById("t-btn");
         const previewWrapper = document.getElementById("preview-wrapper");
         const hud = document.getElementById("tech-hud");
-        const arBtn = document.getElementById("ar-trigger");
 
         let isTracking = false;
         let detectionModel = null;
         let xRayEnabled = false;
-
-        // Force AR trigger for iOS
-        arBtn.addEventListener('click', () => {
-            modelViewer.activateAR();
-        });
 
         handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.5 }).then(m => {
             detectionModel = m;
