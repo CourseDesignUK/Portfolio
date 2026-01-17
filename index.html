@@ -36,21 +36,18 @@
 
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); }
 
-        /* --- Video Grid --- */
         .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-top: 60px; }
         .video-container { position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 20px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); transform-style: preserve-3d; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
-        /* --- Hand Tracking Controls --- */
         #hand-ui { margin-top: 30px; display: flex; align-items: center; gap: 20px; }
-        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: bold; cursor: pointer; }
+        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .cam-btn:hover { opacity: 0.8; transform: scale(1.05); }
         #v-preview { width: 160px; height: 120px; border-radius: 12px; border: 2px solid var(--accent-color); display: none; transform: scaleX(-1); }
 
-        /* --- 3D Model Card --- */
         .model-card { width: 100%; height: 600px; background: var(--glass-bg); border-radius: 40px; border: 1px solid var(--glass-border); position: relative; }
         model-viewer { width: 100%; height: 100%; }
         
-        /* --- Hotspots --- */
         .hotspot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; background: var(--accent-color); cursor: pointer; }
         .hotspot-annotation { visibility: hidden; background: #fff; color: #000; border-radius: 8px; padding: 12px; position: absolute; left: 30px; width: 200px; opacity: 0; transition: 0.3s; pointer-events: none; }
         .hotspot:hover .hotspot-annotation, .hotspot.active .hotspot-annotation { visibility: visible; opacity: 1; }
@@ -93,7 +90,7 @@
             </div>
 
             <div class="model-card">
-                <model-viewer id="xr-model" src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb" camera-controls shadow-intensity="1">
+                <model-viewer id="xr-model" src="models/DamagedHelmet.glb" camera-controls shadow-intensity="1">
                     <button class="hotspot" id="hs1" slot="hotspot-1" data-position="0.16m 0.1m 0.15m" data-normal="0m 0m 1m">
                         <div class="hotspot-annotation"><strong>Optics:</strong> 4K Micro-OLED</div>
                     </button>
@@ -110,7 +107,14 @@
         let isTracking = false;
         let detectionModel = null;
 
-        handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.6 }).then(m => {
+        // Configuration to prioritize hands and lower confidence slightly for better capture
+        const modelParams = {
+            flipHorizontal: true,   
+            maxNumBoxes: 1,        
+            scoreThreshold: 0.6,    
+        };
+
+        handTrack.load(modelParams).then(m => {
             detectionModel = m;
             trackBtn.innerText = "START GESTURE CONTROL";
         });
@@ -135,23 +139,31 @@
 
         function detect() {
             detectionModel.detect(video).then(predictions => {
-                if (predictions.length > 0) {
-                    const hand = predictions[0];
+                // FILTER: Explicitly find a prediction that is NOT a face
+                const hand = predictions.find(p => p.label !== 'face');
+
+                if (hand) {
                     const [x, y, w, h] = hand.bbox;
                     
-                    // Rotation mapping
-                    const rY = ((x + w/2) / 160) * 360 - 180;
-                    const rX = ((y + h/2) / 120) * 90 - 45;
+                    // Center-point tracking for smoother rotation
+                    const centerX = x + (w / 2);
+                    const centerY = y + (h / 2);
+
+                    // Map 160x120 video area to degrees
+                    const rY = (centerX / 160) * 360 - 180;
+                    const rX = (centerY / 120) * 90 - 45;
+                    
+                    // Smoothly update the camera orbit
                     modelViewer.cameraOrbit = `${rY}deg ${rX + 75}deg auto`;
 
-                    // Gesture: Closed Fist Toggles Hotspots
-                    // Handtrack label "closed" or "fist" depending on model version
+                    // Gesture Logic
                     if (hand.label === "closed" || hand.label === "fist") {
                         document.querySelectorAll('.hotspot').forEach(h => h.classList.add('active'));
                     } else {
                         document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
                     }
                 }
+                
                 if (isTracking) requestAnimationFrame(detect);
             });
         }
@@ -159,10 +171,10 @@
         // --- Standard GSAP Visuals ---
         gsap.registerPlugin(ScrollTrigger);
         const cursor = document.getElementById('cursor');
+        
         document.addEventListener('mousemove', (e) => {
             gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
             
-            // 3D Tilt for videos
             const tiltX = (window.innerWidth / 2 - e.pageX) / 50;
             const tiltY = (window.innerHeight / 2 - e.pageY) / 50;
             gsap.to(".video-container", { rotationY: tiltX, rotationX: -tiltY, duration: 0.8 });
