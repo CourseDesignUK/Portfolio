@@ -18,6 +18,7 @@
             --text-color: #ffffff;
             --accent-color: #6366f1;
             --hud-green: #4ade80;
+            --model-bg: #111418; /* Slightly lighter 3D window color */
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
@@ -40,7 +41,7 @@
             height: 100%;
             z-index: -1;
             pointer-events: none;
-            opacity: 0.15; /* Subtle data stream effect */
+            opacity: 0.15;
         }
 
         nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); }
@@ -73,7 +74,6 @@
             border: 1px solid var(--glass-border);
             cursor: pointer;
             z-index: 1;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.05); }
@@ -84,16 +84,17 @@
         #preview-wrapper { position: relative; width: 140px; height: 105px; display: none; }
         #v-preview { width: 100%; height: 100%; border-radius: 4px; border: 1px solid var(--accent-color); transform: scaleX(-1); filter: grayscale(1) brightness(0.8); }
 
-        /* --- Model Card --- */
+        /* --- Centered 90% Model Card --- */
         .model-card { 
-            width: 100%; 
+            width: 90%; 
             height: 65vh; 
-            background: #030508; 
+            background: var(--model-bg); 
             border-radius: 24px; 
             border: 1px solid var(--glass-border); 
             position: relative; 
             overflow: hidden; 
-            margin-top: 30px;
+            margin: 30px auto 0 auto; /* Centered with auto margins */
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
         }
         
         model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
@@ -103,7 +104,7 @@
             top: 25px;
             left: 25px;
             padding: 20px;
-            background: rgba(5, 7, 10, 0.95);
+            background: rgba(5, 7, 10, 0.9);
             border: 1px solid var(--hud-green);
             color: var(--hud-green);
             font-family: 'Source Code Pro', monospace;
@@ -116,8 +117,8 @@
         }
         #tech-hud.active { opacity: 1; transform: translateX(0); }
 
+        .ar-controls { display: flex; justify-content: center; margin-top: 25px; }
         .ar-launch-btn {
-            margin-top: 20px;
             background: #fff;
             color: #000;
             border: none;
@@ -131,6 +132,7 @@
 
         @media (max-width: 768px) {
             .grid-container { grid-template-columns: 1fr; }
+            .model-card { width: 100%; height: 50vh; }
         }
     </style>
 </head>
@@ -183,7 +185,7 @@
                 <div>STRUCTURAL INTEGRITY: 98.4%</div>
                 <div>INTERNAL COMPONENT SYNC: OK</div>
             </div>
-            
+
             <model-viewer id="xr-model" 
                 src="models/chinook-2.glb" 
                 ios-src="models/Chinook-2.usdz"
@@ -196,9 +198,11 @@
             </model-viewer>
         </div>
 
-        <button class="ar-launch-btn" onclick="document.querySelector('#xr-model').activateAR()">
-            Launch Spatial AR
-        </button>
+        <div class="ar-controls">
+            <button class="ar-launch-btn" onclick="document.querySelector('#xr-model').activateAR()">
+                Launch Spatial AR
+            </button>
+        </div>
     </section>
 
     <script>
@@ -326,10 +330,14 @@
                 const hand = predictions.find(p => p.label !== 'face');
                 if (hand) {
                     const [x, y, w, h] = hand.bbox;
+                    
+                    // Orbit Calculation
+                    // 
                     const rY = ((x + w/2) / 160) * 360 - 180;
                     modelViewer.cameraOrbit = `${rY}deg 75deg 12m`;
                     
                     if (["closed", "fist"].includes(hand.label)) {
+                        // 
                         applyXRay(true);
                     } else {
                         applyXRay(false);
