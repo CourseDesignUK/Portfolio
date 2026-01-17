@@ -16,6 +16,8 @@
             --bg-color: #0f0f0f;
             --text-color: #ffffff;
             --accent-color: #6366f1;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         * {
@@ -58,7 +60,7 @@
 
         .logo { font-weight: 700; letter-spacing: -1px; font-size: 1.2rem; }
 
-        /* --- Layout Sections --- */
+        /* --- Global Layout --- */
         section {
             padding: 100px 10%;
             min-height: 100vh;
@@ -68,94 +70,10 @@
             position: relative;
         }
 
-        h1 { font-size: 5rem; font-weight: 700; }
-        h2 { font-size: 3rem; margin-bottom: 20px; color: var(--accent-color); }
+        h1 { font-size: 5rem; font-weight: 700; line-height: 1.1; }
+        h2 { font-size: 3.5rem; margin-bottom: 20px; color: var(--accent-color); }
         p { font-size: 1.2rem; color: #888; max-width: 600px; line-height: 1.6; }
 
-        /* --- VIDEO GRID --- */
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
-            perspective: 1000px;
-        }
-
-        .video-wrapper {
-            perspective: 1000px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .video-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 ratio */
-            height: 0;
-            border-radius: 20px;
-            overflow: hidden;
-            background: #000;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transform-style: preserve-3d;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-            transition: border 0.3s ease;
-        }
-
-        .video-container:hover {
-            border: 1px solid var(--accent-color);
-        }
-
-        /* Background Glow Leak */
-        .video-container::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -1;
-            background: var(--accent-color);
-            filter: blur(100px);
-            opacity: 0.1;
-            transition: opacity 0.5s ease;
-        }
-
-        .video-container:hover::before {
-            opacity: 0.4;
-        }
-
-        /* Moving Scanning Line */
-        .video-container::after {
-            content: "";
-            position: absolute;
-            top: -100%;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                transparent,
-                rgba(99, 102, 241, 0.15),
-                transparent
-            );
-            animation: scan 4s linear infinite;
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        @keyframes scan {
-            0% { top: -100%; }
-            100% { top: 100%; }
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-            z-index: 1;
-        }
-
-        /* Augmented Reality Tag Styling */
         .ar-content {
             margin-bottom: 20px;
             display: inline-block;
@@ -164,11 +82,126 @@
             background: rgba(99, 102, 241, 0.05);
         }
 
-        @media (max-width: 768px) {
-            h1 { font-size: 3rem; }
-            .video-grid { grid-template-columns: 1fr; }
+        /* --- Section 1: Video Grid --- */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
         }
 
+        .video-wrapper {
+            perspective: 1200px;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #000;
+            border: 1px solid var(--glass-border);
+            transform-style: preserve-3d;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: 0; z-index: 1;
+        }
+
+        /* Scanline effect */
+        .video-container::after {
+            content: "";
+            position: absolute;
+            top: -100%; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(99, 102, 241, 0.1), transparent);
+            animation: scan 6s linear infinite;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        @keyframes scan { 0% { top: -100%; } 100% { top: 100%; } }
+
+        /* --- Section 2: 3D Model Manipulation --- */
+        .section-model {
+            background: radial-gradient(circle at 70% 50%, #1a1a2e 0%, #0f0f0f 100%);
+        }
+
+        .model-interface {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .model-card {
+            width: 100%;
+            height: 600px;
+            background: var(--glass-bg);
+            border-radius: 40px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px);
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        }
+
+        model-viewer {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            --progress-bar-color: var(--accent-color);
+        }
+
+        /* --- Hotspots --- */
+        .hotspot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            background-color: var(--accent-color);
+            box-shadow: 0 0 15px var(--accent-color);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .hotspot-annotation {
+            visibility: hidden;
+            background: #fff;
+            color: #000;
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            left: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 220px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .hotspot:hover .hotspot-annotation {
+            visibility: visible;
+            opacity: 1;
+            left: 40px;
+        }
+
+        .hotspot:not([data-visible]) { opacity: 0.3; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 968px) {
+            h1 { font-size: 3rem; }
+            h2 { font-size: 2.2rem; }
+            .model-interface { grid-template-columns: 1fr; }
+            .model-card { height: 450px; }
+            .video-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -177,115 +210,129 @@
 
     <nav>
         <div class="logo">XR TRAINING LABS</div>
-        <div class="menu">MENU</div>
+        <div class="menu">EXPLORE</div>
     </nav>
 
     <section class="hero">
-        <h1>Technology Enhanced<br>Training</h1>
+        <div class="hero-content">
+            <h1>Technology Enhanced<br>High-Stakes Training</h1>
+            <p style="margin-top: 20px;">Deploying persistent immersive environments for workforce scaling and precision skill acquisition.</p>
+        </div>
     </section>
 
-    <section class="section-3d">
-        <div class="content">
-            <div class="ar-content">
-                <h3>AUGMENTED REALITY</h3>
+    <section class="section-video">
+        <div class="ar-content"><h3>SIMULATION LIBRARY</h3></div>
+        <h2>Active Modules</h2>
+        
+        <div class="video-grid">
+            <div class="video-wrapper">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?mute=1&loop=1&playlist=_ckPvnl4HQI" allowfullscreen></iframe>
+                </div>
             </div>
-            <h2>Immersive Simulations</h2>
-            <p>Our training modules utilize spatial computing to provide hands-on experience in risk-free digital environments.</p>
-
-            <div class="video-grid">
-                <div class="video-wrapper">
-                    <div class="video-container">
-                        <iframe 
-                            src="https://www.youtube.com/embed/_ckPvnl4HQI?si=UJoXgWHDHu7UG1ec&autoplay=1&mute=1&loop=1&playlist=_ckPvnl4HQI" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen>
-                        </iframe>
-                    </div>
+            <div class="video-wrapper">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?mute=1" allowfullscreen></iframe>
                 </div>
-
-                <div class="video-wrapper">
-                    <div class="video-container">
-                        <iframe 
-                            src="https://www.youtube.com/embed/2OvfLt13D6Y?si=r8WVHWKuQK9lwSCs&mute=1" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen>
-                        </iframe>
-                    </div>
+            </div>
+            <div class="video-wrapper">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/8kNXOVutOJc?mute=1" allowfullscreen></iframe>
                 </div>
-
-                <div class="video-wrapper">
-                    <div class="video-container">
-                        <iframe 
-                            src="https://www.youtube.com/embed/8kNXOVutOJc?si=7hZ_Uc5eIRwabunc&mute=1" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen>
-                        </iframe>
-                    </div>
-                </div>
-
-                <div class="video-wrapper">
-                    <div class="video-container">
-                        <iframe 
-                            src="https://www.youtube.com/embed/0m-LbA8E97Q?si=Oh1ACXX3OsfvLo-O&mute=1" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                            allowfullscreen>
-                        </iframe>
-                    </div>
+            </div>
+            <div class="video-wrapper">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?mute=1" allowfullscreen></iframe>
                 </div>
             </div>
         </div>
     </section>
 
+    <section class="section-model">
+        <div class="model-interface">
+            <div class="model-info">
+                <div class="ar-content"><h3>INTERACTIVE ASSETS</h3></div>
+                <h2>Digital Twin Interaction</h2>
+                <p>Rotate the model to inspect technical components. Hover over hotspots for data-sheet specifications extracted from GitHub version control.</p>
+            </div>
+
+            <div class="model-card">
+                <model-viewer 
+                    id="xr-model"
+                    src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb" 
+                    ar 
+                    camera-controls 
+                    shadow-intensity="1" 
+                    auto-rotate>
+                    
+                    <button class="hotspot" slot="hotspot-1" data-position="0.16m 0.1m 0.15m" data-normal="0m 0m 1m">
+                        <div class="hotspot-annotation"><strong>Primary Interface:</strong> 4K OLED Wide-FOV lens assembly.</div>
+                    </button>
+
+                    <button class="hotspot" slot="hotspot-2" data-position="-0.12m 0.05m -0.1m" data-normal="-1m 0m 0m">
+                        <div class="hotspot-annotation"><strong>Haptic Engine:</strong> Low-latency vibrational feedback array.</div>
+                    </button>
+                </model-viewer>
+            </div>
+        </div>
+    </section>
+
     <script>
-        // Register ScrollTrigger
         gsap.registerPlugin(ScrollTrigger);
 
-        // Custom Cursor
+        // Custom Cursor Logic
         const cursor = document.getElementById('cursor');
         document.addEventListener('mousemove', (e) => {
             gsap.to(cursor, {
                 x: e.clientX,
                 y: e.clientY,
-                duration: 0.1,
+                duration: 0.15,
                 ease: "power2.out"
             });
         });
 
-        // 3D Tilt Effect on all Video Containers
-        const videoCards = document.querySelectorAll('.video-container');
-        
+        // Dynamic 3D Tilt for Video Containers
+        const containers = document.querySelectorAll('.video-container');
         document.addEventListener('mousemove', (e) => {
-            const xAxis = (window.innerWidth / 2 - e.pageX) / 60;
-            const yAxis = (window.innerHeight / 2 - e.pageY) / 60;
+            const x = (window.innerWidth / 2 - e.pageX) / 50;
+            const y = (window.innerHeight / 2 - e.pageY) / 50;
             
-            videoCards.forEach(card => {
-                gsap.to(card, {
-                    rotationY: xAxis,
-                    rotationX: -yAxis,
-                    ease: "power2.out",
-                    duration: 0.8
+            containers.forEach(container => {
+                gsap.to(container, {
+                    rotationY: x,
+                    rotationX: -y,
+                    duration: 0.8,
+                    ease: "power2.out"
                 });
             });
         });
 
-        // Scroll Reveal for Video Grid Items
-        videoCards.forEach((card, index) => {
-            gsap.from(card, {
-                scrollTrigger: {
-                    trigger: card,
-                    start: "top 90%",
-                    end: "bottom 20%",
-                    toggleActions: "play none none reverse"
-                },
-                scale: 0.8,
-                opacity: 0,
-                duration: 1.2,
-                delay: index * 0.1, // Staggered entrance
-                ease: "expo.out"
-            });
+        // Staggered Scroll Entrance for Videos
+        gsap.from(".video-wrapper", {
+            scrollTrigger: {
+                trigger: ".video-grid",
+                start: "top 80%",
+            },
+            y: 50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power3.out"
         });
 
-        // Subtle Logo Parallax
+        // Entrance for Model Card
+        gsap.from(".model-card", {
+            scrollTrigger: {
+                trigger: ".section-model",
+                start: "top 70%",
+            },
+            scale: 0.9,
+            opacity: 0,
+            duration: 1.5,
+            ease: "expo.out"
+        });
+
+        // Navigation Parallax
         gsap.to(".logo", {
             scrollTrigger: {
                 trigger: "body",
@@ -293,7 +340,7 @@
                 end: "bottom bottom",
                 scrub: true
             },
-            x: 20
+            x: 30
         });
     </script>
 </body>
