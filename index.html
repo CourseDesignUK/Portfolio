@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Spatial Computing</title>
+    <title>XR Training Labs | Persistent Expansion</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Source+Code+Pro&display=swap" rel="stylesheet">
@@ -19,6 +19,7 @@
             --accent-color: #6366f1;
             --hud-green: #4ade80;
             --glass-border: rgba(255, 255, 255, 0.1);
+            --pcb-line: rgba(99, 102, 241, 0.07);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,14 +29,17 @@
             background-color: var(--bg-color); 
             color: var(--text-color); 
             overflow-x: hidden;
+            /* Subtle Circuit Board Pattern */
             background-image: 
-                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
+                radial-gradient(circle at 2px 2px, var(--pcb-line) 1px, transparent 0),
+                linear-gradient(var(--pcb-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--pcb-line) 1px, transparent 1px);
+            background-size: 100px 100px, 50px 50px, 50px 50px;
+            background-position: center center;
         }
 
         nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); }
-        .logo { font-weight: 700; font-family: 'Source Code Pro', monospace; color: var(--accent-color); font-size: 0.9rem; }
+        .logo { font-weight: 700; font-family: 'Source Code Pro', monospace; color: var(--accent-color); font-size: 1rem; letter-spacing: 1px; }
 
         section { padding: 120px 5% 60px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
         
@@ -49,7 +53,6 @@
             gap: 30px; 
             max-width: 1200px; 
             margin: 40px auto; 
-            perspective: 1000px;
         }
 
         .video-card { 
@@ -58,32 +61,33 @@
             aspect-ratio: 16/9; 
             border-radius: 12px; 
             overflow: hidden; 
-            background: #111;
+            background: #000;
             border: 1px solid var(--glass-border);
             cursor: pointer;
             z-index: 1;
-            transition: box-shadow 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.05); }
 
-        /* --- Interaction UI --- */
+        /* --- Hand UI --- */
         #hand-ui { margin-top: 30px; display: flex; align-items: center; gap: 20px; }
-        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 12px 24px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
+        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 12px 24px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; font-family: 'Source Code Pro', monospace; }
         
         #preview-wrapper { position: relative; width: 140px; height: 105px; display: none; }
-        #v-preview { width: 100%; height: 100%; border-radius: 4px; border: 1px solid var(--accent-color); transform: scaleX(-1); filter: grayscale(1) contrast(1.2); }
+        #v-preview { width: 100%; height: 100%; border-radius: 4px; border: 1px solid var(--accent-color); transform: scaleX(-1); filter: grayscale(1) brightness(0.8); }
 
-        /* --- Model Interface --- */
+        /* --- Model Card --- */
         .model-card { 
             width: 100%; 
             height: 65vh; 
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 20px; 
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 24px; 
             border: 1px solid var(--glass-border); 
             position: relative; 
             overflow: hidden; 
             margin-top: 30px;
+            backdrop-filter: blur(5px);
         }
         
         model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
@@ -93,15 +97,15 @@
             top: 25px;
             left: 25px;
             padding: 20px;
-            background: rgba(5, 7, 10, 0.9);
+            background: rgba(5, 7, 10, 0.95);
             border: 1px solid var(--hud-green);
             color: var(--hud-green);
             font-family: 'Source Code Pro', monospace;
             font-size: 0.7rem;
             pointer-events: none;
             opacity: 0;
-            transform: translateX(-20px);
-            transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateX(-15px);
+            transition: 0.4s ease;
             z-index: 5;
         }
         #tech-hud.active { opacity: 1; transform: translateX(0); }
@@ -126,12 +130,17 @@
 </head>
 <body>
 
-    <nav><div class="logo">// XR_LAB_SENSING</div></nav>
+    <nav><div class="logo">XR_TRAINING_LABS_v2.0</div></nav>
 
     <section>
-        <h1>Spatial Computing<br>Training Systems</h1>
-        <div class="ar-content">LIVE_FEED_ARCHIVE</div>
+        <h1>XR TRAINING LABS</h1>
+        <div class="ar-content">DIAGNOSTIC_RECORDS // CHINOOK_SERIES</div>
         
+        
+
+[Image of a printed circuit board diagram]
+
+
         <div class="grid-container">
             <div class="video-card" data-video="_ckPvnl4HQI">
                 <iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?controls=0&mute=1&enablejsapi=1"></iframe>
@@ -149,8 +158,8 @@
     </section>
 
     <section style="min-height: 100vh;">
-        <div class="ar-content">OBJECT_ID: CHINOOK_CH47D</div>
-        <p>Rotate hand to <strong>Orbit</strong>. Clench fist for <strong>X-Ray Structural Analysis</strong>.</p>
+        <div class="ar-content">SPATIAL_SYNC: CHINOOK_CH47D</div>
+        <p>Use horizontal hand movement to <strong>Rotate</strong>. Clench fist to toggle <strong>X-Ray Structural Analysis</strong>.</p>
         
         <div id="hand-ui">
             <button class="cam-btn" id="t-btn">INITIALIZE SENSORS</button>
@@ -164,8 +173,11 @@
                 <div>[SYSTEM STATUS: X-RAY ACTIVE]</div>
                 <div>---------------------------</div>
                 <div>STRUCTURAL INTEGRITY: 98.4%</div>
-                <div>INTERNAL COMPONENT SYNC... OK</div>
+                <div>INTERNAL COMPONENT SYNC: OK</div>
+                <div>AR_READY: TRUE</div>
             </div>
+
+            
 
             <model-viewer id="xr-model" 
                 src="models/chinook-2.glb" 
@@ -185,7 +197,7 @@
     </section>
 
     <script>
-        // --- Grid Animation Logic ---
+        // --- Grid Animation (Netflix Cinema Style) ---
         const cards = document.querySelectorAll('.video-card');
         
         cards.forEach((card) => {
@@ -194,28 +206,24 @@
             const originalSrc = iframe.src;
 
             card.addEventListener('mouseenter', () => {
-                // Scale up and play
                 gsap.to(card, { 
                     scale: 1.15, 
                     zIndex: 100, 
-                    boxShadow: "0 20px 40px rgba(0,0,0,0.6)",
+                    boxShadow: "0 25px 50px rgba(99, 102, 241, 0.3)",
                     duration: 0.4, 
                     ease: "power2.out" 
                 });
                 iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`;
                 
-                // Dim neighbors
                 cards.forEach(other => {
-                    if (other !== card) gsap.to(other, { opacity: 0.4, scale: 0.95, duration: 0.4 });
+                    if (other !== card) gsap.to(other, { opacity: 0.3, scale: 0.95, duration: 0.4 });
                 });
             });
 
             card.addEventListener('mouseleave', () => {
-                // Reset this card
                 gsap.to(card, { scale: 1.0, zIndex: 1, boxShadow: "0 0 0 rgba(0,0,0,0)", duration: 0.3 });
                 iframe.src = originalSrc;
                 
-                // Reset neighbors
                 cards.forEach(other => {
                     gsap.to(other, { opacity: 1, scale: 1.0, duration: 0.3 });
                 });
