@@ -7,6 +7,8 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
@@ -28,7 +30,19 @@
             body { cursor: none; }
         }
 
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; position: relative; }
+
+        /* --- Matrix Background Canvas --- */
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Places it behind everything */
+            pointer-events: none; /* Ensures it doesn't block clicks */
+            opacity: 0.7; /* Global subtlety control */
+        }
 
         nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 100; background: linear-gradient(to bottom, #0f0f0f, transparent); }
         .logo { font-weight: 700; letter-spacing: -1px; font-size: 1rem; }
@@ -68,6 +82,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            /* Ensure content stands out from matrix bg */
+            backdrop-filter: blur(5px); 
         }
         
         model-viewer { 
@@ -125,6 +141,7 @@
     </style>
 </head>
 <body>
+    <canvas id="matrix-bg"></canvas>
 
     <div id="cursor"></div>
 
@@ -166,7 +183,7 @@
 
             <model-viewer id="xr-model" 
                 src="models/chinook-2.glb" 
-                ios-src="models/Chinook-2.usdz"
+                ios-src="models/chinook-2.usdz"
                 ar 
                 ar-modes="webxr scene-viewer quick-look" 
                 camera-controls 
@@ -184,6 +201,66 @@
             </button>
         </div>
     </section>
+
+    <script>
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas dimensions to window size
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Matrix characters (numbers and uppercase letters for simplicity)
+        const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const charArray = chars.split('');
+        
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+
+        // An array to keep track of the y position of each dropping column
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function drawMatrix() {
+            // Translucent black fill over previous frame to create trail effect
+            // Use a very low opacity (e.g., 0.05) for long, subtle trails
+            ctx.fillStyle = 'rgba(15, 15, 15, 0.05)'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Text color and style - using low opacity green for subtlety
+            ctx.fillStyle = 'rgba(0, 255, 70, 0.15)'; 
+            ctx.font = fontSize + 'px "Source Code Pro", monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                // Pick a random character
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+                
+                // Draw the character
+                ctx.fillText(text, x, y);
+
+                // Reset drop to top randomly after it crossed screen
+                // Adding Math.random() > 0.975 adds randomness to the reset time
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                // Increment y coordinate
+                drops[i]++;
+            }
+        }
+
+        // Run the animation loop roughly every 50ms for that digital look
+        setInterval(drawMatrix, 50);
+    </script>
 
     <script>
         const video = document.getElementById("v-preview");
@@ -224,7 +301,6 @@
                 if (hand) {
                     const [x, y, w, h] = hand.bbox;
                     const centerX = x + w/2;
-                    // Horizontal mapping to orbit
                     const rY = (centerX / 160) * 360 - 180;
                     modelViewer.cameraOrbit = `${rY}deg 75deg auto`;
                     
