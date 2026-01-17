@@ -17,7 +17,7 @@
             --bg-color: #0f0f0f;
             --text-color: #ffffff;
             --accent-color: #6366f1;
-            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
@@ -35,6 +35,11 @@
         p { font-size: 1.2rem; color: #888; max-width: 600px; line-height: 1.6; }
 
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); }
+
+        /* --- Video Grid --- */
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-top: 60px; }
+        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 20px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); transform-style: preserve-3d; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
         /* --- Tech Document Panel --- */
         #tech-doc {
@@ -69,11 +74,6 @@
 
         .model-card { width: 100%; height: 700px; background: var(--glass-bg); border-radius: 40px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; }
         model-viewer { width: 100%; height: 100%; }
-        
-        /* --- Hotspots --- */
-        .hotspot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; background: var(--accent-color); cursor: pointer; }
-        .hotspot-annotation { visibility: hidden; background: #fff; color: #000; border-radius: 8px; padding: 12px; position: absolute; left: 30px; width: 180px; opacity: 0; transition: 0.3s; pointer-events: none; font-size: 0.8rem; }
-        .hotspot.active .hotspot-annotation { visibility: visible; opacity: 1; }
     </style>
 </head>
 <body>
@@ -82,13 +82,27 @@
 
     <nav>
         <div class="logo">XR TRAINING LABS</div>
-        <div class="menu">VIRTUAL HANGAR</div>
+        <div class="menu">EXPLORE</div>
     </nav>
+
+    <section class="hero">
+        <h1>Technology Enhanced<br>Sensing & Training</h1>
+    </section>
+
+    <section>
+        <div class="ar-content"><h3>SIMULATION LIBRARY</h3></div>
+        <div class="video-grid">
+            <div class="video-container"><iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?mute=1&loop=1&playlist=_ckPvnl4HQI"></iframe></div>
+            <div class="video-container"><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?mute=1"></iframe></div>
+            <div class="video-container"><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?mute=1"></iframe></div>
+            <div class="video-container"><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?mute=1"></iframe></div>
+        </div>
+    </section>
 
     <section class="section-model">
         <div class="ar-content"><h3>CHINOOK CH-47D</h3></div>
-        <h2>Interactive Flight Systems</h2>
-        <p>Rotate hand horizontally to inspect airframe. <strong>Close fist</strong> to pull technical specifications.</p>
+        <h2>Interactive Digital Twin</h2>
+        <p>Rotate hand horizontally to inspect. <strong>Close fist</strong> to view technical documentation.</p>
         
         <div id="hand-ui">
             <button class="cam-btn" id="t-btn">INITIALIZING AI...</button>
@@ -103,19 +117,10 @@
                 <div class="spec-row"><span class="spec-label">Engines</span><span>2x T55-GA-714A</span></div>
                 <div class="spec-row"><span class="spec-label">Rotor System</span><span>Tandem 3-Blade</span></div>
                 <div class="spec-row"><span class="spec-label">Range</span><span>400 nmi</span></div>
-                <p style="font-size: 0.8rem; margin-top: 20px;">The Chinook is a heavy-lift helicopter that is among the heaviest lifting of Western helicopters.</p>
+                <p style="font-size: 0.8rem; margin-top: 20px;">The Chinook is a heavy-lift helicopter used for troop movement, artillery placement, and battlefield resupply.</p>
             </div>
 
             <model-viewer id="xr-model" src="models/chinook-2.glb" camera-controls shadow-intensity="1" camera-orbit="0deg 75deg auto">
-                <button class="hotspot" slot="hotspot-cockpit" data-position="0m 0.8m 3.5m" data-normal="0m 0m 1m">
-                    <div class="hotspot-annotation"><strong>Cockpit:</strong> Triple-redundant digital flight controls.</div>
-                </button>
-                <button class="hotspot" slot="hotspot-engine" data-position="0m 1.5m -3.5m" data-normal="0m 1m 0m">
-                    <div class="hotspot-annotation"><strong>Engine:</strong> T55-GA-714A Turboshaft.</div>
-                </button>
-                <button class="hotspot" slot="hotspot-rotor" data-position="0m 2.2m 0m" data-normal="0m 1m 0m">
-                    <div class="hotspot-annotation"><strong>Rotors:</strong> Counter-rotating tandem system.</div>
-                </button>
             </model-viewer>
         </div>
     </section>
@@ -128,9 +133,10 @@
         let isTracking = false;
         let detectionModel = null;
 
+        // Load Handtrack model
         handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.6 }).then(m => {
             detectionModel = m;
-            trackBtn.innerText = "START SENSING";
+            trackBtn.innerText = "START GESTURE CONTROL";
         });
 
         trackBtn.addEventListener("click", () => {
@@ -147,40 +153,45 @@
                 handTrack.stopVideo(video);
                 isTracking = false;
                 video.style.display = "none";
-                trackBtn.innerText = "START SENSING";
+                trackBtn.innerText = "START GESTURE CONTROL";
             }
         });
 
         function detect() {
             detectionModel.detect(video).then(predictions => {
-                // Ignore the face, look for the hand
+                // Ensure we track hands specifically, ignoring the head/face
                 const hand = predictions.find(p => p.label !== 'face');
 
                 if (hand) {
                     const [x, y, w, h] = hand.bbox;
                     const centerX = x + w/2;
                     
-                    // Horizontal mapping only
+                    // Horizontal mapping ONLY
                     const rY = (centerX / 160) * 360 - 180;
                     modelViewer.cameraOrbit = `${rY}deg 75deg auto`;
 
-                    // GESTURE: Fist opens document and shows hotspots
+                    // GESTURE: Close fist to show/hide the technical document
                     if (hand.label === "closed" || hand.label === "fist") {
                         techDoc.classList.add('active');
-                        document.querySelectorAll('.hotspot').forEach(h => h.classList.add('active'));
                     } else {
                         techDoc.classList.remove('active');
-                        document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('active'));
                     }
                 }
                 if (isTracking) requestAnimationFrame(detect);
             });
         }
 
-        // GSAP Cursor
+        // --- GSAP Visuals ---
+        gsap.registerPlugin(ScrollTrigger);
         const cursor = document.getElementById('cursor');
+        
         document.addEventListener('mousemove', (e) => {
             gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
+            
+            // 3D Tilt effect for video library
+            const tiltX = (window.innerWidth / 2 - e.pageX) / 50;
+            const tiltY = (window.innerHeight / 2 - e.pageY) / 50;
+            gsap.to(".video-container", { rotationY: tiltX, rotationX: -tiltY, duration: 0.8 });
         });
     </script>
 </body>
