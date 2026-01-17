@@ -3,76 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Chinook-2 Digital Twin</title>
+    <title>XR Training Labs | Chinook-2 Tech Interface</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Source+Code+Pro:wght@400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Source+Code+Pro&display=swap" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
 
     <style>
         :root {
-            --bg-color: #0a0a0a;
+            --bg-color: #030508;
             --text-color: #ffffff;
             --accent-color: #6366f1;
-            --matrix-color: rgba(0, 255, 70, 0.12);
-            --glass-bg: rgba(255, 255, 255, 0.03);
+            --hud-green: #4ade80;
             --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        @media (pointer: fine) {
-            #cursor { position: fixed; width: 20px; height: 20px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 9999; mix-blend-mode: difference; }
-            body { cursor: none; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            overflow-x: hidden;
+            /* Technical Blueprint Grid */
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
         }
 
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; position: relative; }
+        nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 100; backdrop-filter: blur(10px); }
+        .logo { font-weight: 700; font-family: 'Source Code Pro', monospace; color: var(--accent-color); }
 
-        /* --- Binary Waterfall Canvas --- */
-        #matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            pointer-events: none;
-        }
-
-        nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 100; background: linear-gradient(to bottom, #0a0a0a, transparent); }
-        .logo { font-weight: 700; letter-spacing: -1px; font-size: 1rem; }
-
-        section { padding: 100px 5%; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1; }
+        section { padding: 100px 5%; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
         
-        h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1.1; margin-bottom: 20px; }
-        h2 { font-size: clamp(1.8rem, 5vw, 3.5rem); margin-bottom: 20px; color: var(--accent-color); }
-        p { font-size: 1.1rem; color: #888; max-width: 600px; line-height: 1.6; }
+        h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 20px; text-transform: uppercase; letter-spacing: -2px; }
+        .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; }
 
-        .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); }
+        /* --- Video Gallery --- */
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 40px; }
+        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); background: #000; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; opacity: 0.8; }
 
-        /* --- Video Grid --- */
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 40px; }
-        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); transform-style: preserve-3d; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
-
-        /* --- UI Controls --- */
-        #hand-ui { margin-top: 30px; display: flex; flex-wrap: wrap; align-items: center; gap: 15px; }
-        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        /* --- Interaction UI --- */
+        #hand-ui { margin-top: 30px; display: flex; flex-wrap: wrap; align-items: center; gap: 20px; }
+        .cam-btn { background: var(--accent-color); color: white; border: none; padding: 15px 30px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
         
-        #preview-wrapper { position: relative; width: 140px; height: 105px; display: none; }
-        #v-preview { width: 100%; height: 100%; border-radius: 10px; border: 2px solid var(--accent-color); transform: scaleX(-1); }
+        #preview-wrapper { position: relative; width: 160px; height: 120px; display: none; }
+        #v-preview { width: 100%; height: 100%; border-radius: 4px; border: 1px solid var(--accent-color); transform: scaleX(-1); filter: grayscale(1) contrast(1.2); }
+        #zoom-status { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--hud-green); transition: 0.1s; }
 
-        /* --- Model Card - Opaque to hide matrix inside --- */
+        /* --- Model Card --- */
         .model-card { 
             width: 100%; 
-            height: 65vh; 
-            min-height: 450px;
-            background: #0a0a0a; /* Solid background hides the matrix waterfall */
-            border-radius: 30px; 
+            height: 70vh; 
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px; 
             border: 1px solid var(--glass-border); 
             position: relative; 
             overflow: hidden; 
@@ -82,42 +72,51 @@
             justify-content: center;
         }
         
-        model-viewer { width: 100%; height: 100%; }
+        model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
 
-        .ar-controls { display: flex; justify-content: center; margin-top: 20px; padding-bottom: 40px; }
-        .ar-launch-btn { background: #fff; color: #000; border: none; padding: 15px 40px; border-radius: 40px; font-weight: 700; cursor: pointer; }
-
-        /* --- HUD Document --- */
-        #tech-doc {
+        /* --- HUD Panel --- */
+        #tech-hud {
             position: absolute;
-            right: 20px;
-            top: 20px;
-            width: 280px;
+            top: 25px;
+            left: 25px;
             padding: 20px;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
+            background: rgba(5, 7, 10, 0.9);
+            border: 1px solid var(--hud-green);
+            color: var(--hud-green);
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.7rem;
+            pointer-events: none;
             opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s ease;
-            z-index: 10;
+            transform: translateX(-20px);
+            transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 5;
         }
-        #tech-doc.active { opacity: 1; visibility: visible; }
+        #tech-hud.active { opacity: 1; transform: translateX(0); }
+
+        .ar-launch-btn {
+            margin-top: 20px;
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
-    <canvas id="matrix-bg"></canvas>
-    <div id="cursor"></div>
 
-    <nav><div class="logo">XR TRAINING LABS</div></nav>
+    <nav><div class="logo">// XR_LAB_SENSING</div></nav>
 
     <section>
-        <h1>Aviation Sensing<br>& Digital Twins</h1>
+        <h1>Spatial Computing<br>Training Systems</h1>
     </section>
 
     <section>
-        <div class="ar-content"><h3>SIMULATION LIBRARY</h3></div>
+        <div class="ar-content">LIVE_FEED_ARCHIVE</div>
         <div class="video-grid">
             <div class="video-container"><iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?mute=1&loop=1&playlist=_ckPvnl4HQI"></iframe></div>
             <div class="video-container"><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?mute=1"></iframe></div>
@@ -126,92 +125,62 @@
         </div>
     </section>
 
-    <section class="section-model">
-        <div class="ar-content"><h3>CHINOOK CH-47D</h3></div>
-        <h2>Interactive Inspection</h2>
-        <p>Horizontal hand movement orbits the craft. Clench fist to access diagnostics.</p>
+    <section>
+        <div class="ar-content">OBJECT_ID: CHINOOK_CH47D</div>
+        <p>Rotate hand to <strong>Orbit</strong>. Proximity to camera controls <strong>Z-Axis Zoom</strong>. Fist clench triggers <strong>X-Ray Analysis</strong>.</p>
         
         <div id="hand-ui">
-            <button class="cam-btn" id="t-btn">INITIALIZING AI...</button>
+            <button class="cam-btn" id="t-btn">INITIALIZE SENSORS</button>
             <div id="preview-wrapper">
                 <video id="v-preview" autoplay playsinline></video>
+                <div id="zoom-status"></div>
             </div>
         </div>
 
         <div class="model-card">
-            <div id="tech-doc">
-                <div style="color:var(--accent-color); font-weight:700; margin-bottom:10px;">DIAGNOSTIC HUD</div>
-                <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>Airframe</span><span>CH-47D</span></div>
-                <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span>Payload</span><span>24,000 lbs</span></div>
+            <div id="tech-hud">
+                <div>[SYSTEM STATUS: X-RAY ACTIVE]</div>
+                <div>---------------------------</div>
+                <div>STRUCTURAL INTEGRITY: 98.4%</div>
+                <div>INTERNAL COMPONENT SYNC... OK</div>
+                <div>DEPTH SENSING: ACTIVE</div>
             </div>
 
             <model-viewer id="xr-model" 
                 src="models/chinook-2.glb" 
                 ios-src="models/chinook-2.usdz"
-                ar ar-modes="webxr scene-viewer quick-look" 
+                ar 
+                ar-modes="webxr quick-look scene-viewer" 
                 camera-controls 
                 shadow-intensity="1" 
-                camera-orbit="0deg 75deg auto" 
+                camera-orbit="0deg 75deg 12m"
+                min-camera-orbit="auto auto 2m"
+                max-camera-orbit="auto auto 25m"
                 touch-action="none">
             </model-viewer>
         </div>
 
-        <div class="ar-controls">
-            <button class="ar-launch-btn" onclick="document.querySelector('#xr-model').activateAR()">
-                ACTIVATE SPATIAL AR
-            </button>
-        </div>
+        <button class="ar-launch-btn" onclick="document.querySelector('#xr-model').activateAR()">
+            Launch iOS/Android AR
+        </button>
     </section>
-
-    <script>
-        const canvas = document.getElementById('matrix-bg');
-        const ctx = canvas.getContext('2d');
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resize();
-        window.addEventListener('resize', resize);
-
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.ceil(columns)).fill(1);
-
-        function draw() {
-            ctx.fillStyle = 'rgba(10, 10, 10, 0.08)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            ctx.fillStyle = 'rgba(0, 255, 70, 0.12)';
-            ctx.font = fontSize + 'px "Source Code Pro", monospace';
-
-            for (let i = 0; i < drops.length; i++) {
-                // Binary Only: Randomly pick 1 or 0
-                const text = Math.round(Math.random());
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
-                drops[i]++;
-            }
-        }
-        setInterval(draw, 50);
-    </script>
 
     <script>
         const video = document.getElementById("v-preview");
         const modelViewer = document.querySelector("#xr-model");
         const trackBtn = document.getElementById("t-btn");
-        const techDoc = document.getElementById("tech-doc");
         const previewWrapper = document.getElementById("preview-wrapper");
+        const zoomStatus = document.getElementById("zoom-status");
+        const hud = document.getElementById("tech-hud");
 
         let isTracking = false;
         let detectionModel = null;
+        let xRayEnabled = false;
 
-        handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.45 }).then(m => {
+        // Model loading logic
+        handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.5 }).then(m => {
             detectionModel = m;
-            trackBtn.innerText = "START GESTURE CONTROL";
+            trackBtn.innerText = "SENSORS READY";
         });
 
         trackBtn.addEventListener("click", () => {
@@ -220,7 +189,7 @@
                     if (status) {
                         isTracking = true;
                         previewWrapper.style.display = "block";
-                        trackBtn.innerText = "STOP SENSING";
+                        trackBtn.innerText = "SENSOR ONLINE";
                         detect();
                     }
                 });
@@ -228,35 +197,58 @@
                 handTrack.stopVideo(video);
                 isTracking = false;
                 previewWrapper.style.display = "none";
-                trackBtn.innerText = "START GESTURE CONTROL";
+                trackBtn.innerText = "SENSORS READY";
             }
         });
+
+        function applyXRay(enable) {
+            if (enable === xRayEnabled) return;
+            xRayEnabled = enable;
+            hud.classList.toggle('active', enable);
+
+            const materials = modelViewer.model.materials;
+            materials.forEach(mat => {
+                if (enable) {
+                    mat.setAlphaMode("BLEND");
+                    // Blue-ish transparent x-ray look
+                    mat.pbrMetallicRoughness.setBaseColorFactor([0.2, 0.4, 1.0, 0.25]);
+                } else {
+                    mat.setAlphaMode("OPAQUE");
+                    mat.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]);
+                }
+            });
+        }
 
         function detect() {
             detectionModel.detect(video).then(predictions => {
                 const hand = predictions.find(p => p.label !== 'face');
                 if (hand) {
                     const [x, y, w, h] = hand.bbox;
-                    const rY = ((x + w/2) / 160) * 360 - 180;
-                    modelViewer.cameraOrbit = `${rY}deg 75deg auto`;
                     
-                    if (["closed", "fist", "point"].includes(hand.label)) {
-                        techDoc.classList.add('active');
+                    // 1. HORIZONTAL ROTATION
+                    const rY = ((x + w/2) / 160) * 360 - 180;
+                    
+                    // 2. DEPTH ZOOM (Z-AXIS)
+                    // We use the area of the hand bounding box as a depth proxy
+                    const handArea = w * h;
+                    const minArea = 2000; 
+                    const maxArea = 9000;
+                    const clampedArea = Math.min(Math.max(handArea, minArea), maxArea);
+                    
+                    // Map area to camera distance (25m to 3m)
+                    const distance = 25 - ((clampedArea - minArea) / (maxArea - minArea)) * 22;
+                    
+                    zoomStatus.style.width = `${((clampedArea - minArea) / (maxArea - minArea)) * 100}%`;
+                    modelViewer.cameraOrbit = `${rY}deg 75deg ${distance}m`;
+                    
+                    // 3. X-RAY TOGGLE (FIST)
+                    if (["closed", "fist"].includes(hand.label)) {
+                        applyXRay(true);
                     } else {
-                        techDoc.classList.remove('active');
+                        applyXRay(false);
                     }
                 }
                 if (isTracking) requestAnimationFrame(detect);
-            });
-        }
-
-        if (window.matchMedia("(pointer: fine)").matches) {
-            const cursor = document.getElementById('cursor');
-            document.addEventListener('mousemove', (e) => {
-                gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
-                const tiltX = (window.innerWidth / 2 - e.pageX) / 50;
-                const tiltY = (window.innerHeight / 2 - e.pageY) / 50;
-                gsap.to(".video-container", { rotationY: tiltX, rotationX: -tiltY, duration: 0.8 });
             });
         }
     </script>
