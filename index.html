@@ -24,16 +24,14 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* Ensure body is transparent to see the canvas behind it */
         body { 
             font-family: 'Inter', sans-serif; 
-            background: transparent; 
+            background: var(--bg-color); 
             color: var(--text-color); 
             overflow-x: hidden;
             position: relative;
         }
 
-        /* --- THE FIX: Explicitly positioned and sized --- */
         #matrix-canvas {
             position: fixed;
             top: 0;
@@ -42,7 +40,7 @@
             height: 100vh;
             display: block;
             z-index: -1; 
-            background-color: var(--bg-color); /* The base dark color lives here now */
+            background-color: var(--bg-color);
             pointer-events: none;
         }
 
@@ -57,13 +55,14 @@
         .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; }
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; }
 
-        /* --- 2 x 2 Video Grid --- */
+        /* --- Grid & Tilt Card --- */
         .grid-container { 
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
-            gap: 30px; 
+            gap: 40px; 
             max-width: 1200px; 
             margin: 20px 0; 
+            perspective: 1200px; /* Crucial for 3D depth */
         }
 
         .video-card { 
@@ -76,9 +75,30 @@
             border: 1px solid var(--glass-border);
             cursor: pointer;
             z-index: 1;
+            transform-style: preserve-3d; /* Allows nested 3D elements */
         }
 
-        .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.05); }
+        /* The Glint/Shine Element */
+        .shine {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+        }
+
+        .video-card iframe { 
+            width: 100%; 
+            height: 100%; 
+            border: 0; 
+            pointer-events: none; 
+            transform: scale(1.05); 
+        }
 
         /* --- Hand UI --- */
         #hand-ui { margin-top: 30px; display: flex; align-items: center; gap: 20px; }
@@ -120,15 +140,8 @@
 
         .ar-controls { display: flex; justify-content: center; margin-top: 25px; }
         .ar-launch-btn {
-            background: #fff;
-            color: #000;
-            border: none;
-            padding: 18px 45px;
-            border-radius: 4px;
-            font-weight: 700;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 0.8rem;
+            background: #fff; color: #000; border: none; padding: 18px 45px; border-radius: 4px;
+            font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.8rem;
         }
     </style>
 </head>
@@ -142,24 +155,26 @@
         <h1>XR Training Labs</h1>
         <h2 class="sub-heading">Spatial Computing Training Systems</h2>
         <p class="intro-text">
-            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application. We have experience in designing, developing and deployment of training in 3d, mixed and virtual reality, using Moodle, Web, Apps and VR headsets.
+            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application. 
         </p>
 
         <div class="ar-content">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div>
-        <p class="intro-text">
-            Here are some videos that show currently deployed training built by our team.        
-        </p>
+        
         <div class="grid-container">
             <div class="video-card" data-video="_ckPvnl4HQI">
+                <div class="shine"></div>
                 <iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?controls=0&mute=1&enablejsapi=1"></iframe>
             </div>
             <div class="video-card" data-video="2OvfLt13D6Y">
+                <div class="shine"></div>
                 <iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe>
             </div>
             <div class="video-card" data-video="8kNXOVutOJc">
+                <div class="shine"></div>
                 <iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe>
             </div>
             <div class="video-card" data-video="0m-LbA8E97Q">
+                <div class="shine"></div>
                 <iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe>
             </div>
         </div>
@@ -204,7 +219,6 @@
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
 
-        // Adjust dimensions
         function setCanvasSize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -217,52 +231,89 @@
         const drops = Array(columns).fill(0);
 
         function drawMatrix() {
-            // Background fill with slight opacity to create fading trails
             ctx.fillStyle = 'rgba(3, 5, 8, 0.1)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Set character color - Binary (1 and 0)
-            ctx.fillStyle = 'rgba(0, 255, 70, 0.35)'; // Increased opacity
+            ctx.fillStyle = 'rgba(0, 255, 70, 0.35)';
             ctx.font = fontSize + 'px "Source Code Pro", monospace';
 
             for (let i = 0; i < drops.length; i++) {
-                const text = Math.floor(Math.random() * 2); // Random 0 or 1
+                const text = Math.floor(Math.random() * 2);
                 const x = i * fontSize;
                 const y = drops[i] * fontSize;
-
                 ctx.fillText(text, x, y);
-
-                // Reset drop to top randomly
-                if (y > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
+                if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             }
         }
-
-        // Run animation loop
         setInterval(drawMatrix, 50);
     </script>
 
     <script>
-        // ... (Handtracking and Grid logic from previous version remains identical) ...
         const cards = document.querySelectorAll('.video-card');
+
         cards.forEach((card) => {
             const iframe = card.querySelector('iframe');
+            const shine = card.querySelector('.shine');
             const videoId = card.getAttribute('data-video');
             const originalSrc = iframe.src;
-            card.addEventListener('mouseenter', () => {
-                gsap.to(card, { scale: 1.15, zIndex: 100, boxShadow: "0 25px 50px rgba(99, 102, 241, 0.3)", duration: 0.4 });
-                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`;
-                cards.forEach(other => { if (other !== card) gsap.to(other, { opacity: 0.3, scale: 0.95, duration: 0.4 }); });
+
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Tilt degree (-10 to 10)
+                const rotateX = ((y - centerY) / centerY) * -10; 
+                const rotateY = ((x - centerX) / centerX) * 10;
+
+                // Shine position
+                const shineX = (x / rect.width) * 100;
+                const shineY = (y / rect.height) * 100;
+
+                gsap.to(card, { 
+                    scale: 1.15, 
+                    rotateX: rotateX,
+                    rotateY: rotateY,
+                    zIndex: 100, 
+                    boxShadow: "0 25px 50px rgba(99, 102, 241, 0.4)", 
+                    duration: 0.1,
+                    ease: "power2.out"
+                });
+
+                gsap.to(shine, {
+                    opacity: 1,
+                    x: `${shineX - 50}%`,
+                    y: `${shineY - 50}%`,
+                    duration: 0.1
+                });
             });
+
+            card.addEventListener('mouseenter', () => {
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`;
+                cards.forEach(other => { 
+                    if (other !== card) gsap.to(other, { opacity: 0.3, scale: 0.95, duration: 0.4 }); 
+                });
+            });
+
             card.addEventListener('mouseleave', () => {
-                gsap.to(card, { scale: 1.0, zIndex: 1, boxShadow: "0 0 0 rgba(0,0,0,0)", duration: 0.3 });
+                gsap.to(card, { 
+                    scale: 1.0, rotateX: 0, rotateY: 0, zIndex: 1, 
+                    boxShadow: "0 0 0 rgba(0,0,0,0)", 
+                    duration: 0.6,
+                    ease: "elastic.out(1, 0.3)" 
+                });
+
+                gsap.to(shine, { opacity: 0, duration: 0.5 });
+                
                 iframe.src = originalSrc;
                 cards.forEach(other => { gsap.to(other, { opacity: 1, scale: 1.0, duration: 0.3 }); });
             });
         });
 
+        // --- Handtracking Elements ---
         const video = document.getElementById("v-preview");
         const modelViewer = document.querySelector("#xr-model");
         const trackBtn = document.getElementById("t-btn");
@@ -270,6 +321,7 @@
         const hud = document.getElementById("tech-hud");
         let isTracking = false;
         let xRayEnabled = false;
+        let detectionModel;
 
         handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.5 }).then(m => {
             detectionModel = m;
