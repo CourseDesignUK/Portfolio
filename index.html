@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Persistent Expansion</title>
+    <title>XR Training Labs | Neural Parallax</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Source+Code+Pro&display=swap" rel="stylesheet">
@@ -14,12 +14,13 @@
 
     <style>
         :root {
-            --bg-color: #030508;
+            --bg-color: #05070a;
             --text-color: #ffffff;
             --accent-color: #6366f1;
             --hud-green: #4ade80;
             --model-bg: #111418;
             --glass-border: rgba(255, 255, 255, 0.1);
+            --grid-color: rgba(99, 102, 241, 0.15);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,18 +31,44 @@
             color: var(--text-color); 
             overflow-x: hidden;
             position: relative;
+            min-height: 200vh;
         }
 
-        #matrix-canvas {
+        /* --- PARALLAX BACKGROUND SYSTEM --- */
+        #parallax-container {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            display: block;
-            z-index: -1; 
-            background-color: var(--bg-color);
-            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #0a0c14 0%, #05070a 100%);
+        }
+
+        .parallax-layer {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            will-change: transform;
+        }
+
+        /* Deep Grid Layer */
+        #grid-layer {
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 80px 80px;
+            mask-image: radial-gradient(ellipse at center, black, transparent 80%);
+            opacity: 0.5;
+        }
+
+        /* Particle/Node Layer */
+        #particle-canvas {
+            width: 100%;
+            height: 100%;
         }
 
         nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); }
@@ -49,20 +76,19 @@
 
         section { padding: 140px 5% 60px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 10; }
         
-        h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 10px; text-transform: uppercase; letter-spacing: -2px; }
+        h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 10px; text-transform: uppercase; letter-spacing: -2px; text-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
         h2.sub-heading { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 300; color: var(--accent-color); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
         
         .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; }
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; }
 
-        /* --- Grid & Tilt Card --- */
         .grid-container { 
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
             gap: 40px; 
             max-width: 1200px; 
             margin: 20px 0; 
-            perspective: 1200px; /* Crucial for 3D depth */
+            perspective: 1500px; 
         }
 
         .video-card { 
@@ -75,79 +101,55 @@
             border: 1px solid var(--glass-border);
             cursor: pointer;
             z-index: 1;
-            transform-style: preserve-3d; /* Allows nested 3D elements */
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* The Glint/Shine Element */
         .shine {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 150%;
-            height: 150%;
-            background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+            top: 0; left: 0; width: 150%; height: 150%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
             pointer-events: none;
             z-index: 5;
             opacity: 0;
             transform: translate(-50%, -50%);
         }
 
-        .video-card iframe { 
-            width: 100%; 
-            height: 100%; 
-            border: 0; 
-            pointer-events: none; 
-            transform: scale(1.05); 
-        }
+        .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.05); }
 
-        /* --- Hand UI --- */
         #hand-ui { margin-top: 30px; display: flex; align-items: center; gap: 20px; }
         .cam-btn { background: var(--accent-color); color: white; border: none; padding: 12px 24px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; font-family: 'Source Code Pro', monospace; }
         #preview-wrapper { position: relative; width: 140px; height: 105px; display: none; }
         #v-preview { width: 100%; height: 100%; border-radius: 4px; border: 1px solid var(--accent-color); transform: scaleX(-1); filter: grayscale(1) brightness(0.8); }
 
-        /* --- Model Card --- */
         .model-card { 
-            width: 90%; 
-            height: 65vh; 
-            background: var(--model-bg); 
-            border-radius: 24px; 
-            border: 1px solid var(--glass-border); 
-            position: relative; 
-            overflow: hidden; 
-            margin: 30px auto 0 auto;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            width: 90%; height: 65vh; background: var(--model-bg); border-radius: 24px; 
+            border: 1px solid var(--glass-border); position: relative; overflow: hidden; 
+            margin: 30px auto 0 auto; box-shadow: 0 30px 60px rgba(0,0,0,0.4);
         }
         
         model-viewer { width: 100%; height: 100%; --poster-color: transparent; }
 
         #tech-hud {
-            position: absolute;
-            top: 25px;
-            left: 25px;
-            padding: 20px;
-            background: rgba(5, 7, 10, 0.9);
-            border: 1px solid var(--hud-green);
-            color: var(--hud-green);
-            font-family: 'Source Code Pro', monospace;
-            font-size: 0.7rem;
-            pointer-events: none;
-            opacity: 0;
-            transition: 0.4s ease;
-            z-index: 5;
+            position: absolute; top: 25px; left: 25px; padding: 20px;
+            background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green);
+            color: var(--hud-green); font-family: 'Source Code Pro', monospace;
+            font-size: 0.7rem; pointer-events: none; opacity: 0; transition: 0.4s ease; z-index: 5;
         }
         #tech-hud.active { opacity: 1; }
 
         .ar-controls { display: flex; justify-content: center; margin-top: 25px; }
-        .ar-launch-btn {
-            background: #fff; color: #000; border: none; padding: 18px 45px; border-radius: 4px;
-            font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.8rem;
-        }
+        .ar-launch-btn { background: #fff; color: #000; border: none; padding: 18px 45px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-    <canvas id="matrix-canvas"></canvas>
+    <div id="parallax-container">
+        <div id="grid-layer" class="parallax-layer"></div>
+        <div id="particle-layer" class="parallax-layer">
+            <canvas id="particle-canvas"></canvas>
+        </div>
+    </div>
 
     <nav><div class="logo">XR_TRAINING_LABS_v2.0</div></nav>
 
@@ -155,7 +157,7 @@
         <h1>XR Training Labs</h1>
         <h2 class="sub-heading">Spatial Computing Training Systems</h2>
         <p class="intro-text">
-            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application. 
+            Immersive training architectures designed for the next era of human-machine interaction.
         </p>
 
         <div class="ar-content">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div>
@@ -180,72 +182,78 @@
         </div>
     </section>
 
-    <section style="min-height: 100vh;">
-        <div class="ar-content">SPATIAL_SYNC: CHINOOK_CH47D</div>
-        <div id="hand-ui">
-            <button class="cam-btn" id="t-btn">INITIALIZE SENSORS</button>
-            <div id="preview-wrapper">
-                <video id="v-preview" autoplay playsinline></video>
-            </div>
-        </div>
-
-        <div class="model-card">
-            <div id="tech-hud">
-                <div>[SYSTEM STATUS: X-RAY ACTIVE]</div>
-                <div>---------------------------</div>
-                <div>STRUCTURAL INTEGRITY: 98.4%</div>
-            </div>
-
-            <model-viewer id="xr-model" 
-                src="models/chinook-2.glb" 
-                ios-src="models/Chinook-2.usdz"
-                ar ar-modes="quick-look webxr scene-viewer" 
-                ar-placement="floor"
-                camera-controls 
-                shadow-intensity="1" 
-                camera-orbit="0deg 75deg 12m"
-                touch-action="none">
-            </model-viewer>
-        </div>
-
-        <div class="ar-controls">
-            <button class="ar-launch-btn" onclick="document.querySelector('#xr-model').activateAR()">
-                Launch Spatial AR
-            </button>
-        </div>
-    </section>
-
     <script>
-        const canvas = document.getElementById('matrix-canvas');
-        const ctx = canvas.getContext('2d');
+        const gridLayer = document.getElementById('grid-layer');
+        const particleCanvas = document.getElementById('particle-canvas');
+        const pCtx = particleCanvas.getContext('2d');
+        
+        let width, height;
+        const particles = [];
 
-        function setCanvasSize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            particleCanvas.width = width;
+            particleCanvas.height = height;
         }
-        setCanvasSize();
-        window.addEventListener('resize', setCanvasSize);
 
-        const fontSize = 16;
-        const columns = Math.floor(canvas.width / fontSize);
-        const drops = Array(columns).fill(0);
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(3, 5, 8, 0.1)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'rgba(0, 255, 70, 0.35)';
-            ctx.font = fontSize + 'px "Source Code Pro", monospace';
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = Math.floor(Math.random() * 2);
-                const x = i * fontSize;
-                const y = drops[i] * fontSize;
-                ctx.fillText(text, x, y);
-                if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 2;
+                this.speed = Math.random() * 0.5 + 0.1;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                this.y -= this.speed;
+                if (this.y < 0) this.reset();
+            }
+            draw() {
+                pCtx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`;
+                pCtx.beginPath();
+                pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                pCtx.fill();
             }
         }
-        setInterval(drawMatrix, 50);
+
+        for(let i=0; i<100; i++) particles.push(new Particle());
+
+        function animateParticles() {
+            pCtx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+        animateParticles();
+
+        // Mouse Parallax Logic
+        window.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX - width/2) / width;
+            const moveY = (e.clientY - height/2) / height;
+
+            gsap.to(gridLayer, {
+                x: moveX * 30,
+                y: moveY * 30,
+                duration: 1,
+                ease: "power2.out"
+            });
+
+            gsap.to('#particle-layer', {
+                x: moveX * 60,
+                y: moveY * 60,
+                duration: 1,
+                ease: "power2.out"
+            });
+        });
     </script>
 
     <script>
@@ -261,59 +269,29 @@
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                // Tilt degree (-10 to 10)
-                const rotateX = ((y - centerY) / centerY) * -10; 
-                const rotateY = ((x - centerX) / centerX) * 10;
-
-                // Shine position
+                const rotateX = ((y - rect.height/2) / (rect.height/2)) * -10; 
+                const rotateY = ((x - rect.width/2) / (rect.width/2)) * 10;
                 const shineX = (x / rect.width) * 100;
                 const shineY = (y / rect.height) * 100;
 
-                gsap.to(card, { 
-                    scale: 1.15, 
-                    rotateX: rotateX,
-                    rotateY: rotateY,
-                    zIndex: 100, 
-                    boxShadow: "0 25px 50px rgba(99, 102, 241, 0.4)", 
-                    duration: 0.1,
-                    ease: "power2.out"
-                });
-
-                gsap.to(shine, {
-                    opacity: 1,
-                    x: `${shineX - 50}%`,
-                    y: `${shineY - 50}%`,
-                    duration: 0.1
-                });
+                gsap.to(card, { scale: 1.1, rotateX, rotateY, zIndex: 100, boxShadow: "0 25px 50px rgba(99, 102, 241, 0.4)", duration: 0.1 });
+                gsap.to(shine, { opacity: 1, x: `${shineX - 50}%`, y: `${shineY - 50}%`, duration: 0.1 });
             });
 
             card.addEventListener('mouseenter', () => {
                 iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`;
-                cards.forEach(other => { 
-                    if (other !== card) gsap.to(other, { opacity: 0.3, scale: 0.95, duration: 0.4 }); 
-                });
+                cards.forEach(other => { if (other !== card) gsap.to(other, { opacity: 0.2, scale: 0.9, duration: 0.4 }); });
             });
 
             card.addEventListener('mouseleave', () => {
-                gsap.to(card, { 
-                    scale: 1.0, rotateX: 0, rotateY: 0, zIndex: 1, 
-                    boxShadow: "0 0 0 rgba(0,0,0,0)", 
-                    duration: 0.6,
-                    ease: "elastic.out(1, 0.3)" 
-                });
-
+                gsap.to(card, { scale: 1.0, rotateX: 0, rotateY: 0, zIndex: 1, boxShadow: "0 10px 30px rgba(0,0,0,0.5)", duration: 0.6, ease: "elastic.out(1, 0.3)" });
                 gsap.to(shine, { opacity: 0, duration: 0.5 });
-                
                 iframe.src = originalSrc;
                 cards.forEach(other => { gsap.to(other, { opacity: 1, scale: 1.0, duration: 0.3 }); });
             });
         });
 
-        // --- Handtracking Elements ---
+        // (Handtracking logic remains same as previous version)
         const video = document.getElementById("v-preview");
         const modelViewer = document.querySelector("#xr-model");
         const trackBtn = document.getElementById("t-btn");
@@ -350,8 +328,7 @@
             if (enable === xRayEnabled || !modelViewer.model) return;
             xRayEnabled = enable;
             hud.classList.toggle('active', enable);
-            const materials = modelViewer.model.materials;
-            materials.forEach(mat => {
+            modelViewer.model.materials.forEach(mat => {
                 if (enable) {
                     mat.setAlphaMode("BLEND");
                     mat.pbrMetallicRoughness.setBaseColorFactor([0.2, 0.4, 1.0, 0.25]);
