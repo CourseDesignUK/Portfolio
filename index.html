@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Spatial Systems</title>
+    <title>XR Training Labs | Neural Spatial Systems</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Source+Code+Pro&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
             --hud-green: #4ade80;
             --model-bg: #111418;
             --glass-border: rgba(255, 255, 255, 0.1);
-            --grid-color: rgba(99, 102, 241, 0.15);
+            --grid-color: rgba(99, 102, 241, 0.12);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,69 +30,78 @@
             background: var(--bg-color); 
             color: var(--text-color); 
             overflow-x: hidden;
-            position: relative;
         }
 
         /* --- PARALLAX BACKGROUND --- */
         #parallax-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: radial-gradient(circle at center, #0a0c14 0%, #05070a 100%);
+            overflow: hidden;
         }
-
-        .parallax-layer { position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; will-change: transform; }
-
+        .parallax-layer { position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; }
+        
         #grid-layer {
             background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-            background-size: 80px 80px;
-            mask-image: radial-gradient(ellipse at center, black, transparent 80%);
-            opacity: 0.4;
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black, transparent 85%);
         }
+        #particle-canvas { width: 100%; height: 100%; }
 
         /* --- UI COMPONENTS --- */
         nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); }
-        .logo { font-weight: 700; font-family: 'Source Code Pro', monospace; color: var(--accent-color); font-size: 1rem; }
+        .logo { font-weight: 700; font-family: 'Source Code Pro', monospace; color: var(--accent-color); font-size: 0.9rem; letter-spacing: 1px; }
 
         section { padding: 140px 5% 60px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 10; }
         
-        h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; text-transform: uppercase; letter-spacing: -2px; margin-bottom: 10px; }
-        h2.sub-heading { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 300; color: var(--accent-color); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
+        h1 { font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 700; text-transform: uppercase; letter-spacing: -2px; margin-bottom: 10px; }
+        h2.sub-heading { font-size: clamp(1rem, 2.5vw, 1.8rem); font-weight: 300; color: var(--accent-color); margin-bottom: 30px; text-transform: uppercase; letter-spacing: 3px; }
         
-        .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; }
-        .ar-label { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.1); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; }
+        .ar-label { margin-bottom: 20px; display: inline-block; padding: 6px 16px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.1); font-family: 'Source Code Pro', monospace; font-size: 0.75rem; letter-spacing: 1px; }
 
         /* --- VIDEO GRID --- */
-        .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; max-width: 1200px; margin: 20px 0; perspective: 1000px; }
+        .grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 30px; 
+            max-width: 1200px; 
+            margin: 20px 0; 
+            perspective: 1200px; 
+        }
         .video-card { 
             position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; 
             background: #000; border: 1px solid var(--glass-border); cursor: pointer; transform-style: preserve-3d;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
         }
-        .shine { position: absolute; top: 0; left: 0; width: 150%; height: 150%; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%); pointer-events: none; z-index: 5; opacity: 0; transform: translate(-50%, -50%); }
-        .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.05); }
+        .shine { 
+            position: absolute; top: 0; left: 0; width: 150%; height: 150%; 
+            background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 70%); 
+            pointer-events: none; z-index: 5; opacity: 0; transform: translate(-50%, -50%); 
+        }
+        .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.02); transition: 0.3s; }
 
         /* --- 3D MODEL SECTION --- */
         .model-card { 
-            width: 100%; height: 60vh; background: var(--model-bg); border-radius: 24px; 
+            width: 100%; height: 65vh; background: var(--model-bg); border-radius: 20px; 
             border: 1px solid var(--glass-border); position: relative; overflow: hidden; margin-top: 30px;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
         }
         model-viewer { width: 100%; height: 100%; outline: none; }
 
         #tech-hud {
-            position: absolute; top: 20px; left: 20px; padding: 15px; background: rgba(5, 7, 10, 0.85);
+            position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9);
             border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace;
-            font-size: 0.7rem; pointer-events: none; opacity: 0; transition: 0.3s; z-index: 5;
+            font-size: 0.7rem; pointer-events: none; opacity: 0; transition: 0.3s; z-index: 5; line-height: 1.5;
         }
         #tech-hud.active { opacity: 1; }
 
-        /* --- HAND TRACKING UI --- */
-        #hand-controls { display: flex; align-items: center; gap: 20px; margin: 20px 0; }
-        .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 12px 25px; border-radius: 4px; font-weight: 700; cursor: pointer; font-family: 'Source Code Pro', monospace; font-size: 0.7rem; transition: 0.3s; }
-        .cam-btn:hover { background: #4f46e5; }
-        #v-preview { width: 120px; height: 90px; border: 1px solid var(--accent-color); border-radius: 4px; display: none; transform: scaleX(-1); filter: grayscale(1); }
+        #hand-controls { display: flex; align-items: center; gap: 20px; margin: 25px 0; }
+        .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 14px 28px; border-radius: 4px; font-weight: 700; cursor: pointer; font-family: 'Source Code Pro', monospace; font-size: 0.75rem; letter-spacing: 1px; }
+        #v-preview { width: 140px; height: 105px; border: 1px solid var(--accent-color); border-radius: 4px; display: none; transform: scaleX(-1); filter: grayscale(1) brightness(0.7); }
 
         .ar-launch-btn {
-            background: #fff; color: #000; border: none; padding: 15px 40px; border-radius: 4px;
-            font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.8rem;
-            margin: 20px auto; display: block;
+            background: #fff; color: #000; border: none; padding: 18px 50px; border-radius: 4px;
+            font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.85rem;
+            margin: 30px auto; display: block; letter-spacing: 1px;
         }
     </style>
 </head>
@@ -100,28 +109,39 @@
 
     <div id="parallax-container">
         <div id="grid-layer" class="parallax-layer"></div>
+        <div id="particle-layer" class="parallax-layer">
+            <canvas id="particle-canvas"></canvas>
+        </div>
     </div>
 
-    <nav><div class="logo">XR_TRAINING_LABS_v2.0</div></nav>
+    <nav><div class="logo">XR_TRAINING_LABS_v3.0</div></nav>
 
     <section>
-        <h1>XR Training Labs</h1>
-        <h2 class="sub-heading">Spatial Computing Systems</h2>
-        <p class="intro-text">Interactive training records and mixed reality diagnostics.</p>
-
-        <div class="ar-label">DIAGNOSTIC_RECORDS // VIDEO_VAULT</div>
+        <h1>Spatial Computing</h1>
+        <h2 class="sub-heading">Training & Diagnostics</h2>
+        
+        <div class="ar-label">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div>
+        
         <div class="grid-container">
-            <div class="video-card" data-video="_ckPvnl4HQI">
+            <div class="video-card" data-video="DfQ2xc5ygGc">
                 <div class="shine"></div>
-                <iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?controls=0&mute=1&enablejsapi=1"></iframe>
+                <iframe src="https://www.youtube.com/embed/DfQ2xc5ygGc?controls=0&mute=1&enablejsapi=1"></iframe>
             </div>
-            <div class="video-card" data-video="2OvfLt13D6Y">
+            <div class="video-card" data-video="LvSaP_7rMbM">
                 <div class="shine"></div>
-                <iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe>
+                <iframe src="https://www.youtube.com/embed/LvSaP_7rMbM?controls=0&mute=1&enablejsapi=1"></iframe>
+            </div>
+            <div class="video-card" data-video="hwnwM5zI8To">
+                <div class="shine"></div>
+                <iframe src="https://www.youtube.com/embed/hwnwM5zI8To?controls=0&mute=1&enablejsapi=1"></iframe>
+            </div>
+            <div class="video-card" data-video="inC-Lab04aA">
+                <div class="shine"></div>
+                <iframe src="https://www.youtube.com/embed/inC-Lab04aA?controls=0&mute=1&enablejsapi=1"></iframe>
             </div>
         </div>
 
-        <div class="ar-label" style="margin-top: 60px;">SPATIAL_SYNC: CHINOOK_CH47D</div>
+        <div class="ar-label" style="margin-top: 80px;">SPATIAL_SYNC: CHINOOK_CH47D</div>
         
         <div id="hand-controls">
             <button class="cam-btn" id="start-track">INITIALIZE SENSORS</button>
@@ -132,8 +152,9 @@
             <div id="tech-hud">
                 <div>[X-RAY SENSORS ACTIVE]</div>
                 <div>------------------------</div>
+                <div>SYSTEM STATUS: SCANNING</div>
                 <div>CORE INTEGRITY: 98.4%</div>
-                <div>PITCH: STABLE</div>
+                <div>GESTURE: FIST_TO_XRAY</div>
             </div>
             <model-viewer id="xr-model" 
                 src="models/chinook-2.glb" 
@@ -141,24 +162,70 @@
                 ar ar-modes="webxr scene-viewer quick-look" 
                 camera-controls 
                 shadow-intensity="1" 
-                camera-orbit="0deg 75deg 12m">
+                camera-orbit="0deg 75deg 12m"
+                exposure="1.2">
             </model-viewer>
         </div>
 
         <button class="ar-launch-btn" onclick="document.querySelector('#xr-model').activateAR()">
-            Launch WebXR Mode
+            Launch Augmented Reality
         </button>
     </section>
 
     <script>
-        // --- PARALLAX BACKGROUND ---
+        // --- 1. NEURAL PARALLAX & PARTICLES ---
+        const pCanvas = document.getElementById('particle-canvas');
+        const pCtx = pCanvas.getContext('2d');
+        let pWidth, pHeight;
+        const particles = [];
+
+        function resize() {
+            pWidth = window.innerWidth;
+            pHeight = window.innerHeight;
+            pCanvas.width = pWidth;
+            pCanvas.height = pHeight;
+        }
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * pWidth;
+                this.y = Math.random() * pHeight;
+                this.size = Math.random() * 1.5;
+                this.speed = Math.random() * 0.4 + 0.1;
+                this.opacity = Math.random() * 0.4 + 0.1;
+            }
+            update() {
+                this.y -= this.speed;
+                if (this.y < 0) this.reset();
+            }
+            draw() {
+                pCtx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`;
+                pCtx.beginPath();
+                pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                pCtx.fill();
+            }
+        }
+
+        for(let i=0; i<80; i++) particles.push(new Particle());
+
+        function animate() {
+            pCtx.clearRect(0, 0, pWidth, pHeight);
+            particles.forEach(p => { p.update(); p.draw(); });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
+        resize(); animate();
+
         window.addEventListener('mousemove', (e) => {
             const moveX = (e.clientX - window.innerWidth/2) / window.innerWidth;
             const moveY = (e.clientY - window.innerHeight/2) / window.innerHeight;
-            gsap.to('#grid-layer', { x: moveX * 40, y: moveY * 40, duration: 1.5, ease: "power2.out" });
+            gsap.to('#grid-layer', { x: moveX * 45, y: moveY * 45, duration: 2, ease: "power2.out" });
+            gsap.to('#particle-layer', { x: moveX * 80, y: moveY * 80, duration: 2, ease: "power2.out" });
         });
 
-        // --- VIDEO TILT & SHINE ---
+        // --- 2. VIDEO TILT & SHINE ---
         const cards = document.querySelectorAll('.video-card');
         cards.forEach(card => {
             const iframe = card.querySelector('iframe');
@@ -169,73 +236,73 @@
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                const rX = ((y - rect.height/2) / (rect.height/2)) * -10;
-                const rY = ((x - rect.width/2) / (rect.width/2)) * 10;
+                const rX = ((y - rect.height/2) / (rect.height/2)) * -12;
+                const rY = ((x - rect.width/2) / (rect.width/2)) * 12;
                 
-                gsap.to(card, { rotateX: rX, rotateY: rY, scale: 1.05, duration: 0.1 });
+                gsap.to(card, { rotateX: rX, rotateY: rY, scale: 1.08, zIndex: 50, duration: 0.1 });
                 gsap.to(shine, { opacity: 1, x: `${(x/rect.width)*100 - 50}%`, y: `${(y/rect.height)*100 - 50}%`, duration: 0.1 });
             });
 
             card.addEventListener('mouseenter', () => {
                 iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`;
+                cards.forEach(other => { if(other !== card) gsap.to(other, { opacity: 0.2, scale: 0.9, duration: 0.4 }); });
             });
 
             card.addEventListener('mouseleave', () => {
-                gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, duration: 0.5, ease: "elastic.out(1, 0.3)" });
+                gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, zIndex: 1, duration: 0.6, ease: "elastic.out(1, 0.3)" });
                 gsap.to(shine, { opacity: 0 });
                 iframe.src = iframe.src.replace("&autoplay=1", "");
+                cards.forEach(other => { gsap.to(other, { opacity: 1, scale: 1, duration: 0.4 }); });
             });
         });
 
-        // --- HAND TRACKING & 3D INTERACTION ---
-        const modelViewer = document.querySelector('#xr-model');
-        const video = document.getElementById("v-preview");
-        const trackBtn = document.getElementById("start-track");
+        // --- 3. HAND TRACKING & X-RAY ---
+        const mv = document.querySelector('#xr-model');
+        const vTrack = document.getElementById("v-preview");
+        const btnTrack = document.getElementById("start-track");
         const hud = document.getElementById("tech-hud");
         let isTracking = false;
-        let detectionModel;
+        let dModel;
 
         handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.6 }).then(m => {
-            detectionModel = m;
-            trackBtn.innerText = "SENSORS READY";
+            dModel = m;
+            btnTrack.innerText = "SENSORS READY";
         });
 
-        trackBtn.addEventListener("click", () => {
+        btnTrack.addEventListener("click", () => {
             if (!isTracking) {
-                handTrack.startVideo(video).then(status => {
+                handTrack.startVideo(vTrack).then(status => {
                     if (status) {
                         isTracking = true;
-                        video.style.display = "block";
-                        trackBtn.innerText = "STOP SENSORS";
-                        runDetection();
+                        vTrack.style.display = "block";
+                        btnTrack.innerText = "STOP SENSORS";
+                        detectHand();
                     }
                 });
             } else {
-                handTrack.stopVideo(video);
+                handTrack.stopVideo(vTrack);
                 isTracking = false;
-                video.style.display = "none";
-                trackBtn.innerText = "INITIALIZE SENSORS";
+                vTrack.style.display = "none";
+                btnTrack.innerText = "INITIALIZE SENSORS";
             }
         });
 
-        function runDetection() {
-            detectionModel.detect(video).then(predictions => {
-                const hand = predictions.find(p => p.label !== 'face');
+        function detectHand() {
+            dModel.detect(vTrack).then(preds => {
+                const hand = preds.find(p => p.label !== 'face');
                 if (hand) {
-                    // Map hand X position to 3D Orbit
                     const [x, y, w, h] = hand.bbox;
-                    const orbitX = ((x + w/2) / 120) * 360 - 180;
-                    modelViewer.cameraOrbit = `${orbitX}deg 75deg 12m`;
+                    const orbX = ((x + w/2) / 140) * 360 - 180;
+                    mv.cameraOrbit = `${orbX}deg 75deg 12m`;
 
-                    // Gesture: Closed Hand/Fist for X-Ray
-                    const isXray = ["closed", "fist", "pinch"].includes(hand.label);
-                    hud.classList.toggle('active', isXray);
+                    const xray = ["closed", "fist", "pinch"].includes(hand.label);
+                    hud.classList.toggle('active', xray);
                     
-                    if (modelViewer.model) {
-                        modelViewer.model.materials.forEach(mat => {
-                            if (isXray) {
+                    if (mv.model) {
+                        mv.model.materials.forEach(mat => {
+                            if (xray) {
                                 mat.setAlphaMode("BLEND");
-                                mat.pbrMetallicRoughness.setBaseColorFactor([0.3, 0.5, 1.0, 0.3]);
+                                mat.pbrMetallicRoughness.setBaseColorFactor([0.2, 0.4, 1.0, 0.25]);
                             } else {
                                 mat.setAlphaMode("OPAQUE");
                                 mat.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]);
@@ -243,7 +310,7 @@
                         });
                     }
                 }
-                if (isTracking) requestAnimationFrame(runDetection);
+                if (isTracking) requestAnimationFrame(detectHand);
             });
         }
     </script>
