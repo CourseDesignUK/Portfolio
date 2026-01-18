@@ -57,7 +57,16 @@
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 10px; text-transform: uppercase; letter-spacing: -2px; }
         h2.sub-heading { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 300; color: var(--accent-color); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
         
-        .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; }
+        /* TEXT JUSTIFICATION */
+        .intro-text { 
+            font-size: 1.1rem; 
+            color: #aaa; 
+            max-width: 800px; 
+            line-height: 1.6; 
+            margin-bottom: 40px; 
+            text-align: justify; /* Justified text */
+            hyphens: auto;
+        }
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; }
 
         /* --- 2x4 VIDEO GRID --- */
@@ -87,12 +96,56 @@
         }
         .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.02); }
 
-        /* --- 3D MODEL SECTION --- */
-        .model-card { 
-            width: 100%; height: 65vh; background: var(--model-bg); border-radius: 24px; 
-            border: 1px solid var(--glass-border); position: relative; overflow: hidden; margin: 30px auto 0 auto;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        /* --- DYNAMIC SPATIAL INTERACTION AREA --- */
+        .spatial-sync-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 1600px;
+            margin: 30px auto 0;
+            gap: 30px;
+            align-items: flex-start;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
+        .model-card { 
+            width: 66.66%; /* 2/3 width */
+            height: 65vh; 
+            background: var(--model-bg); 
+            border-radius: 24px; 
+            border: 1px solid var(--glass-border); 
+            position: relative; 
+            overflow: hidden;
+            margin: 0 auto; /* Centered by default */
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-shrink: 0;
+        }
+
+        /* Layout when tracking is active */
+        .spatial-sync-wrapper.tracking-active .model-card {
+            margin: 0; /* Shifts left */
+        }
+
+        #preview-wrapper { 
+            width: 33.33%; /* 1/3 width */
+            height: 65vh; /* Match model height */
+            position: relative; 
+            display: none; /* Hidden by default */
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--accent-color);
+            background: #000;
+            transition: all 0.6s ease;
+        }
+
+        #v-preview { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; /* Fill the 1/3 window */
+            transform: scaleX(-1); 
+            filter: grayscale(1) brightness(0.8) contrast(1.2); 
+        }
+
         model-viewer { width: 100%; height: 100%; outline: none; }
 
         #tech-hud {
@@ -102,11 +155,8 @@
         }
         #tech-hud.active { opacity: 1; }
 
-        /* --- HAND CONTROL UI --- */
-        #hand-ui { margin-top: 30px; display: flex; align-items: center; gap: 20px; }
+        #hand-ui { margin-bottom: 20px; display: flex; align-items: center; gap: 20px; }
         .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 12px 24px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; font-family: 'Source Code Pro', monospace; }
-        #preview-wrapper { position: relative; width: 140px; height: 105px; display: none; }
-        #v-preview { width: 100%; height: 100%; border-radius: 4px; border: 1px solid var(--accent-color); transform: scaleX(-1); filter: grayscale(1) brightness(0.8); }
 
         .ar-controls { display: flex; justify-content: center; margin-top: 25px; }
         .ar-launch-btn {
@@ -130,8 +180,7 @@
         <h1>XR Training Labs</h1>
         <h2 class="sub-heading">Spatial Computing Training Systems</h2>
         <p class="intro-text">
-            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application. <br>
-            We have experience in designing, developing and deployment of training in 3d, mixed and virtual reality, using Moodle, Web, Apps and VR headsets.
+            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application. We have experience in designing, developing and deployment of training in 3d, mixed and virtual reality, using Moodle, Web, Apps and VR headsets.
         </p>
 
         <div class="ar-content">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div>
@@ -149,45 +198,42 @@
             <div class="video-card" data-video="hwnwM5zI8To"><div class="shine"></div><iframe src="https://www.youtube.com/embed/hwnwM5zI8To?controls=0&mute=1&enablejsapi=1"></iframe></div>
             <div class="video-card" data-video="inC-Lab04aA"><div class="shine"></div><iframe src="https://www.youtube.com/embed/inC-Lab04aA?controls=0&mute=1&enablejsapi=1"></iframe></div>
         </div>
-    </section>
 
-     <p class="intro-text">
-            Team members has successfully build and deployed training for the UK Military, ensuring full integration into Learning Management Systems.<br>
-            We have expertise in building and maintaining LMS as well as content, with full documentation compliant with ISO9001.<br>
-            With a backgroung in Miltary Avaiation instruction XR Training Labs aims to bring the right solution to the problem, including Virtual reality, Mixed reality and 3D.<br>
-            We offer a single point of contact to bring your training to life.
+        <p class="intro-text" style="margin-top: 40px; max-width: 100%;">
+            Team members has successfully build and deployed training for the UK Military, ensuring full integration into Learning Management Systems. We have expertise in building and maintaining LMS as well as content, with full documentation compliant with ISO9001. With a backgroung in Miltary Avaiation instruction XR Training Labs aims to bring the right solution to the problem, including Virtual reality, Mixed reality and 3D. We offer a single point of contact to bring your training to life.
         </p>
+    </section>
 
     <section style="min-height: 100vh;">
         <div class="ar-content">SPATIAL_SYNC: CHINOOK_CH47D</div>
+        
         <div id="hand-ui">
             <button class="cam-btn" id="t-btn">INITIALIZE SENSORS</button>
+        </div>
+
+        <div class="spatial-sync-wrapper" id="sync-engine">
+            <div class="model-card">
+                <div id="tech-hud">
+                    <div>[SYSTEM STATUS: X-RAY ACTIVE]</div>
+                    <div>---------------------------</div>
+                    <div>STRUCTURAL INTEGRITY: 98.4%</div>
+                </div>
+
+                <model-viewer id="xr-model" 
+                    src="models/chinook-2.glb" 
+                    ios-src="models/Chinook-2.usdz"
+                    ar ar-modes="quick-look webxr scene-viewer" 
+                    ar-placement="floor"
+                    camera-controls 
+                    shadow-intensity="1" 
+                    camera-orbit="0deg 75deg 12m"
+                    touch-action="none">
+                </model-viewer>
+            </div>
+
             <div id="preview-wrapper">
                 <video id="v-preview" autoplay playsinline></video>
             </div>
-        </div>
-
-         <p class="intro-text">
-             
-        </p>
-
-        <div class="model-card">
-            <div id="tech-hud">
-                <div>[SYSTEM STATUS: X-RAY ACTIVE]</div>
-                <div>---------------------------</div>
-                <div>STRUCTURAL INTEGRITY: 98.4%</div>
-            </div>
-
-            <model-viewer id="xr-model" 
-                src="models/chinook-2.glb" 
-                ios-src="models/Chinook-2.usdz"
-                ar ar-modes="quick-look webxr scene-viewer" 
-                ar-placement="floor"
-                camera-controls 
-                shadow-intensity="1" 
-                camera-orbit="0deg 75deg 12m"
-                touch-action="none">
-            </model-viewer>
         </div>
 
         <div class="ar-controls">
@@ -198,7 +244,7 @@
     </section>
 
     <script>
-        // --- 1. PARALLAX & PARTICLES ---
+        // --- 1. PARALLAX ---
         const pCanvas = document.getElementById('particle-canvas');
         const pCtx = pCanvas.getContext('2d');
         let pWidth, pHeight;
@@ -250,7 +296,7 @@
             gsap.to('#particle-layer', { x: moveX * 80, y: moveY * 80, duration: 2.5, ease: "power2.out" });
         });
 
-        // --- 2. EXAGGERATED VIDEO TILT & SCALE ---
+        // --- 2. VIDEO TILT & SCALE ---
         const cards = document.querySelectorAll('.video-card');
         cards.forEach(card => {
             const iframe = card.querySelector('iframe');
@@ -281,11 +327,12 @@
             });
         });
 
-        // --- 3. HAND TRACKING & X-RAY ---
+        // --- 3. HAND TRACKING & DYNAMIC LAYOUT ---
         const mv = document.querySelector('#xr-model');
         const vTrack = document.getElementById("v-preview");
         const btnTrack = document.getElementById("t-btn");
         const previewWrapper = document.getElementById("preview-wrapper");
+        const syncEngine = document.getElementById("sync-engine");
         const hud = document.getElementById("tech-hud");
         let isTracking = false;
         let dModel;
@@ -300,6 +347,8 @@
                 handTrack.startVideo(vTrack).then(status => {
                     if (status) {
                         isTracking = true;
+                        // Trigger CSS Layout shift
+                        syncEngine.classList.add('tracking-active');
                         previewWrapper.style.display = "block";
                         btnTrack.innerText = "SENSOR ONLINE";
                         detectHand();
@@ -308,6 +357,8 @@
             } else {
                 handTrack.stopVideo(vTrack);
                 isTracking = false;
+                // Revert CSS Layout
+                syncEngine.classList.remove('tracking-active');
                 previewWrapper.style.display = "none";
                 btnTrack.innerText = "INITIALIZE SENSORS";
             }
