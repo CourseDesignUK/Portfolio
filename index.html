@@ -42,7 +42,7 @@
         .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; text-align: justify; hyphens: auto; } 
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; } 
 
-        /* --- VIDEO GRID WITH TILT --- */ 
+        /* --- VIDEO GRID TILT RESTORED --- */ 
         .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1600px; margin: 20px auto; perspective: 2000px; } 
         @media (max-width: 1100px) { .grid-container { grid-template-columns: repeat(2, 1fr); } } 
         @media (max-width: 600px) { .grid-container { grid-template-columns: 1fr; } } 
@@ -55,22 +55,51 @@
         .shine { position: absolute; top: 0; left: 0; width: 150%; height: 150%; background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%); pointer-events: none; z-index: 5; opacity: 0; transform: translate(-50%, -50%); } 
         .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.02); } 
 
-        /* --- IPHONE INTERFACE --- */
+        /* --- IPHONE WRAPPER --- */
         .iphone-wrapper { display: flex; justify-content: center; padding: 60px 0; } 
         .iphone-device { width: 320px; height: 650px; background: #111; border-radius: 40px; border: 8px solid #222; position: relative; box-shadow: 0 50px 100px rgba(0,0,0,0.8); overflow: hidden; } 
         .iphone-device::before { content: ''; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 100px; height: 25px; background: #000; border-radius: 20px; z-index: 20; } 
         .iphone-screen { width: 100%; height: 100%; background: #000; } 
         .iphone-screen iframe { width: 100%; height: 100%; border: none; } 
 
-        /* --- SPATIAL SYNC (ORIGINAL HAND TRACKING LAYOUT) --- */ 
-        .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto; gap: 30px; align-items: flex-start; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
-        .model-card { width: 100%; height: 75vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); flex-shrink: 0; } 
-        .spatial-sync-wrapper.tracking-active .model-card { width: 66.66%; } 
+        /* --- ORIGINAL FULL-WINDOW CHINOOK LAYOUT --- */ 
+        .spatial-sync-wrapper { 
+            display: flex; 
+            width: 100%; 
+            max-width: 1600px; 
+            margin: 30px auto; 
+            gap: 30px; 
+            align-items: center; /* Center Vertically */
+            justify-content: center; /* Center Horizontally */
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
+        } 
+        .model-card { 
+            width: 100%; 
+            height: 75vh; 
+            background: var(--model-bg); 
+            border-radius: 24px; 
+            border: 1px solid var(--glass-border); 
+            position: relative; 
+            overflow: hidden; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4); 
+            flex-shrink: 0; 
+        } 
+        .spatial-sync-wrapper.tracking-active .model-card { 
+            width: 66%; 
+        } 
 
-        #preview-wrapper { width: 33.33%; height: 75vh; border-radius: 24px; overflow: hidden; border: 1px solid var(--accent-color); background: #000; display: none; } 
+        #preview-wrapper { 
+            width: 33%; 
+            height: 60vh; 
+            border-radius: 24px; 
+            overflow: hidden; 
+            border: 1px solid var(--accent-color); 
+            background: #000; 
+            display: none; 
+        } 
         #v-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); } 
 
-        #tech-hud { position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace; font-size: 0.7rem; opacity: 0; transition: 0.4s; z-index: 5; pointer-events: none;} 
+        #tech-hud { position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace; font-size: 0.7rem; opacity: 0; transition: 0.4s; z-index: 5; pointer-events: none; } 
         #tech-hud.active { opacity: 1; } 
         #hand-ui { margin-bottom: 20px; } 
         .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 14px 28px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Source Code Pro', monospace; transition: 0.3s; } 
@@ -140,19 +169,19 @@
                             </div>
                             <model-viewer id='m' camera-controls auto-rotate shadow-intensity='2'></model-viewer>
                             <script>
-                                /* FIXED PATHS TO ROOT /models/ */
+                                /* RELATIVE PATHS FOR IPHONE WINDOW */
                                 const d = [
-                                    { n: 'Airbus A319', f: '/models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'Oxygen, Li-ion', rescue: '4 Main exits' },
-                                    { n: 'Airbus A320', f: '/models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Dust', rescue: '4 Main exits, 4 Overwing' },
-                                    { n: 'Airbus A321', f: '/models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Cryo Cooling', rescue: '8 exits' },
-                                    { n: 'Airbus A380', f: '/models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Massive Fuel', rescue: '16 Floor-level exits' },
-                                    { n: 'CH-47 Chinook', f: '/models/chinook-2.glb', cat: 'Tactical', p: '33', fuel: '3,914 L', haz: 'Military Spec', rescue: 'Rear ramp' }
+                                    { n: 'Airbus A319', f: 'models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'Oxygen, Li-ion', rescue: '4 Main exits' },
+                                    { n: 'Airbus A320', f: 'models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Dust', rescue: '4 Main exits, 4 Overwing' },
+                                    { n: 'Airbus A321', f: 'models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Cryo Cooling', rescue: '8 exits' },
+                                    { n: 'Airbus A380', f: 'models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Massive Fuel', rescue: '16 Floor-level exits' },
+                                    { n: 'CH-47 Chinook', f: 'models/chinook-2.glb', cat: 'Tactical', p: '33', fuel: '3,914 L', haz: 'Military Spec', rescue: 'Rear ramp' }
                                 ];
                                 const sel = document.getElementById('s');
                                 d.forEach((x, i) => { const o = document.createElement('option'); o.value = i; o.innerText = x.n; sel.appendChild(o); });
                                 function u(i) {
                                     const a = d[i];
-                                    document.getElementById('m').src = a.f;
+                                    document.getElementById('m').src = '../' + a.f;
                                     document.getElementById('t').innerText = a.n;
                                     document.getElementById('specs').innerHTML = `
                                         <div class='spec-item'><span class='label'>ICAO ARFF CAT</span>` + a.cat + `</div>
@@ -185,14 +214,14 @@
                     <div>---------------------------</div> 
                     <div>STRUCTURAL INTEGRITY: 98.4%</div> 
                 </div> 
-                <model-viewer id="xr-model" src="/models/chinook-2.glb" camera-controls shadow-intensity="1" camera-orbit="0deg 75deg 12m" style="width:100%; height:100%;"></model-viewer> 
+                <model-viewer id="xr-model" src="models/chinook-2.glb" camera-controls shadow-intensity="1" camera-orbit="0deg 75deg 12m" style="width:100%; height:100%;"></model-viewer> 
             </div> 
             <div id="preview-wrapper"><video id="v-preview" autoplay playsinline muted width="640" height="480"></video></div> 
         </div> 
     </section> 
 
     <script> 
-        /* --- VIDEO TILT PHYSICS --- */
+        /* --- VIDEO TILT PHYSICS RESTORED --- */
         const cards = document.querySelectorAll('.video-card'); 
         cards.forEach(card => { 
             const iframe = card.querySelector('iframe'); 
@@ -222,7 +251,7 @@
             }); 
         });
 
-        /* --- HAND TRACKING & X-RAY LOGIC --- */
+        /* --- ORIGINAL HAND TRACKING LOGIC RESTORED --- */
         const mv = document.querySelector('#xr-model'); 
         const vTrack = document.getElementById("v-preview"); 
         const btnTrack = document.getElementById("t-btn"); 
