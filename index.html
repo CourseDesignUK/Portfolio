@@ -27,7 +27,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; } 
         body { font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-color); overflow-x: hidden; } 
 
-        /* --- BACKGROUND --- */
         #parallax-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #0a0c14 0%, #030508 100%); overflow: hidden; } 
         .parallax-layer { position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; will-change: transform; } 
         #grid-layer { background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(ellipse at center, black, transparent 85%); } 
@@ -42,29 +41,29 @@
         .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; text-align: justify; } 
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; } 
 
-        /* --- VIDEO GRID --- */ 
         .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1600px; margin: 20px auto; perspective: 2000px; } 
         .video-card { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); cursor: pointer; transform-style: preserve-3d; transition: z-index 0.3s; } 
         .shine { position: absolute; top: 0; left: 0; width: 150%; height: 150%; background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%); pointer-events: none; z-index: 5; opacity: 0; transform: translate(-50%, -50%); } 
         .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.02); } 
 
-        /* --- IPHONE SECTION WITH TILT --- */
-        .iphone-section-container { display: flex; align-items: center; justify-content: space-between; gap: 50px; max-width: 1400px; margin: 40px auto; padding: 0 5%; perspective: 2000px; }
+        .iphone-section-container { display: flex; align-items: center; justify-content: space-between; gap: 50px; max-width: 1400px; margin: 40px auto; padding: 0 5%; }
         .app-description { flex: 1; color: #ccc; }
         .app-description h3 { color: var(--accent-color); font-size: 1.8rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
-        .app-description li { margin-bottom: 12px; padding-left: 20px; border-left: 2px solid var(--hud-green); font-size: 0.95rem; list-style: none;}
+        .app-description p { line-height: 1.7; margin-bottom: 20px; font-size: 1.05rem; }
+        .app-description ul { list-style: none; }
+        .app-description li { margin-bottom: 12px; padding-left: 20px; border-left: 2px solid var(--hud-green); font-size: 0.95rem; }
 
         .iphone-wrapper { flex-shrink: 0; display: flex; justify-content: center; padding: 20px 0; } 
-        .iphone-device { 
-            width: 320px; height: 650px; background: #111; border-radius: 40px; border: 8px solid #222; 
-            position: relative; box-shadow: 0 50px 100px rgba(0,0,0,0.8); overflow: hidden; 
-            transform-style: preserve-3d; will-change: transform;
-        } 
+        .iphone-device { width: 320px; height: 650px; background: #111; border-radius: 40px; border: 8px solid #222; position: relative; box-shadow: 0 50px 100px rgba(0,0,0,0.8); overflow: hidden; } 
         .iphone-device::before { content: ''; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 100px; height: 25px; background: #000; border-radius: 20px; z-index: 20; } 
         .iphone-screen { width: 100%; height: 100%; background: #000; } 
         .iphone-screen iframe { width: 100%; height: 100%; border: none; } 
 
-        /* --- CHINOOK MANIPULATION --- */ 
+        @media (max-width: 1000px) {
+            .iphone-section-container { flex-direction: column; text-align: center; }
+            .app-description li { border-left: none; border-bottom: 1px solid var(--hud-green); padding-bottom: 10px; }
+        }
+
         .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto; gap: 30px; align-items: center; justify-content: center; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
         .model-card { width: 100%; height: 75vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); flex-shrink: 0; } 
         .spatial-sync-wrapper.tracking-active .model-card { width: 66.66%; } 
@@ -82,12 +81,14 @@
         <div id="particle-layer" class="parallax-layer"><canvas id="particle-canvas"></canvas></div> 
     </div> 
 
-    <nav><div class="logo">XR_TRAINING_LABS_v2.1</div></nav> 
+    <nav><div class="logo">XR_TRAINING_LABS_v2.0</div></nav> 
 
     <section> 
         <h1>XR Training Labs</h1> 
         <h2 class="sub-heading">Spatial Computing Training Systems</h2> 
-        <p class="intro-text">Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application.</p>
+        <p class="intro-text"> 
+            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application. We have experience in designing, developing and deployment of training in 3d, mixed and virtual reality, using Moodle, Web, Apps and VR headsets.
+        </p>
 
         <div class="ar-content">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div> 
          
@@ -107,16 +108,17 @@
         <div class="iphone-section-container">
             <div class="app-description">
                 <h3>Aero Asset Viewer</h3>
-                <p>Designed for defense firefighters, this mobile-first spatial computing application converts technical specifications into life-saving interactive data.</p>
+                <p>Designed for the next generation of defense firefighters, the Aero Asset Viewer is a mobile-first spatial computing application that transforms technical manuals into interactive training tools.</p>
                 <ul>
-                    <li><strong>Augmented Reality:</strong> Deploy aircraft to scale for tactical drill planning.</li>
-                    <li><strong>Munitions Library:</strong> Hazard data for ordnance and propellants.</li>
-                    <li><strong>Firefighting Cards:</strong> Critical ICAO ARFF data for Airbus and military transport fleets.</li>
+                    <li><strong>Augmented Reality Integration:</strong> Deploy 1:1 scale aircraft models directly onto the airfield to practice tactical positioning and egress routes.</li>
+                    <li><strong>Multisector Asset Library:</strong> Access a wide range of civilian aircraft, military transports, and tactical munitions hazards.</li>
+                    <li><strong>ICAO ARFF Firefighting Cards:</strong> Instantly retrieve critical data on fuel loads, passenger capacities, and rescue exit locations for civilian Airbus fleets.</li>
+                    <li><strong>Munition Hazard Intelligence:</strong> Critical data for tactical response when encountering unexploded ordnance or military-grade propellants.</li>
                 </ul>
             </div>
 
             <div class="iphone-wrapper">
-                <div class="iphone-device" id="iphone-tilt">
+                <div class="iphone-device">
                     <div class="iphone-screen">
                         <iframe srcdoc="
                             <!DOCTYPE html>
@@ -154,22 +156,27 @@
                                     <select id='s' onchange='u(this.value)'></select>
                                     <button onclick='document.getElementById(&quot;details&quot;).classList.add(&quot;active&quot;)' style='background:#5d7a8c; color:white; border:none; padding:5px 10px; border-radius:4px; font-size:10px;'>FACTS</button>
                                 </div>
-                                <model-viewer id='m' camera-controls auto-rotate src='models/airbus_a319.glb'></model-viewer>
+                                <model-viewer id='m' camera-controls auto-rotate shadow-intensity='2'></model-viewer>
                                 <script>
                                     const d = [
-                                        { n: 'Airbus A319', f: 'models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'Oxygen, Li-ion' },
-                                        { n: 'Airbus A320', f: 'models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Dust' },
-                                        { n: 'Airbus A321', f: 'models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Hydraulic Skydrol' },
-                                        { n: 'Airbus A380', f: 'models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Massive Fuel' },
-                                        { n: 'CH-47 Chinook', f: 'models/chinook-2.glb', cat: 'Tactical', p: '33', fuel: '3,914 L', haz: 'Military Spec' }
+                                        { n: 'Airbus A319', f: 'models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'Oxygen, Li-ion', rescue: '4 Main exits' },
+                                        { n: 'Airbus A320', f: 'models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Dust', rescue: '4 Main exits, 4 Overwing' },
+                                        { n: 'Airbus A321', f: 'models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Hydraulic Skydrol', rescue: '8 exits' },
+                                        { n: 'Airbus A380', f: 'models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Massive Fuel', rescue: '16 Floor-level exits' },
+                                        { n: 'CH-47 Chinook', f: 'models/chinook-2.glb', cat: 'Tactical', p: '33', fuel: '3,914 L', haz: 'Military Spec', rescue: 'Rear ramp' }
                                     ];
                                     const sel = document.getElementById('s');
                                     d.forEach((x, i) => { const o = document.createElement('option'); o.value = i; o.innerText = x.n; sel.appendChild(o); });
                                     function u(i) {
                                         const a = d[i];
-                                        document.getElementById('m').src = '../' + a.f;
+                                        document.getElementById('m').src = 'models/' + a.f.split('/').pop();
                                         document.getElementById('t').innerText = a.n;
-                                        document.getElementById('specs').innerHTML = `<div class='spec-item'><span class='label'>ICAO CAT</span>` + a.cat + `</div><div class='spec-item'><span class='label'>MAX PAX</span>` + a.p + `</div><div class='spec-item'><span class='label'>FUEL</span>` + a.fuel + `</div><div class='spec-item'><span class='label'>HAZARDS</span>` + a.haz + `</div>`;
+                                        document.getElementById('specs').innerHTML = `
+                                            <div class='spec-item'><span class='label'>ICAO ARFF CAT</span>` + a.cat + `</div>
+                                            <div class='spec-item'><span class='label'>MAX PAX</span>` + a.p + `</div>
+                                            <div class='spec-item'><span class='label'>FUEL LOAD</span>` + a.fuel + `</div>
+                                            <div class='spec-item'><span class='label'>CIVILIAN HAZARDS</span>` + a.haz + `</div>
+                                        `;
                                     }
                                     u(0);
                                 </script>
@@ -180,6 +187,10 @@
                 </div>
             </div>
         </div>
+
+        <p class="intro-text" style="margin-top: 40px; max-width: 100%;"> 
+            Team members have successfully built and deployed training for the UK Military. We offer a single point of contact to bring your training to life with Virtual reality, Mixed reality and 3D.
+        </p> 
     </section> 
 
     <section> 
@@ -187,7 +198,11 @@
         <div id="hand-ui"><button class="cam-btn" id="t-btn">INITIALIZING SENSORS...</button></div> 
         <div class="spatial-sync-wrapper" id="sync-engine"> 
             <div class="model-card"> 
-                <div id="tech-hud"><div>[SYSTEM STATUS: X-RAY ACTIVE]</div></div> 
+                <div id="tech-hud"> 
+                    <div>[SYSTEM STATUS: X-RAY ACTIVE]</div> 
+                    <div>---------------------------</div> 
+                    <div>STRUCTURAL INTEGRITY: 98.4%</div> 
+                </div> 
                 <model-viewer id="xr-model" src="models/chinook-2.glb" camera-controls shadow-intensity="1" camera-orbit="0deg 75deg 12m" style="width:100%; height:100%;"></model-viewer> 
             </div> 
             <div id="preview-wrapper"><video id="v-preview" autoplay playsinline muted width="640" height="480"></video></div> 
@@ -195,16 +210,7 @@
     </section> 
 
     <script> 
-        /* --- IPHONE TILT PHYSICS --- */
-        const phone = document.getElementById('iphone-tilt');
-        window.addEventListener('mousemove', (e) => {
-            const rect = phone.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width/2;
-            const y = e.clientY - rect.top - rect.height/2;
-            gsap.to(phone, { rotateY: x * 0.05, rotateX: -y * 0.05, duration: 0.5, ease: "power2.out" });
-        });
-
-        /* --- VIDEO TILT & HOVER --- */
+        /* --- HAND TRACKING & VIDEO TILT LOGIC --- */
         const cards = document.querySelectorAll('.video-card'); 
         cards.forEach(card => { 
             const iframe = card.querySelector('iframe'); 
@@ -214,7 +220,9 @@
                 const rect = card.getBoundingClientRect(); 
                 const x = e.clientX - rect.left; 
                 const y = e.clientY - rect.top; 
-                gsap.to(card, { rotateX: ((y - rect.height/2) / (rect.height/2)) * -20, rotateY: ((x - rect.width/2) / (rect.width/2)) * 20, scale: 1.4, zIndex: 100, boxShadow: "0 40px 80px rgba(99, 102, 241, 0.6)", duration: 0.1 }); 
+                const rX = ((y - rect.height/2) / (rect.height/2)) * -20; 
+                const rY = ((x - rect.width/2) / (rect.width/2)) * 20; 
+                gsap.to(card, { rotateX: rX, rotateY: rY, scale: 1.4, zIndex: 100, boxShadow: "0 40px 80px rgba(99, 102, 241, 0.6)", duration: 0.1 }); 
                 gsap.to(shine, { opacity: 1, x: `${(x/rect.width)*100 - 50}%`, y: `${(y/rect.height)*100 - 50}%`, duration: 0.1 }); 
             }); 
             card.addEventListener('mouseenter', () => { 
@@ -222,14 +230,13 @@
                 cards.forEach(other => { if(other !== card) gsap.to(other, { opacity: 0.1, scale: 0.8, filter: "blur(4px)", duration: 0.4 }); }); 
             }); 
             card.addEventListener('mouseleave', () => { 
-                gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, zIndex: 1, boxShadow: "0 10px 20px rgba(0,0,0,0.4)", duration: 0.6 }); 
+                gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, zIndex: 1, boxShadow: "0 10px 20px rgba(0,0,0,0.4)", duration: 0.6, ease: "elastic.out(1, 0.3)" }); 
                 gsap.to(shine, { opacity: 0 }); 
                 iframe.src = iframe.src.replace("&autoplay=1", ""); 
                 cards.forEach(other => { gsap.to(other, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.4 }); }); 
             }); 
         });
 
-        /* --- HAND TRACKING --- */
         const mv = document.querySelector('#xr-model'); 
         const vTrack = document.getElementById("v-preview"); 
         const btnTrack = document.getElementById("t-btn"); 
@@ -248,10 +255,22 @@
         btnTrack.addEventListener("click", () => { 
             if (!isTracking) { 
                 handTrack.startVideo(vTrack).then(status => { 
-                    if (status) { isTracking = true; syncEngine.classList.add('tracking-active'); previewWrapper.style.display = "block"; btnTrack.innerText = "TERMINATE"; detectHand(); }
+                    if (status) { 
+                        isTracking = true; 
+                        syncEngine.classList.add('tracking-active'); 
+                        previewWrapper.style.display = "block"; 
+                        btnTrack.innerText = "TERMINATE SENSORS"; 
+                        btnTrack.style.background = "var(--error-red)"; 
+                        detectHand(); 
+                    } 
                 }); 
             } else { 
-                handTrack.stopVideo(vTrack); isTracking = false; syncEngine.classList.remove('tracking-active'); previewWrapper.style.display = "none"; btnTrack.innerText = "INITIALIZE"; 
+                handTrack.stopVideo(vTrack); 
+                isTracking = false; 
+                syncEngine.classList.remove('tracking-active'); 
+                previewWrapper.style.display = "none"; 
+                btnTrack.innerText = "INITIALIZE SENSORS"; 
+                btnTrack.style.background = "var(--accent-color)"; 
             } 
         }); 
 
@@ -261,16 +280,22 @@
                 const hand = preds.find(p => p.label !== 'face'); 
                 if (hand) { 
                     const [x, y, w, h] = hand.bbox; 
-                    mv.cameraOrbit = `${((x + w/2) / 640 * 360) - 180}deg 75deg 12m`; 
+                    const centerX = x + w / 2; 
+                    const percentX = centerX / 640; 
+                    mv.cameraOrbit = `${(percentX * 360) - 180}deg 75deg 12m`; 
                     const xray = ["closed", "fist", "pinch"].includes(hand.label); 
                     hud.classList.toggle('active', xray); 
-                    if (mv.model) mv.model.materials.forEach(mat => { mat.setAlphaMode(xray ? "BLEND" : "OPAQUE"); mat.pbrMetallicRoughness.setBaseColorFactor(xray ? [0.2, 0.4, 1.0, 0.3] : [1, 1, 1, 1]); }); 
+                    if (mv.model) { 
+                        mv.model.materials.forEach(mat => { 
+                            mat.setAlphaMode(xray ? "BLEND" : "OPAQUE"); 
+                            mat.pbrMetallicRoughness.setBaseColorFactor(xray ? [0.2, 0.4, 1.0, 0.3] : [1, 1, 1, 1]); 
+                        }); 
+                    } 
                 } 
                 requestAnimationFrame(detectHand); 
             }); 
         } 
 
-        /* --- PARALLAX --- */
         const pCanvas = document.getElementById('particle-canvas'); 
         const pCtx = pCanvas.getContext('2d'); 
         let pWidth, pHeight; 
@@ -283,8 +308,8 @@
         window.addEventListener('mousemove', (e) => { 
             const moveX = (e.clientX - window.innerWidth/2) / window.innerWidth; 
             const moveY = (e.clientY - window.innerHeight/2) / window.innerHeight; 
-            gsap.to('#grid-layer', { x: moveX * 45, y: moveY * 45, duration: 2.5 }); 
-            gsap.to('#particle-layer', { x: moveX * 80, y: moveY * 80, duration: 2.5 }); 
+            gsap.to('#grid-layer', { x: moveX * 45, y: moveY * 45, duration: 2.5, ease: "power2.out" }); 
+            gsap.to('#particle-layer', { x: moveX * 80, y: moveY * 80, duration: 2.5, ease: "power2.out" }); 
         }); 
     </script> 
 </body> 
