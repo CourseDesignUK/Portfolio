@@ -42,57 +42,38 @@
         .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; text-align: justify; hyphens: auto; } 
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; } 
 
+        /* --- VIDEO GRID WITH TILT --- */ 
         .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1600px; margin: 20px auto; perspective: 2000px; } 
         @media (max-width: 1100px) { .grid-container { grid-template-columns: repeat(2, 1fr); } } 
         @media (max-width: 600px) { .grid-container { grid-template-columns: 1fr; } } 
 
-        .video-card { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); cursor: pointer; transition: 0.3s; } 
-        .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; } 
+        .video-card {  
+            position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden;  
+            background: #000; border: 1px solid var(--glass-border); cursor: pointer; transform-style: preserve-3d; 
+            transition: z-index 0.3s; 
+        } 
+        .shine { position: absolute; top: 0; left: 0; width: 150%; height: 150%; background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%); pointer-events: none; z-index: 5; opacity: 0; transform: translate(-50%, -50%); } 
+        .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.02); } 
 
+        /* --- IPHONE INTERFACE --- */
         .iphone-wrapper { display: flex; justify-content: center; padding: 60px 0; } 
         .iphone-device { width: 320px; height: 650px; background: #111; border-radius: 40px; border: 8px solid #222; position: relative; box-shadow: 0 50px 100px rgba(0,0,0,0.8); overflow: hidden; } 
         .iphone-device::before { content: ''; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 100px; height: 25px; background: #000; border-radius: 20px; z-index: 20; } 
         .iphone-screen { width: 100%; height: 100%; background: #000; } 
         .iphone-screen iframe { width: 100%; height: 100%; border: none; } 
 
-        /* FULL WINDOW CHINOOK LAYOUT */
-        .spatial-sync-wrapper { 
-            display: flex; 
-            width: 100%; 
-            max-width: 1600px; 
-            margin: 30px auto; 
-            gap: 30px; 
-            align-items: flex-start; 
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
-        } 
-        .model-card { 
-            width: 100%; 
-            height: 75vh; 
-            background: var(--model-bg); 
-            border-radius: 24px; 
-            border: 1px solid var(--glass-border); 
-            position: relative; 
-            overflow: hidden; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4); 
-            flex-shrink: 0; 
-        } 
+        /* --- SPATIAL SYNC (ORIGINAL HAND TRACKING LAYOUT) --- */ 
+        .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto; gap: 30px; align-items: flex-start; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
+        .model-card { width: 100%; height: 75vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); flex-shrink: 0; } 
         .spatial-sync-wrapper.tracking-active .model-card { width: 66.66%; } 
 
-        #preview-wrapper { 
-            width: 33.33%; 
-            height: 75vh; 
-            border-radius: 24px; 
-            overflow: hidden; 
-            border: 1px solid var(--accent-color); 
-            background: #000; 
-            display: none; 
-        } 
+        #preview-wrapper { width: 33.33%; height: 75vh; border-radius: 24px; overflow: hidden; border: 1px solid var(--accent-color); background: #000; display: none; } 
         #v-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); } 
 
-        #tech-hud { position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace; font-size: 0.7rem; opacity: 0; transition: 0.4s; z-index: 5; } 
+        #tech-hud { position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace; font-size: 0.7rem; opacity: 0; transition: 0.4s; z-index: 5; pointer-events: none;} 
         #tech-hud.active { opacity: 1; } 
         #hand-ui { margin-bottom: 20px; } 
-        .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 14px 28px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Source Code Pro', monospace; } 
+        .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 14px 28px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Source Code Pro', monospace; transition: 0.3s; } 
     </style> 
 </head> 
 <body> 
@@ -114,14 +95,14 @@
         <div class="ar-content">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div> 
          
         <div class="grid-container"> 
-            <div class="video-card" data-video="_ckPvnl4HQI"><iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="2OvfLt13D6Y"><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="8kNXOVutOJc"><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="0m-LbA8E97Q"><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="DfQ2xc5ygGc"><iframe src="https://www.youtube.com/embed/DfQ2xc5ygGc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="LvSaP_7rMbM"><iframe src="https://www.youtube.com/embed/LvSaP_7rMbM?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="hwnwM5zI8To"><iframe src="https://www.youtube.com/embed/hwnwM5zI8To?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="inC-Lab04aA"><iframe src="https://www.youtube.com/embed/inC-Lab04aA?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="_ckPvnl4HQI"><div class="shine"></div><iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="2OvfLt13D6Y"><div class="shine"></div><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="8kNXOVutOJc"><div class="shine"></div><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="0m-LbA8E97Q"><div class="shine"></div><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="DfQ2xc5ygGc"><div class="shine"></div><iframe src="https://www.youtube.com/embed/DfQ2xc5ygGc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="LvSaP_7rMbM"><div class="shine"></div><iframe src="https://www.youtube.com/embed/LvSaP_7rMbM?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="hwnwM5zI8To"><div class="shine"></div><iframe src="https://www.youtube.com/embed/hwnwM5zI8To?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="inC-Lab04aA"><div class="shine"></div><iframe src="https://www.youtube.com/embed/inC-Lab04aA?controls=0&mute=1&enablejsapi=1"></iframe></div> 
         </div> 
 
         <div class="ar-content" style="margin-top: 60px;">MOBILE_INTERFACE: AERO_ASSET_VIEWER</div>
@@ -159,12 +140,13 @@
                             </div>
                             <model-viewer id='m' camera-controls auto-rotate shadow-intensity='2'></model-viewer>
                             <script>
+                                /* FIXED PATHS TO ROOT /models/ */
                                 const d = [
-                                    { n: 'Airbus A319', f: '/models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'High Pressure Oxygen, Li-ion Batteries', rescue: '4 Main exits, 2 Overwing hatches' },
-                                    { n: 'Airbus A320', f: '/models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Material Dust, High Pressure Tires', rescue: '4 Main exits, 4 Overwing hatches' },
-                                    { n: 'Airbus A321', f: '/models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Hydraulic systems (Skydrol), Cryo Cooling', rescue: '8 Floor-level exits' },
-                                    { n: 'Airbus A380', f: '/models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Large composite surface areas, Multi-deck risk', rescue: '16 Floor-level exits across two decks' },
-                                    { n: 'CH-47 Chinook', f: '/models/chinook-2.glb', cat: 'Tactical', p: '33', fuel: '3,914 L', haz: 'Military Grade Propellants, Magnesium components', rescue: 'Rear ramp, Side cockpit doors' }
+                                    { n: 'Airbus A319', f: '/models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'Oxygen, Li-ion', rescue: '4 Main exits' },
+                                    { n: 'Airbus A320', f: '/models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Dust', rescue: '4 Main exits, 4 Overwing' },
+                                    { n: 'Airbus A321', f: '/models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Cryo Cooling', rescue: '8 exits' },
+                                    { n: 'Airbus A380', f: '/models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Massive Fuel', rescue: '16 Floor-level exits' },
+                                    { n: 'CH-47 Chinook', f: '/models/chinook-2.glb', cat: 'Tactical', p: '33', fuel: '3,914 L', haz: 'Military Spec', rescue: 'Rear ramp' }
                                 ];
                                 const sel = document.getElementById('s');
                                 d.forEach((x, i) => { const o = document.createElement('option'); o.value = i; o.innerText = x.n; sel.appendChild(o); });
@@ -174,9 +156,8 @@
                                     document.getElementById('t').innerText = a.n;
                                     document.getElementById('specs').innerHTML = `
                                         <div class='spec-item'><span class='label'>ICAO ARFF CAT</span>` + a.cat + `</div>
-                                        <div class='spec-item'><span class='label'>MAX PASSENGERS</span>` + a.p + `</div>
+                                        <div class='spec-item'><span class='label'>MAX PAX</span>` + a.p + `</div>
                                         <div class='spec-item'><span class='label'>FUEL LOAD</span>` + a.fuel + `</div>
-                                        <div class='spec-item'><span class='label'>RESCUE EXITS</span>` + a.rescue + `</div>
                                         <div class='spec-item'><span class='label'>CIVILIAN HAZARDS</span>` + a.haz + `</div>
                                     `;
                                 }
@@ -211,27 +192,37 @@
     </section> 
 
     <script> 
-        // Parallax Logic
-        const pCanvas = document.getElementById('particle-canvas'); 
-        const pCtx = pCanvas.getContext('2d'); 
-        let pWidth, pHeight; 
-        const particles = []; 
-        function resize() { pWidth = window.innerWidth; pHeight = window.innerHeight; pCanvas.width = pWidth; pCanvas.height = pHeight; } 
-        class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * pWidth; this.y = Math.random() * pHeight; this.size = Math.random() * 1.5; this.speed = Math.random() * 0.4 + 0.1; this.opacity = Math.random() * 0.4 + 0.1; } update() { this.y -= this.speed; if (this.y < 0) this.reset(); } draw() { pCtx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`; pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); pCtx.fill(); } } 
-        for(let i=0; i<80; i++) particles.push(new Particle()); 
-        function animate() { pCtx.clearRect(0, 0, pWidth, pHeight); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } 
-        window.addEventListener('resize', resize); resize(); animate(); 
-
-        // Video Card Interactivity
+        /* --- VIDEO TILT PHYSICS --- */
         const cards = document.querySelectorAll('.video-card'); 
         cards.forEach(card => { 
             const iframe = card.querySelector('iframe'); 
+            const shine = card.querySelector('.shine'); 
             const videoId = card.getAttribute('data-video'); 
-            card.onmouseenter = () => { iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`; }; 
-            card.onmouseleave = () => { iframe.src = iframe.src.replace("&autoplay=1", ""); }; 
+
+            card.addEventListener('mousemove', (e) => { 
+                const rect = card.getBoundingClientRect(); 
+                const x = e.clientX - rect.left; 
+                const y = e.clientY - rect.top; 
+                const rX = ((y - rect.height/2) / (rect.height/2)) * -20; 
+                const rY = ((x - rect.width/2) / (rect.width/2)) * 20; 
+                gsap.to(card, { rotateX: rX, rotateY: rY, scale: 1.4, zIndex: 100, boxShadow: "0 40px 80px rgba(99, 102, 241, 0.6)", duration: 0.1 }); 
+                gsap.to(shine, { opacity: 1, x: `${(x/rect.width)*100 - 50}%`, y: `${(y/rect.height)*100 - 50}%`, duration: 0.1 }); 
+            }); 
+
+            card.addEventListener('mouseenter', () => { 
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`; 
+                cards.forEach(other => { if(other !== card) gsap.to(other, { opacity: 0.1, scale: 0.8, filter: "blur(4px)", duration: 0.4 }); }); 
+            }); 
+
+            card.addEventListener('mouseleave', () => { 
+                gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, zIndex: 1, boxShadow: "0 10px 20px rgba(0,0,0,0.4)", duration: 0.6, ease: "elastic.out(1, 0.3)" }); 
+                gsap.to(shine, { opacity: 0 }); 
+                iframe.src = iframe.src.replace("&autoplay=1", ""); 
+                cards.forEach(other => { gsap.to(other, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.4 }); }); 
+            }); 
         });
 
-        // Hand Tracking Logic
+        /* --- HAND TRACKING & X-RAY LOGIC --- */
         const mv = document.querySelector('#xr-model'); 
         const vTrack = document.getElementById("v-preview"); 
         const btnTrack = document.getElementById("t-btn"); 
@@ -291,6 +282,24 @@
                 requestAnimationFrame(detectHand); 
             }); 
         } 
+
+        /* --- PARALLAX BACKGROUND --- */
+        const pCanvas = document.getElementById('particle-canvas'); 
+        const pCtx = pCanvas.getContext('2d'); 
+        let pWidth, pHeight; 
+        const particles = []; 
+        function resize() { pWidth = window.innerWidth; pHeight = window.innerHeight; pCanvas.width = pWidth; pCanvas.height = pHeight; } 
+        class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * pWidth; this.y = Math.random() * pHeight; this.size = Math.random() * 1.5; this.speed = Math.random() * 0.4 + 0.1; this.opacity = Math.random() * 0.4 + 0.1; } update() { this.y -= this.speed; if (this.y < 0) this.reset(); } draw() { pCtx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`; pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); pCtx.fill(); } } 
+        for(let i=0; i<80; i++) particles.push(new Particle()); 
+        function animate() { pCtx.clearRect(0, 0, pWidth, pHeight); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } 
+        window.addEventListener('resize', resize); resize(); animate(); 
+        
+        window.addEventListener('mousemove', (e) => { 
+            const moveX = (e.clientX - window.innerWidth/2) / window.innerWidth; 
+            const moveY = (e.clientY - window.innerHeight/2) / window.innerHeight; 
+            gsap.to('#grid-layer', { x: moveX * 45, y: moveY * 45, duration: 2.5, ease: "power2.out" }); 
+            gsap.to('#particle-layer', { x: moveX * 80, y: moveY * 80, duration: 2.5, ease: "power2.out" }); 
+        }); 
     </script> 
 </body> 
 </html>
