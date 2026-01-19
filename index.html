@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Persistent Expansion</title>
+    <title>XR Training Labs | Fleet & Ordnance Registry</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Source+Code+Pro&display=swap" rel="stylesheet">
@@ -69,11 +69,90 @@
         }
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; }
 
+        /* --- DATA TERMINAL WINDOW --- */
+        .terminal-window {
+            width: 100%;
+            max-width: 1600px;
+            margin: 20px auto;
+            background: rgba(10, 12, 20, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+        }
+
+        .terminal-header {
+            padding: 15px 25px;
+            background: rgba(99, 102, 241, 0.1);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Source Code Pro', monospace;
+            font-size: 0.8rem;
+        }
+
+        #data-search {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--accent-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 4px;
+            font-family: 'Source Code Pro';
+            outline: none;
+            width: 250px;
+        }
+
+        .terminal-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            scroll-behavior: smooth;
+        }
+
+        .terminal-content::-webkit-scrollbar { width: 6px; }
+        .terminal-content::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 10px; }
+
+        .data-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .data-card:hover {
+            background: rgba(99, 102, 241, 0.08);
+            border-color: var(--accent-color);
+            transform: translateY(-5px);
+        }
+
+        .card-label { color: var(--accent-color); font-size: 0.6rem; font-family: 'Source Code Pro'; text-transform: uppercase; margin-bottom: 4px; }
+        .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
+        .card-stat { font-size: 0.8rem; margin-bottom: 6px; color: #ccc; }
+        .card-stat b { color: #fff; font-family: 'Source Code Pro'; }
+        .card-desc { font-size: 0.75rem; color: #888; line-height: 1.4; margin-top: 12px; font-style: italic; }
+
+        .cat-divider {
+            grid-column: 1 / -1;
+            padding: 10px 0;
+            margin-top: 20px;
+            color: var(--hud-green);
+            font-family: 'Source Code Pro';
+            border-bottom: 1px dashed var(--hud-green);
+            text-transform: uppercase;
+        }
+
         /* --- VIDEO GRID --- */
         .grid-container { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
-            grid-template-rows: repeat(2, auto);
             gap: 20px; 
             max-width: 1600px; 
             margin: 20px auto; 
@@ -108,8 +187,7 @@
         }
 
         .model-card { 
-            width: 100%; /* Full width when tracking is off */
-            height: 65vh; 
+            width: 100%; height: 65vh; 
             background: var(--model-bg); 
             border-radius: 24px; 
             border: 1px solid var(--glass-border); 
@@ -120,28 +198,16 @@
             flex-shrink: 0;
         }
 
-        /* Layout when tracking is active */
-        .spatial-sync-wrapper.tracking-active .model-card {
-            width: 66.66%;
-        }
+        .spatial-sync-wrapper.tracking-active .model-card { width: 66.66%; }
 
         #preview-wrapper { 
-            width: 33.33%;
-            height: 65vh;
-            position: relative; 
-            display: none;
-            border-radius: 24px;
-            overflow: hidden;
-            border: 1px solid var(--accent-color);
-            background: #000;
+            width: 33.33%; height: 65vh; position: relative; display: none;
+            border-radius: 24px; overflow: hidden; border: 1px solid var(--accent-color); background: #000;
         }
 
         #v-preview { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover;
-            transform: scaleX(-1); 
-            filter: grayscale(1) brightness(0.8) contrast(1.2); 
+            width: 100%; height: 100%; object-fit: cover;
+            transform: scaleX(-1); filter: grayscale(1) brightness(0.8) contrast(1.2); 
         }
 
         model-viewer { width: 100%; height: 100%; outline: none; }
@@ -182,7 +248,7 @@
         <h1>XR Training Labs</h1>
         <h2 class="sub-heading">Spatial Computing Training Systems</h2>
         <p class="intro-text">
-            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application. We have experience in designing, developing and deployment of training in 3d, mixed and virtual reality, using Moodle, Web, Apps and VR headsets.
+            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application.
         </p>
 
         <div class="ar-content">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div>
@@ -192,15 +258,20 @@
             <div class="video-card" data-video="2OvfLt13D6Y"><div class="shine"></div><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe></div>
             <div class="video-card" data-video="8kNXOVutOJc"><div class="shine"></div><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe></div>
             <div class="video-card" data-video="0m-LbA8E97Q"><div class="shine"></div><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe></div>
-            <div class="video-card" data-video="DfQ2xc5ygGc"><div class="shine"></div><iframe src="https://www.youtube.com/embed/DfQ2xc5ygGc?controls=0&mute=1&enablejsapi=1"></iframe></div>
-            <div class="video-card" data-video="LvSaP_7rMbM"><div class="shine"></div><iframe src="https://www.youtube.com/embed/LvSaP_7rMbM?controls=0&mute=1&enablejsapi=1"></iframe></div>
-            <div class="video-card" data-video="hwnwM5zI8To"><div class="shine"></div><iframe src="https://www.youtube.com/embed/hwnwM5zI8To?controls=0&mute=1&enablejsapi=1"></iframe></div>
-            <div class="video-card" data-video="inC-Lab04aA"><div class="shine"></div><iframe src="https://www.youtube.com/embed/inC-Lab04aA?controls=0&mute=1&enablejsapi=1"></iframe></div>
         </div>
+    </section>
 
-        <p class="intro-text" style="margin-top: 40px; max-width: 100%;">
-            Team members have successfully built and deployed training for the UK Military. We offer a single point of contact to bring your training to life with Virtual reality, Mixed reality and 3D.
-        </p>
+    <section id="fleet-registry">
+        <div class="ar-content">SYSTEM_QUERY // ASSET_REGISTRY</div>
+        <div class="terminal-window">
+            <div class="terminal-header">
+                <span>STATUS: <span style="color: var(--hud-green)">ACTIVE_ENCRYPTED_FEED</span></span>
+                <input type="text" id="data-search" placeholder="SEARCH ASSET ID...">
+                <span id="record-count">RECORDS: 0</span>
+            </div>
+            <div class="terminal-content" id="data-container">
+                </div>
+        </div>
     </section>
 
     <section style="min-height: 100vh;">
@@ -241,37 +312,81 @@
     </section>
 
     <script>
-        // --- 1. PARALLAX & PARTICLES ---
+        // --- 1. DATA REQUISITION (JSON) ---
+        const fleetData = [
+            { name: "Airbus A319", type: "civilian", arff_cat: "ICAO Category 6", fuel: "24,210 Liters", description: "Focus on overwing exits for rapid egress; ensure slides are disarmed." },
+            { name: "Airbus A320", type: "civilian", arff_cat: "ICAO Category 6", fuel: "27,200 Liters", description: "High-pressure oxygen bottles located in forward cargo hold." },
+            { name: "Airbus A321", type: "civilian", arff_cat: "ICAO Category 7", fuel: "29,680 Liters", description: "Stretched fuselage hazard; center-tank fires pose structural risk." },
+            { name: "Airbus A380", type: "civilian", arff_cat: "ICAO Category 10", fuel: "320,000 Liters", description: "Double-deck evacuation hazard. GLARE skin is fire-resistant." },
+            { name: "Boeing 747-8F", type: "civilian", arff_cat: "ICAO Category 10", fuel: "226,118 Liters", description: "Freighter config. Primary rescue entry via upper deck." },
+            { name: "B-2 Spirit", type: "military", base: "Whiteman AFB", weapons: "Nuclear/Conv", description: "Stealth Bomber. DANGER: Toxic RAM if burning. Egress via underside." },
+            { name: "F-35 Lightning II", type: "military", base: "RAF Marham", weapons: "Internal AIM-120", description: "Tactical Stealth. DANGER: CFRP composite dust if burning." },
+            { name: "F-16 Fighting Falcon", type: "military", base: "Global", weapons: "20mm Vulcan", description: "CRITICAL: EPU uses Hydrazine (toxic). Canopy is explosive." },
+            { name: "CH-47 Chinook", type: "military", base: "RAF Odiham", weapons: "M134 Miniguns", description: "Tandem Rotor. Fuel in sponsons. DANGER: Low blades during shutdown." },
+            { name: "AIM-9M Sidewinder", type: "ordnance", neq: "9.4 kg", weight: "85 kg", description: "IR Guided. DANGER: Toxic smoke. Approach from rear/sides only." },
+            { name: "GBU-31 JDAM", type: "ordnance", neq: "428 kg", weight: "925 kg", description: "EXTREME EXPLOSIVE. Evacuate 1000m if on fire. Thermal coating delay." },
+            { name: "Storm Shadow", type: "ordnance", neq: "450 kg", weight: "1,300 kg", description: "Cruise Missile. Contains JP-10 jet fuel. Requires massive foam." }
+        ];
+
+        const container = document.getElementById('data-container');
+        const searchInput = document.getElementById('data-search');
+        const countDisplay = document.getElementById('record-count');
+
+        function renderRegistry(filter = "") {
+            container.innerHTML = "";
+            const categories = ["civilian", "military", "ordnance"];
+            let count = 0;
+
+            categories.forEach(cat => {
+                const items = fleetData.filter(d => d.type === cat && d.name.toLowerCase().includes(filter.toLowerCase()));
+                if (items.length > 0) {
+                    const div = document.createElement('div');
+                    div.className = "cat-divider";
+                    div.innerText = `> CATEGORY: ${cat}`;
+                    container.appendChild(div);
+
+                    items.forEach(item => {
+                        count++;
+                        const card = document.createElement('div');
+                        card.className = "data-card";
+                        card.innerHTML = `
+                            <div class="card-label">${item.type}</div>
+                            <div class="card-title">${item.name}</div>
+                            <div class="card-stat">LOADOUT: <b>${item.fuel || item.weapons || item.neq}</b></div>
+                            <div class="card-desc">${item.description}</div>
+                        `;
+                        container.appendChild(card);
+                    });
+                }
+            });
+            countDisplay.innerText = `RECORDS: ${count}`;
+        }
+
+        searchInput.addEventListener('input', (e) => renderRegistry(e.target.value));
+        renderRegistry();
+
+        // --- 2. PARALLAX & PARTICLES ---
         const pCanvas = document.getElementById('particle-canvas');
         const pCtx = pCanvas.getContext('2d');
         let pWidth, pHeight;
         const particles = [];
 
         function resize() {
-            pWidth = window.innerWidth;
-            pHeight = window.innerHeight;
-            pCanvas.width = pWidth;
-            pCanvas.height = pHeight;
+            pWidth = window.innerWidth; pHeight = window.innerHeight;
+            pCanvas.width = pWidth; pCanvas.height = pHeight;
         }
 
         class Particle {
             constructor() { this.reset(); }
             reset() {
-                this.x = Math.random() * pWidth;
-                this.y = Math.random() * pHeight;
-                this.size = Math.random() * 1.5;
-                this.speed = Math.random() * 0.4 + 0.1;
+                this.x = Math.random() * pWidth; this.y = Math.random() * pHeight;
+                this.size = Math.random() * 1.5; this.speed = Math.random() * 0.4 + 0.1;
                 this.opacity = Math.random() * 0.4 + 0.1;
             }
-            update() {
-                this.y -= this.speed;
-                if (this.y < 0) this.reset();
-            }
+            update() { this.y -= this.speed; if (this.y < 0) this.reset(); }
             draw() {
                 pCtx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`;
-                pCtx.beginPath();
-                pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                pCtx.fill();
+                pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); pCtx.fill();
             }
         }
 
@@ -289,42 +404,11 @@
         window.addEventListener('mousemove', (e) => {
             const moveX = (e.clientX - window.innerWidth/2) / window.innerWidth;
             const moveY = (e.clientY - window.innerHeight/2) / window.innerHeight;
-            gsap.to('#grid-layer', { x: moveX * 45, y: moveY * 45, duration: 2.5, ease: "power2.out" });
-            gsap.to('#particle-layer', { x: moveX * 80, y: moveY * 80, duration: 2.5, ease: "power2.out" });
+            gsap.to('#grid-layer', { x: moveX * 45, y: moveY * 45, duration: 2.5 });
+            gsap.to('#particle-layer', { x: moveX * 80, y: moveY * 80, duration: 2.5 });
         });
 
-        // --- 2. VIDEO TILT & HOVER ---
-        const cards = document.querySelectorAll('.video-card');
-        cards.forEach(card => {
-            const iframe = card.querySelector('iframe');
-            const shine = card.querySelector('.shine');
-            const videoId = card.getAttribute('data-video');
-
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                const rX = ((y - rect.height/2) / (rect.height/2)) * -20;
-                const rY = ((x - rect.width/2) / (rect.width/2)) * 20;
-                
-                gsap.to(card, { rotateX: rX, rotateY: rY, scale: 1.4, zIndex: 100, boxShadow: "0 40px 80px rgba(99, 102, 241, 0.6)", duration: 0.1 });
-                gsap.to(shine, { opacity: 1, x: `${(x/rect.width)*100 - 50}%`, y: `${(y/rect.height)*100 - 50}%`, duration: 0.1 });
-            });
-
-            card.addEventListener('mouseenter', () => {
-                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`;
-                cards.forEach(other => { if(other !== card) gsap.to(other, { opacity: 0.1, scale: 0.8, filter: "blur(4px)", duration: 0.4 }); });
-            });
-
-            card.addEventListener('mouseleave', () => {
-                gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, zIndex: 1, boxShadow: "0 10px 20px rgba(0,0,0,0.4)", duration: 0.6, ease: "elastic.out(1, 0.3)" });
-                gsap.to(shine, { opacity: 0 });
-                iframe.src = iframe.src.replace("&autoplay=1", "");
-                cards.forEach(other => { gsap.to(other, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.4 }); });
-            });
-        });
-
-        // --- 3. REFINED HAND TRACKING ---
+        // --- 3. HAND TRACKING ---
         const mv = document.querySelector('#xr-model');
         const vTrack = document.getElementById("v-preview");
         const btnTrack = document.getElementById("t-btn");
@@ -335,11 +419,8 @@
         let isTracking = false;
         let dModel = null;
 
-        const modelParams = { flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.6 };
-
-        handTrack.load(modelParams).then(m => {
-            dModel = m;
-            btnTrack.innerText = "SENSORS READY";
+        handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.6 }).then(m => {
+            dModel = m; btnTrack.innerText = "SENSORS READY";
             btnTrack.style.background = "var(--hud-green)";
         });
 
@@ -356,45 +437,24 @@
                     }
                 });
             } else {
-                handTrack.stopVideo(vTrack);
-                isTracking = false;
+                handTrack.stopVideo(vTrack); isTracking = false;
                 syncEngine.classList.remove('tracking-active');
                 previewWrapper.style.display = "none";
                 btnTrack.innerText = "INITIALIZE SENSORS";
-                btnTrack.style.background = "var(--accent-color)";
             }
         });
 
         function detectHand() {
             if (!isTracking) return;
-
             dModel.detect(vTrack).then(preds => {
                 const hand = preds.find(p => p.label !== 'face');
                 if (hand) {
-                    const [x, y, w, h] = hand.bbox;
-                    const videoWidth = vTrack.width || 640; 
-                    const centerX = x + w / 2;
-                    const percentX = centerX / videoWidth;
-                    
-                    const orbitY = (percentX * 360) - 180;
+                    const orbitY = ((hand.bbox[0] + hand.bbox[2]/2) / 640 * 360) - 180;
                     mv.cameraOrbit = `${orbitY}deg 75deg 12m`;
-
                     const xray = ["closed", "fist", "pinch"].includes(hand.label);
                     hud.classList.toggle('active', xray);
-                    
-                    if (mv.model) {
-                        mv.model.materials.forEach(mat => {
-                            if (xray) {
-                                mat.setAlphaMode("BLEND");
-                                mat.pbrMetallicRoughness.setBaseColorFactor([0.2, 0.4, 1.0, 0.3]);
-                            } else {
-                                mat.setAlphaMode("OPAQUE");
-                                mat.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]);
-                            }
-                        });
-                    }
                 }
-                if (isTracking) requestAnimationFrame(detectHand);
+                requestAnimationFrame(detectHand);
             });
         }
     </script>
