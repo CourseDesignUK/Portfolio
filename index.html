@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XR Training Labs | Fleet & Ordnance Registry</title>
+    <title>XR Training Labs | Persistent Expansion</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Source+Code+Pro&display=swap" rel="stylesheet">
@@ -22,6 +22,7 @@
             --glass-border: rgba(255, 255, 255, 0.1);
             --grid-color: rgba(99, 102, 241, 0.12);
             --error-red: #ff4444;
+            --phone-bg: #0a0c10;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -48,324 +49,190 @@
         }
         #particle-canvas { width: 100%; height: 100%; }
 
-        /* --- NAVIGATION --- */
         nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); }
         .logo { font-weight: 700; font-family: 'Source Code Pro', monospace; color: var(--accent-color); font-size: 1rem; }
 
-        /* --- CONTENT SECTIONS --- */
         section { padding: 140px 5% 60px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 10; }
         
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 10px; text-transform: uppercase; letter-spacing: -2px; }
         h2.sub-heading { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 300; color: var(--accent-color); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
         
-        .intro-text { 
-            font-size: 1.1rem; 
-            color: #aaa; 
-            max-width: 800px; 
-            line-height: 1.6; 
-            margin-bottom: 40px; 
-            text-align: justify;
-            hyphens: auto;
-        }
+        .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; }
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; }
 
-        /* --- DATA TERMINAL WINDOW --- */
-        .terminal-window {
-            width: 100%;
-            max-width: 1600px;
-            margin: 20px auto;
-            background: rgba(10, 12, 20, 0.8);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
+        /* --- PHONE INTERFACE DESIGN --- */
+        .mobile-terminal-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 0;
+        }
+
+        .handheld-device {
+            width: 340px;
+            height: 680px;
+            background: #111;
+            border-radius: 45px;
+            border: 8px solid #222;
+            position: relative;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.8), 0 0 20px rgba(99, 102, 241, 0.2);
+            overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 600px;
-            overflow: hidden;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
         }
 
-        .terminal-header {
-            padding: 15px 25px;
-            background: rgba(99, 102, 241, 0.1);
-            border-bottom: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: 'Source Code Pro', monospace;
-            font-size: 0.8rem;
+        /* Notch Area */
+        .device-notch {
+            width: 150px;
+            height: 25px;
+            background: #222;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+            z-index: 20;
         }
 
-        #data-search {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--accent-color);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 4px;
-            font-family: 'Source Code Pro';
-            outline: none;
-            width: 250px;
-        }
-
-        .terminal-content {
+        .phone-screen {
             flex: 1;
+            background: var(--phone-bg);
+            padding: 40px 15px 20px;
             overflow-y: auto;
-            padding: 30px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
-            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scrollbar-width: none;
+        }
+        .phone-screen::-webkit-scrollbar { display: none; }
+
+        .phone-header {
+            font-family: 'Source Code Pro', monospace;
+            color: var(--accent-color);
+            font-size: 0.7rem;
+            margin-bottom: 10px;
+            text-align: center;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
         }
 
-        .terminal-content::-webkit-scrollbar { width: 6px; }
-        .terminal-content::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 10px; }
-
-        .data-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
-            padding: 20px;
+        #phone-search {
+            width: 100%;
+            background: #1a1c22;
+            border: 1px solid var(--accent-color);
             border-radius: 8px;
+            padding: 10px;
+            color: white;
+            font-family: 'Inter';
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        .asset-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            padding: 15px;
+            border-radius: 12px;
             transition: 0.3s;
         }
-        .data-card:hover {
-            background: rgba(99, 102, 241, 0.08);
-            border-color: var(--accent-color);
-            transform: translateY(-5px);
-        }
+        .asset-card:hover { border-color: var(--accent-color); background: rgba(99, 102, 241, 0.1); }
 
-        .card-label { color: var(--accent-color); font-size: 0.6rem; font-family: 'Source Code Pro'; text-transform: uppercase; margin-bottom: 4px; }
-        .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
-        .card-stat { font-size: 0.8rem; margin-bottom: 6px; color: #ccc; }
-        .card-stat b { color: #fff; font-family: 'Source Code Pro'; }
-        .card-desc { font-size: 0.75rem; color: #888; line-height: 1.4; margin-top: 12px; font-style: italic; }
+        .asset-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 5px; }
+        .asset-tag { display: inline-block; font-size: 0.6rem; background: var(--accent-color); padding: 2px 6px; border-radius: 4px; margin-bottom: 8px; text-transform: uppercase; }
+        .asset-desc { font-size: 0.75rem; color: #888; line-height: 1.3; }
 
-        .cat-divider {
-            grid-column: 1 / -1;
-            padding: 10px 0;
-            margin-top: 20px;
-            color: var(--hud-green);
-            font-family: 'Source Code Pro';
-            border-bottom: 1px dashed var(--hud-green);
-            text-transform: uppercase;
-        }
-
-        /* --- VIDEO GRID --- */
-        .grid-container { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 20px; 
-            max-width: 1600px; 
-            margin: 20px auto; 
-            perspective: 2000px; 
-        }
-
+        /* --- PREVIOUS STYLES --- */
+        .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1600px; margin: 20px auto; }
         @media (max-width: 1100px) { .grid-container { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 600px) { .grid-container { grid-template-columns: 1fr; } }
-
-        .video-card { 
-            position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; 
-            background: #000; border: 1px solid var(--glass-border); cursor: pointer; transform-style: preserve-3d;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            transition: z-index 0.3s;
-        }
-        .shine { 
-            position: absolute; top: 0; left: 0; width: 150%; height: 150%; 
-            background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%); 
-            pointer-events: none; z-index: 5; opacity: 0; transform: translate(-50%, -50%); 
-        }
-        .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.02); }
-
-        /* --- SPATIAL INTERACTION AREA --- */
-        .spatial-sync-wrapper {
-            display: flex;
-            width: 100%;
-            max-width: 1600px;
-            margin: 30px auto 0;
-            gap: 30px;
-            align-items: flex-start;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .model-card { 
-            width: 100%; height: 65vh; 
-            background: var(--model-bg); 
-            border-radius: 24px; 
-            border: 1px solid var(--glass-border); 
-            position: relative; 
-            overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            flex-shrink: 0;
-        }
-
-        .spatial-sync-wrapper.tracking-active .model-card { width: 66.66%; }
-
-        #preview-wrapper { 
-            width: 33.33%; height: 65vh; position: relative; display: none;
-            border-radius: 24px; overflow: hidden; border: 1px solid var(--accent-color); background: #000;
-        }
-
-        #v-preview { 
-            width: 100%; height: 100%; object-fit: cover;
-            transform: scaleX(-1); filter: grayscale(1) brightness(0.8) contrast(1.2); 
-        }
-
+        .video-card { position: relative; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); cursor: pointer; }
+        .video-card iframe { width: 100%; height: 100%; pointer-events: none; }
+        
+        .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto; gap: 30px; }
+        .model-card { width: 100%; height: 65vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; }
         model-viewer { width: 100%; height: 100%; outline: none; }
-
-        #tech-hud {
-            position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9);
-            border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace;
-            font-size: 0.7rem; pointer-events: none; opacity: 0; transition: 0.4s ease; z-index: 5;
-        }
-        #tech-hud.active { opacity: 1; }
-
-        #hand-ui { margin-bottom: 20px; display: flex; align-items: center; gap: 20px; }
-        .cam-btn { 
-            background: var(--accent-color); color: #fff; border: none; padding: 12px 24px; 
-            border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; 
-            font-size: 0.75rem; font-family: 'Source Code Pro', monospace; transition: 0.3s;
-        }
-
-        .ar-controls { display: flex; justify-content: center; margin-top: 25px; }
-        .ar-launch-btn {
-            background: #fff; color: #000; border: none; padding: 18px 45px; border-radius: 4px;
-            font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.8rem;
-        }
     </style>
 </head>
 <body>
 
     <div id="parallax-container">
         <div id="grid-layer" class="parallax-layer"></div>
-        <div id="particle-layer" class="parallax-layer">
-            <canvas id="particle-canvas"></canvas>
-        </div>
+        <div id="particle-layer" class="parallax-layer"><canvas id="particle-canvas"></canvas></div>
     </div>
 
     <nav><div class="logo">XR_TRAINING_LABS_v2.0</div></nav>
 
     <section>
         <h1>XR Training Labs</h1>
-        <h2 class="sub-heading">Spatial Computing Training Systems</h2>
-        <p class="intro-text">
-            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application.
-        </p>
-
-        <div class="ar-content">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div>
-        
+        <h2 class="sub-heading">Spatial Computing Systems</h2>
         <div class="grid-container">
-            <div class="video-card" data-video="_ckPvnl4HQI"><div class="shine"></div><iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?controls=0&mute=1&enablejsapi=1"></iframe></div>
-            <div class="video-card" data-video="2OvfLt13D6Y"><div class="shine"></div><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe></div>
-            <div class="video-card" data-video="8kNXOVutOJc"><div class="shine"></div><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe></div>
-            <div class="video-card" data-video="0m-LbA8E97Q"><div class="shine"></div><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe></div>
+            <div class="video-card" data-video="_ckPvnl4HQI"><iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?mute=1&enablejsapi=1"></iframe></div>
+            <div class="video-card" data-video="2OvfLt13D6Y"><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?mute=1&enablejsapi=1"></iframe></div>
+            <div class="video-card" data-video="8kNXOVutOJc"><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?mute=1&enablejsapi=1"></iframe></div>
+            <div class="video-card" data-video="0m-LbA8E97Q"><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?mute=1&enablejsapi=1"></iframe></div>
         </div>
     </section>
 
-    <section id="fleet-registry">
-        <div class="ar-content">SYSTEM_QUERY // ASSET_REGISTRY</div>
-        <div class="terminal-window">
-            <div class="terminal-header">
-                <span>STATUS: <span style="color: var(--hud-green)">ACTIVE_ENCRYPTED_FEED</span></span>
-                <input type="text" id="data-search" placeholder="SEARCH ASSET ID...">
-                <span id="record-count">RECORDS: 0</span>
-            </div>
-            <div class="terminal-content" id="data-container">
+    <section>
+        <div class="ar-content">FLEET_REGISTRY // MOBILE_QUERY</div>
+        <div class="mobile-terminal-wrapper">
+            <div class="handheld-device">
+                <div class="device-notch"></div>
+                <div class="phone-screen">
+                    <div class="phone-header">REQUISITION_PROTOCOL_v4.2</div>
+                    <input type="text" id="phone-search" placeholder="Search aircraft/ordnance...">
+                    <div id="phone-list">
+                        </div>
                 </div>
+            </div>
         </div>
     </section>
 
-    <section style="min-height: 100vh;">
+    <section>
         <div class="ar-content">SPATIAL_SYNC: CHINOOK_CH47D</div>
-        
-        <div id="hand-ui">
-            <button class="cam-btn" id="t-btn">LOADING SENSORS...</button>
-        </div>
-
-        <div class="spatial-sync-wrapper" id="sync-engine">
+        <div class="spatial-sync-wrapper">
             <div class="model-card">
-                <div id="tech-hud">
-                    <div>[SYSTEM STATUS: X-RAY ACTIVE]</div>
-                    <div>---------------------------</div>
-                    <div>STRUCTURAL INTEGRITY: 98.4%</div>
-                </div>
-
-                <model-viewer id="xr-model" 
-                    src="models/chinook-2.glb" 
-                    ar ar-modes="webxr scene-viewer quick-look" 
-                    camera-controls 
-                    shadow-intensity="1" 
-                    camera-orbit="0deg 75deg 12m"
-                    touch-action="none">
-                </model-viewer>
+                <model-viewer id="xr-model" src="models/chinook-2.glb" ar camera-controls shadow-intensity="1"></model-viewer>
             </div>
-
-            <div id="preview-wrapper">
-                <video id="v-preview" autoplay playsinline muted></video>
-            </div>
-        </div>
-
-        <div class="ar-controls">
-            <button class="ar-launch-btn" onclick="document.querySelector('#xr-model').activateAR()">
-                Launch Spatial AR
-            </button>
         </div>
     </section>
 
     <script>
-        // --- 1. DATA REQUISITION (JSON) ---
+        // --- 1. AIRCRAFT DATA ---
         const fleetData = [
-            { name: "Airbus A319", type: "civilian", arff_cat: "ICAO Category 6", fuel: "24,210 Liters", description: "Focus on overwing exits for rapid egress; ensure slides are disarmed." },
-            { name: "Airbus A320", type: "civilian", arff_cat: "ICAO Category 6", fuel: "27,200 Liters", description: "High-pressure oxygen bottles located in forward cargo hold." },
-            { name: "Airbus A321", type: "civilian", arff_cat: "ICAO Category 7", fuel: "29,680 Liters", description: "Stretched fuselage hazard; center-tank fires pose structural risk." },
-            { name: "Airbus A380", type: "civilian", arff_cat: "ICAO Category 10", fuel: "320,000 Liters", description: "Double-deck evacuation hazard. GLARE skin is fire-resistant." },
-            { name: "Boeing 747-8F", type: "civilian", arff_cat: "ICAO Category 10", fuel: "226,118 Liters", description: "Freighter config. Primary rescue entry via upper deck." },
-            { name: "B-2 Spirit", type: "military", base: "Whiteman AFB", weapons: "Nuclear/Conv", description: "Stealth Bomber. DANGER: Toxic RAM if burning. Egress via underside." },
-            { name: "F-35 Lightning II", type: "military", base: "RAF Marham", weapons: "Internal AIM-120", description: "Tactical Stealth. DANGER: CFRP composite dust if burning." },
-            { name: "F-16 Fighting Falcon", type: "military", base: "Global", weapons: "20mm Vulcan", description: "CRITICAL: EPU uses Hydrazine (toxic). Canopy is explosive." },
-            { name: "CH-47 Chinook", type: "military", base: "RAF Odiham", weapons: "M134 Miniguns", description: "Tandem Rotor. Fuel in sponsons. DANGER: Low blades during shutdown." },
-            { name: "AIM-9M Sidewinder", type: "ordnance", neq: "9.4 kg", weight: "85 kg", description: "IR Guided. DANGER: Toxic smoke. Approach from rear/sides only." },
-            { name: "GBU-31 JDAM", type: "ordnance", neq: "428 kg", weight: "925 kg", description: "EXTREME EXPLOSIVE. Evacuate 1000m if on fire. Thermal coating delay." },
-            { name: "Storm Shadow", type: "ordnance", neq: "450 kg", weight: "1,300 kg", description: "Cruise Missile. Contains JP-10 jet fuel. Requires massive foam." }
+            { name: "Airbus A319", type: "civilian", desc: "Focus on overwing exits for rapid egress; ensure slides are disarmed." },
+            { name: "Airbus A380", type: "civilian", desc: "ICAO Cat 10. Double-deck hazard. GLARE skin is fire-resistant." },
+            { name: "B-2 Spirit", type: "military", desc: "Stealth Bomber. DANGER: Toxic RAM if burning. Egress via underside." },
+            { name: "F-16 Fighting Falcon", type: "military", desc: "Hydrazine hazard (EPU). Canopy jettison is explosive." },
+            { name: "AIM-9M Sidewinder", type: "ordnance", desc: "IR Guided. Toxic smoke hazard. Approach from rear/sides only." },
+            { name: "Storm Shadow", type: "ordnance", desc: "Cruise Missile. Contains JP-10 jet fuel. Massive foam required." }
+            // Add full JSON here...
         ];
 
-        const container = document.getElementById('data-container');
-        const searchInput = document.getElementById('data-search');
-        const countDisplay = document.getElementById('record-count');
+        const listContainer = document.getElementById('phone-list');
+        const searchInput = document.getElementById('phone-search');
 
-        function renderRegistry(filter = "") {
-            container.innerHTML = "";
-            const categories = ["civilian", "military", "ordnance"];
-            let count = 0;
-
-            categories.forEach(cat => {
-                const items = fleetData.filter(d => d.type === cat && d.name.toLowerCase().includes(filter.toLowerCase()));
-                if (items.length > 0) {
-                    const div = document.createElement('div');
-                    div.className = "cat-divider";
-                    div.innerText = `> CATEGORY: ${cat}`;
-                    container.appendChild(div);
-
-                    items.forEach(item => {
-                        count++;
-                        const card = document.createElement('div');
-                        card.className = "data-card";
-                        card.innerHTML = `
-                            <div class="card-label">${item.type}</div>
-                            <div class="card-title">${item.name}</div>
-                            <div class="card-stat">LOADOUT: <b>${item.fuel || item.weapons || item.neq}</b></div>
-                            <div class="card-desc">${item.description}</div>
-                        `;
-                        container.appendChild(card);
-                    });
-                }
-            });
-            countDisplay.innerText = `RECORDS: ${count}`;
+        function renderPhoneList(filter = "") {
+            listContainer.innerHTML = "";
+            fleetData
+                .filter(item => item.name.toLowerCase().includes(filter.toLowerCase()))
+                .forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = "asset-card";
+                    card.innerHTML = `
+                        <div class="asset-tag">${item.type}</div>
+                        <div class="asset-title">${item.name}</div>
+                        <div class="asset-desc">${item.desc}</div>
+                    `;
+                    listContainer.appendChild(card);
+                });
         }
 
-        searchInput.addEventListener('input', (e) => renderRegistry(e.target.value));
-        renderRegistry();
+        searchInput.addEventListener('input', (e) => renderPhoneList(e.target.value));
+        renderPhoneList();
 
-        // --- 2. PARALLAX & PARTICLES ---
+        // --- 2. PARTICLES & BG ---
         const pCanvas = document.getElementById('particle-canvas');
         const pCtx = pCanvas.getContext('2d');
         let pWidth, pHeight;
@@ -390,7 +257,7 @@
             }
         }
 
-        for(let i=0; i<80; i++) particles.push(new Particle());
+        for(let i=0; i<60; i++) particles.push(new Particle());
 
         function animate() {
             pCtx.clearRect(0, 0, pWidth, pHeight);
@@ -405,58 +272,7 @@
             const moveX = (e.clientX - window.innerWidth/2) / window.innerWidth;
             const moveY = (e.clientY - window.innerHeight/2) / window.innerHeight;
             gsap.to('#grid-layer', { x: moveX * 45, y: moveY * 45, duration: 2.5 });
-            gsap.to('#particle-layer', { x: moveX * 80, y: moveY * 80, duration: 2.5 });
         });
-
-        // --- 3. HAND TRACKING ---
-        const mv = document.querySelector('#xr-model');
-        const vTrack = document.getElementById("v-preview");
-        const btnTrack = document.getElementById("t-btn");
-        const previewWrapper = document.getElementById("preview-wrapper");
-        const syncEngine = document.getElementById("sync-engine");
-        const hud = document.getElementById("tech-hud");
-        
-        let isTracking = false;
-        let dModel = null;
-
-        handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.6 }).then(m => {
-            dModel = m; btnTrack.innerText = "SENSORS READY";
-            btnTrack.style.background = "var(--hud-green)";
-        });
-
-        btnTrack.addEventListener("click", () => {
-            if (!isTracking) {
-                handTrack.startVideo(vTrack).then(status => {
-                    if (status) {
-                        isTracking = true;
-                        syncEngine.classList.add('tracking-active');
-                        previewWrapper.style.display = "block";
-                        btnTrack.innerText = "TERMINATE SENSORS";
-                        btnTrack.style.background = "var(--error-red)";
-                        detectHand();
-                    }
-                });
-            } else {
-                handTrack.stopVideo(vTrack); isTracking = false;
-                syncEngine.classList.remove('tracking-active');
-                previewWrapper.style.display = "none";
-                btnTrack.innerText = "INITIALIZE SENSORS";
-            }
-        });
-
-        function detectHand() {
-            if (!isTracking) return;
-            dModel.detect(vTrack).then(preds => {
-                const hand = preds.find(p => p.label !== 'face');
-                if (hand) {
-                    const orbitY = ((hand.bbox[0] + hand.bbox[2]/2) / 640 * 360) - 180;
-                    mv.cameraOrbit = `${orbitY}deg 75deg 12m`;
-                    const xray = ["closed", "fist", "pinch"].includes(hand.label);
-                    hud.classList.toggle('active', xray);
-                }
-                requestAnimationFrame(detectHand);
-            });
-        }
     </script>
 </body>
 </html>
