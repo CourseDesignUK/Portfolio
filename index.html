@@ -25,7 +25,6 @@
         } 
 
         * { margin: 0; padding: 0; box-sizing: border-box; } 
-        
         body { font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-color); overflow-x: hidden; } 
 
         #parallax-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #0a0c14 0%, #030508 100%); overflow: hidden; } 
@@ -39,69 +38,31 @@
         section { padding: 140px 5% 60px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 10; } 
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 10px; text-transform: uppercase; letter-spacing: -2px; } 
         h2.sub-heading { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 300; color: var(--accent-color); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; } 
-        .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; text-align: justify; hyphens: auto; } 
+        .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; text-align: justify; } 
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; } 
 
-        /* --- VIDEO GRID TILT RESTORED --- */ 
+        /* VIDEO GRID WITH TILT */ 
         .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1600px; margin: 20px auto; perspective: 2000px; } 
-        @media (max-width: 1100px) { .grid-container { grid-template-columns: repeat(2, 1fr); } } 
-        @media (max-width: 600px) { .grid-container { grid-template-columns: 1fr; } } 
-
-        .video-card {  
-            position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden;  
-            background: #000; border: 1px solid var(--glass-border); cursor: pointer; transform-style: preserve-3d; 
-            transition: z-index 0.3s; 
-        } 
+        .video-card { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); cursor: pointer; transform-style: preserve-3d; transition: z-index 0.3s; } 
         .shine { position: absolute; top: 0; left: 0; width: 150%; height: 150%; background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%); pointer-events: none; z-index: 5; opacity: 0; transform: translate(-50%, -50%); } 
         .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.02); } 
 
-        /* --- IPHONE WRAPPER --- */
         .iphone-wrapper { display: flex; justify-content: center; padding: 60px 0; } 
         .iphone-device { width: 320px; height: 650px; background: #111; border-radius: 40px; border: 8px solid #222; position: relative; box-shadow: 0 50px 100px rgba(0,0,0,0.8); overflow: hidden; } 
         .iphone-device::before { content: ''; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 100px; height: 25px; background: #000; border-radius: 20px; z-index: 20; } 
         .iphone-screen { width: 100%; height: 100%; background: #000; } 
         .iphone-screen iframe { width: 100%; height: 100%; border: none; } 
 
-        /* --- ORIGINAL FULL-WINDOW CHINOOK LAYOUT --- */ 
-        .spatial-sync-wrapper { 
-            display: flex; 
-            width: 100%; 
-            max-width: 1600px; 
-            margin: 30px auto; 
-            gap: 30px; 
-            align-items: center; /* Center Vertically */
-            justify-content: center; /* Center Horizontally */
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
-        } 
-        .model-card { 
-            width: 100%; 
-            height: 75vh; 
-            background: var(--model-bg); 
-            border-radius: 24px; 
-            border: 1px solid var(--glass-border); 
-            position: relative; 
-            overflow: hidden; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4); 
-            flex-shrink: 0; 
-        } 
-        .spatial-sync-wrapper.tracking-active .model-card { 
-            width: 66%; 
-        } 
+        /* CHINOOK MANIPULATION LAYOUT */ 
+        .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto; gap: 30px; align-items: center; justify-content: center; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
+        .model-card { width: 100%; height: 75vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); flex-shrink: 0; } 
+        .spatial-sync-wrapper.tracking-active .model-card { width: 66.66%; } 
 
-        #preview-wrapper { 
-            width: 33%; 
-            height: 60vh; 
-            border-radius: 24px; 
-            overflow: hidden; 
-            border: 1px solid var(--accent-color); 
-            background: #000; 
-            display: none; 
-        } 
+        #preview-wrapper { width: 33.33%; height: 75vh; border-radius: 24px; overflow: hidden; border: 1px solid var(--accent-color); background: #000; display: none; } 
         #v-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); } 
 
         #tech-hud { position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace; font-size: 0.7rem; opacity: 0; transition: 0.4s; z-index: 5; pointer-events: none; } 
         #tech-hud.active { opacity: 1; } 
-        #hand-ui { margin-bottom: 20px; } 
         .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 14px 28px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Source Code Pro', monospace; transition: 0.3s; } 
     </style> 
 </head> 
@@ -169,19 +130,18 @@
                             </div>
                             <model-viewer id='m' camera-controls auto-rotate shadow-intensity='2'></model-viewer>
                             <script>
-                                /* RELATIVE PATHS FOR IPHONE WINDOW */
                                 const d = [
                                     { n: 'Airbus A319', f: 'models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'Oxygen, Li-ion', rescue: '4 Main exits' },
                                     { n: 'Airbus A320', f: 'models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Dust', rescue: '4 Main exits, 4 Overwing' },
-                                    { n: 'Airbus A321', f: 'models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Cryo Cooling', rescue: '8 exits' },
-                                    { n: 'Airbus A380', f: 'models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Massive Fuel', rescue: '16 Floor-level exits' },
+                                    { n: 'Airbus A321', f: 'models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Hydraulic Skydrol', rescue: '8 exits' },
+                                    { n: 'Airbus A380', f: 'models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Massive Fuel', rescue: '16 exits' },
                                     { n: 'CH-47 Chinook', f: 'models/chinook-2.glb', cat: 'Tactical', p: '33', fuel: '3,914 L', haz: 'Military Spec', rescue: 'Rear ramp' }
                                 ];
                                 const sel = document.getElementById('s');
                                 d.forEach((x, i) => { const o = document.createElement('option'); o.value = i; o.innerText = x.n; sel.appendChild(o); });
                                 function u(i) {
                                     const a = d[i];
-                                    document.getElementById('m').src = '../' + a.f;
+                                    document.getElementById('m').src = a.f;
                                     document.getElementById('t').innerText = a.n;
                                     document.getElementById('specs').innerHTML = `
                                         <div class='spec-item'><span class='label'>ICAO ARFF CAT</span>` + a.cat + `</div>
@@ -221,13 +181,12 @@
     </section> 
 
     <script> 
-        /* --- VIDEO TILT PHYSICS RESTORED --- */
+        /* --- VIDEO TILT --- */
         const cards = document.querySelectorAll('.video-card'); 
         cards.forEach(card => { 
             const iframe = card.querySelector('iframe'); 
             const shine = card.querySelector('.shine'); 
             const videoId = card.getAttribute('data-video'); 
-
             card.addEventListener('mousemove', (e) => { 
                 const rect = card.getBoundingClientRect(); 
                 const x = e.clientX - rect.left; 
@@ -237,12 +196,10 @@
                 gsap.to(card, { rotateX: rX, rotateY: rY, scale: 1.4, zIndex: 100, boxShadow: "0 40px 80px rgba(99, 102, 241, 0.6)", duration: 0.1 }); 
                 gsap.to(shine, { opacity: 1, x: `${(x/rect.width)*100 - 50}%`, y: `${(y/rect.height)*100 - 50}%`, duration: 0.1 }); 
             }); 
-
             card.addEventListener('mouseenter', () => { 
                 iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`; 
                 cards.forEach(other => { if(other !== card) gsap.to(other, { opacity: 0.1, scale: 0.8, filter: "blur(4px)", duration: 0.4 }); }); 
             }); 
-
             card.addEventListener('mouseleave', () => { 
                 gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, zIndex: 1, boxShadow: "0 10px 20px rgba(0,0,0,0.4)", duration: 0.6, ease: "elastic.out(1, 0.3)" }); 
                 gsap.to(shine, { opacity: 0 }); 
@@ -251,7 +208,7 @@
             }); 
         });
 
-        /* --- ORIGINAL HAND TRACKING LOGIC RESTORED --- */
+        /* --- HAND TRACKING --- */
         const mv = document.querySelector('#xr-model'); 
         const vTrack = document.getElementById("v-preview"); 
         const btnTrack = document.getElementById("t-btn"); 
@@ -298,7 +255,6 @@
                     const centerX = x + w / 2; 
                     const percentX = centerX / 640; 
                     mv.cameraOrbit = `${(percentX * 360) - 180}deg 75deg 12m`; 
-                    
                     const xray = ["closed", "fist", "pinch"].includes(hand.label); 
                     hud.classList.toggle('active', xray); 
                     if (mv.model) { 
@@ -312,7 +268,7 @@
             }); 
         } 
 
-        /* --- PARALLAX BACKGROUND --- */
+        /* --- PARALLAX --- */
         const pCanvas = document.getElementById('particle-canvas'); 
         const pCtx = pCanvas.getContext('2d'); 
         let pWidth, pHeight; 
@@ -322,7 +278,6 @@
         for(let i=0; i<80; i++) particles.push(new Particle()); 
         function animate() { pCtx.clearRect(0, 0, pWidth, pHeight); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } 
         window.addEventListener('resize', resize); resize(); animate(); 
-        
         window.addEventListener('mousemove', (e) => { 
             const moveX = (e.clientX - window.innerWidth/2) / window.innerWidth; 
             const moveY = (e.clientY - window.innerHeight/2) / window.innerHeight; 
