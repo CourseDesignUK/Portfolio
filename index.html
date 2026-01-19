@@ -55,11 +55,38 @@
         .iphone-screen { width: 100%; height: 100%; background: #000; } 
         .iphone-screen iframe { width: 100%; height: 100%; border: none; } 
 
-        .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto; gap: 30px; align-items: center; } 
-        .model-card { width: 100%; height: 75vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
-        .spatial-sync-wrapper.tracking-active .model-card { width: 66%; } 
+        /* FULL WINDOW CHINOOK LAYOUT */
+        .spatial-sync-wrapper { 
+            display: flex; 
+            width: 100%; 
+            max-width: 1600px; 
+            margin: 30px auto; 
+            gap: 30px; 
+            align-items: flex-start; 
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
+        } 
+        .model-card { 
+            width: 100%; 
+            height: 75vh; 
+            background: var(--model-bg); 
+            border-radius: 24px; 
+            border: 1px solid var(--glass-border); 
+            position: relative; 
+            overflow: hidden; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4); 
+            flex-shrink: 0; 
+        } 
+        .spatial-sync-wrapper.tracking-active .model-card { width: 66.66%; } 
 
-        #preview-wrapper { width: 33%; height: 60vh; border-radius: 24px; overflow: hidden; border: 1px solid var(--accent-color); background: #000; display: none; } 
+        #preview-wrapper { 
+            width: 33.33%; 
+            height: 75vh; 
+            border-radius: 24px; 
+            overflow: hidden; 
+            border: 1px solid var(--accent-color); 
+            background: #000; 
+            display: none; 
+        } 
         #v-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); } 
 
         #tech-hud { position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace; font-size: 0.7rem; opacity: 0; transition: 0.4s; z-index: 5; } 
@@ -115,7 +142,7 @@
                                 .details-panel { position: absolute; inset: 0; background: #0a0f19; transform: translateX(100%); transition: 0.4s; z-index: 200; padding: 60px 20px; box-sizing: border-box; overflow-y: auto;}
                                 .details-panel.active { transform: translateX(0); }
                                 model-viewer { width: 100%; height: 100%; }
-                                .spec-item { border-top: 1px solid rgba(255,255,255,0.1); padding: 8px 0; font-size: 12px; }
+                                .spec-item { border-top: 1px solid rgba(255,255,255,0.1); padding: 8px 0; font-size: 11px; }
                                 .label { color: #63b3ed; font-size: 9px; text-transform: uppercase; display: block; }
                             </style>
                         </head>
@@ -132,13 +159,12 @@
                             </div>
                             <model-viewer id='m' camera-controls auto-rotate shadow-intensity='2'></model-viewer>
                             <script>
-                                /* FIXED PATHS TO ROOT /models/ */
                                 const d = [
-                                    { n: 'Airbus A319', f: '/models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'Oxygen, Li-ion' },
-                                    { n: 'Airbus A320', f: '/models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Dust' },
-                                    { n: 'Airbus A321', f: '/models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Cryo Systems' },
-                                    { n: 'Airbus A380', f: '/models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Multi-deck Egress' },
-                                    { n: 'CH-47 Chinook', f: '/models/chinook-2.glb', cat: 'N/A', p: '33', fuel: '3,914 L', haz: 'Military Spec' }
+                                    { n: 'Airbus A319', f: '/models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'High Pressure Oxygen, Li-ion Batteries', rescue: '4 Main exits, 2 Overwing hatches' },
+                                    { n: 'Airbus A320', f: '/models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Material Dust, High Pressure Tires', rescue: '4 Main exits, 4 Overwing hatches' },
+                                    { n: 'Airbus A321', f: '/models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Hydraulic systems (Skydrol), Cryo Cooling', rescue: '8 Floor-level exits' },
+                                    { n: 'Airbus A380', f: '/models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Large composite surface areas, Multi-deck risk', rescue: '16 Floor-level exits across two decks' },
+                                    { n: 'CH-47 Chinook', f: '/models/chinook-2.glb', cat: 'Tactical', p: '33', fuel: '3,914 L', haz: 'Military Grade Propellants, Magnesium components', rescue: 'Rear ramp, Side cockpit doors' }
                                 ];
                                 const sel = document.getElementById('s');
                                 d.forEach((x, i) => { const o = document.createElement('option'); o.value = i; o.innerText = x.n; sel.appendChild(o); });
@@ -148,9 +174,10 @@
                                     document.getElementById('t').innerText = a.n;
                                     document.getElementById('specs').innerHTML = `
                                         <div class='spec-item'><span class='label'>ICAO ARFF CAT</span>` + a.cat + `</div>
-                                        <div class='spec-item'><span class='label'>MAX PAX</span>` + a.p + `</div>
+                                        <div class='spec-item'><span class='label'>MAX PASSENGERS</span>` + a.p + `</div>
                                         <div class='spec-item'><span class='label'>FUEL LOAD</span>` + a.fuel + `</div>
-                                        <div class='spec-item'><span class='label'>RESCUE HAZARDS</span>` + a.haz + `</div>
+                                        <div class='spec-item'><span class='label'>RESCUE EXITS</span>` + a.rescue + `</div>
+                                        <div class='spec-item'><span class='label'>CIVILIAN HAZARDS</span>` + a.haz + `</div>
                                     `;
                                 }
                                 u(0);
@@ -177,14 +204,34 @@
                     <div>---------------------------</div> 
                     <div>STRUCTURAL INTEGRITY: 98.4%</div> 
                 </div> 
-                <model-viewer id="xr-model" src="/models/chinook-2.glb" camera-controls shadow-intensity="1" camera-orbit="0deg 75deg 12m"></model-viewer> 
+                <model-viewer id="xr-model" src="/models/chinook-2.glb" camera-controls shadow-intensity="1" camera-orbit="0deg 75deg 12m" style="width:100%; height:100%;"></model-viewer> 
             </div> 
             <div id="preview-wrapper"><video id="v-preview" autoplay playsinline muted width="640" height="480"></video></div> 
         </div> 
     </section> 
 
     <script> 
-        /* --- HAND TRACKING SYSTEM --- */
+        // Parallax Logic
+        const pCanvas = document.getElementById('particle-canvas'); 
+        const pCtx = pCanvas.getContext('2d'); 
+        let pWidth, pHeight; 
+        const particles = []; 
+        function resize() { pWidth = window.innerWidth; pHeight = window.innerHeight; pCanvas.width = pWidth; pCanvas.height = pHeight; } 
+        class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * pWidth; this.y = Math.random() * pHeight; this.size = Math.random() * 1.5; this.speed = Math.random() * 0.4 + 0.1; this.opacity = Math.random() * 0.4 + 0.1; } update() { this.y -= this.speed; if (this.y < 0) this.reset(); } draw() { pCtx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`; pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); pCtx.fill(); } } 
+        for(let i=0; i<80; i++) particles.push(new Particle()); 
+        function animate() { pCtx.clearRect(0, 0, pWidth, pHeight); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } 
+        window.addEventListener('resize', resize); resize(); animate(); 
+
+        // Video Card Interactivity
+        const cards = document.querySelectorAll('.video-card'); 
+        cards.forEach(card => { 
+            const iframe = card.querySelector('iframe'); 
+            const videoId = card.getAttribute('data-video'); 
+            card.onmouseenter = () => { iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`; }; 
+            card.onmouseleave = () => { iframe.src = iframe.src.replace("&autoplay=1", ""); }; 
+        });
+
+        // Hand Tracking Logic
         const mv = document.querySelector('#xr-model'); 
         const vTrack = document.getElementById("v-preview"); 
         const btnTrack = document.getElementById("t-btn"); 
@@ -244,17 +291,6 @@
                 requestAnimationFrame(detectHand); 
             }); 
         } 
-
-        /* --- PARALLAX & PARTICLES --- */
-        const pCanvas = document.getElementById('particle-canvas'); 
-        const pCtx = pCanvas.getContext('2d'); 
-        let pWidth, pHeight; 
-        const particles = []; 
-        function resize() { pWidth = window.innerWidth; pHeight = window.innerHeight; pCanvas.width = pWidth; pCanvas.height = pHeight; } 
-        class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * pWidth; this.y = Math.random() * pHeight; this.size = Math.random() * 1.5; this.speed = Math.random() * 0.4 + 0.1; this.opacity = Math.random() * 0.4 + 0.1; } update() { this.y -= this.speed; if (this.y < 0) this.reset(); } draw() { pCtx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`; pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); pCtx.fill(); } } 
-        for(let i=0; i<80; i++) particles.push(new Particle()); 
-        function animate() { pCtx.clearRect(0, 0, pWidth, pHeight); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } 
-        window.addEventListener('resize', resize); resize(); animate(); 
     </script> 
 </body> 
 </html>
