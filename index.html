@@ -4,7 +4,7 @@
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>XR Training Labs | Persistent Expansion</title> 
-     
+    
     <link rel="preconnect" href="https://fonts.googleapis.com"> 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Source+Code+Pro&display=swap" rel="stylesheet"> 
 
@@ -25,26 +25,12 @@
         } 
 
         * { margin: 0; padding: 0; box-sizing: border-box; } 
-         
-        body {  
-            font-family: 'Inter', sans-serif;  
-            background: var(--bg-color);  
-            color: var(--text-color);  
-            overflow-x: hidden; 
-        } 
+        
+        body { font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-color); overflow-x: hidden; } 
 
-        #parallax-container { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
-            background: radial-gradient(circle at center, #0a0c14 0%, #030508 100%); 
-            overflow: hidden; 
-        } 
+        #parallax-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #0a0c14 0%, #030508 100%); overflow: hidden; } 
         .parallax-layer { position: absolute; top: -10%; left: -10%; width: 120%; height: 120%; will-change: transform; } 
-         
-        #grid-layer { 
-            background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px); 
-            background-size: 60px 60px; 
-            mask-image: radial-gradient(ellipse at center, black, transparent 85%); 
-        } 
+        #grid-layer { background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(ellipse at center, black, transparent 85%); } 
         #particle-canvas { width: 100%; height: 100%; } 
 
         nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); } 
@@ -53,6 +39,7 @@
         section { padding: 140px 5% 60px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 10; } 
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 10px; text-transform: uppercase; letter-spacing: -2px; } 
         h2.sub-heading { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 300; color: var(--accent-color); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; } 
+        .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; text-align: justify; hyphens: auto; } 
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; } 
 
         .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1600px; margin: 20px auto; perspective: 2000px; } 
@@ -62,21 +49,23 @@
         .video-card { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); cursor: pointer; transition: 0.3s; } 
         .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; } 
 
-        .iphone-wrapper { display: flex; justify-content: center; padding: 40px 0; } 
+        .iphone-wrapper { display: flex; justify-content: center; padding: 60px 0; } 
         .iphone-device { width: 320px; height: 650px; background: #111; border-radius: 40px; border: 8px solid #222; position: relative; box-shadow: 0 50px 100px rgba(0,0,0,0.8); overflow: hidden; } 
         .iphone-device::before { content: ''; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 100px; height: 25px; background: #000; border-radius: 20px; z-index: 20; } 
         .iphone-screen { width: 100%; height: 100%; background: #000; } 
         .iphone-screen iframe { width: 100%; height: 100%; border: none; } 
 
-        .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto 0; gap: 30px; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
-        .model-card { width: 100%; height: 65vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; } 
-        .spatial-sync-wrapper.tracking-active .model-card { width: 66.66%; } 
-        #preview-wrapper { width: 33.33%; height: 65vh; border-radius: 24px; overflow: hidden; border: 1px solid var(--accent-color); background: #000; display: none; } 
+        .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto; gap: 30px; align-items: center; } 
+        .model-card { width: 100%; height: 75vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
+        .spatial-sync-wrapper.tracking-active .model-card { width: 66%; } 
+
+        #preview-wrapper { width: 33%; height: 60vh; border-radius: 24px; overflow: hidden; border: 1px solid var(--accent-color); background: #000; display: none; } 
         #v-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); } 
+
         #tech-hud { position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace; font-size: 0.7rem; opacity: 0; transition: 0.4s; z-index: 5; } 
         #tech-hud.active { opacity: 1; } 
         #hand-ui { margin-bottom: 20px; } 
-        .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 12px 24px; border-radius: 4px; font-weight: 700; cursor: pointer; } 
+        .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 14px 28px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Source Code Pro', monospace; } 
     </style> 
 </head> 
 <body> 
@@ -91,6 +80,10 @@
     <section> 
         <h1>XR Training Labs</h1> 
         <h2 class="sub-heading">Spatial Computing Training Systems</h2> 
+        <p class="intro-text"> 
+            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application. We have experience in designing, developing and deployment of training in 3d, mixed and virtual reality, using Moodle, Web, Apps and VR headsets.
+        </p>
+
         <div class="ar-content">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div> 
          
         <div class="grid-container"> 
@@ -98,8 +91,13 @@
             <div class="video-card" data-video="2OvfLt13D6Y"><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe></div> 
             <div class="video-card" data-video="8kNXOVutOJc"><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
             <div class="video-card" data-video="0m-LbA8E97Q"><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="DfQ2xc5ygGc"><iframe src="https://www.youtube.com/embed/DfQ2xc5ygGc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="LvSaP_7rMbM"><iframe src="https://www.youtube.com/embed/LvSaP_7rMbM?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="hwnwM5zI8To"><iframe src="https://www.youtube.com/embed/hwnwM5zI8To?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="inC-Lab04aA"><iframe src="https://www.youtube.com/embed/inC-Lab04aA?controls=0&mute=1&enablejsapi=1"></iframe></div> 
         </div> 
 
+        <div class="ar-content" style="margin-top: 60px;">MOBILE_INTERFACE: AERO_ASSET_VIEWER</div>
         <div class="iphone-wrapper">
             <div class="iphone-device">
                 <div class="iphone-screen">
@@ -107,14 +105,14 @@
                         <!DOCTYPE html>
                         <html>
                         <head>
-                            <script type='module' src='https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js'></script>
+                            <script type='module' src='https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js'></script>
                             <style>
                                 body { margin: 0; background: #0d1117; color: white; font-family: sans-serif; height: 100vh; overflow: hidden; }
                                 #start-screen { position: fixed; inset: 0; background: radial-gradient(circle, #1a202c, #0d1117); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.5s; }
                                 .commence-btn { border: 1px solid white; background: none; color: white; padding: 10px 20px; cursor: pointer; margin-top: 20px; }
                                 .control-panel { position: absolute; top: 50px; left: 10px; right: 10px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; backdrop-filter: blur(10px); z-index: 50; display: flex; justify-content: space-between; }
                                 select { background: transparent; color: white; border: none; width: 70%; outline: none; }
-                                .details-panel { position: absolute; inset: 0; background: #0a0f19; transform: translateX(100%); transition: 0.4s; z-index: 200; padding: 60px 20px; }
+                                .details-panel { position: absolute; inset: 0; background: #0a0f19; transform: translateX(100%); transition: 0.4s; z-index: 200; padding: 60px 20px; box-sizing: border-box; overflow-y: auto;}
                                 .details-panel.active { transform: translateX(0); }
                                 model-viewer { width: 100%; height: 100%; }
                                 .spec-item { border-top: 1px solid rgba(255,255,255,0.1); padding: 8px 0; font-size: 12px; }
@@ -135,19 +133,24 @@
                             <model-viewer id='m' camera-controls auto-rotate shadow-intensity='2'></model-viewer>
                             <script>
                                 const d = [
-                                    { n: 'Airbus A319', f: 'airbus_a319.glb', c: '6', p: '160', h: 'Oxygen, Li-ion' },
-                                    { n: 'Airbus A320', f: 'airbus_a320.glb', c: '6', p: '180', h: 'Composite Dust' },
-                                    { n: 'Airbus A321', f: 'airbus_a321.glb', c: '7', p: '236', h: 'Cryo Systems' },
-                                    { n: 'Airbus A380', f: 'airbus_a380.glb', c: '10', p: '853', h: 'Massive Fuel' },
-                                    { n: 'CH-47 Chinook', f: 'chinook-2.glb', c: 'Tactical', p: '33', h: 'Military Spec' }
+                                    { n: 'Airbus A319', f: 'models/airbus_a319.glb', c: '6', p: '160', h: 'Oxygen, Li-ion', fuel: '23,860 L', cat: '6' },
+                                    { n: 'Airbus A320', f: 'models/airbus_a320.glb', c: '6', p: '180', h: 'Composite Dust', fuel: '24,210 L', cat: '6' },
+                                    { n: 'Airbus A321', f: 'models/airbus_a321.glb', c: '7', p: '236', h: 'Cryo Systems', fuel: '29,680 L', cat: '7' },
+                                    { n: 'Airbus A380', f: 'models/airbus_a380.glb', c: '10', p: '853', h: 'Massive Fuel', fuel: '320,000 L', cat: '10' },
+                                    { n: 'CH-47 Chinook', f: 'models/chinook-2.glb', c: 'Tactical', p: '33', h: 'Military Spec', fuel: '3,914 L', cat: 'N/A' }
                                 ];
                                 const sel = document.getElementById('s');
                                 d.forEach((x, i) => { const o = document.createElement('option'); o.value = i; o.innerText = x.n; sel.appendChild(o); });
                                 function u(i) {
                                     const a = d[i];
-                                    document.getElementById('m').src = '../models/' + a.f;
+                                    document.getElementById('m').src = '../' + a.f;
                                     document.getElementById('t').innerText = a.n;
-                                    document.getElementById('specs').innerHTML = `<div class='spec-item'><span class='label'>ARFF CAT</span>${a.c}</div><div class='spec-item'><span class='label'>MAX PAX</span>${a.p}</div><div class='spec-item'><span class='label'>HAZARDS</span>${a.h}</div>`;
+                                    document.getElementById('specs').innerHTML = `
+                                        <div class='spec-item'><span class='label'>ICAO ARFF CAT</span>` + a.cat + `</div>
+                                        <div class='spec-item'><span class='label'>MAX PAX</span>` + a.p + `</div>
+                                        <div class='spec-item'><span class='label'>FUEL LOAD</span>` + a.fuel + `</div>
+                                        <div class='spec-item'><span class='label'>RESCUE HAZARDS</span>` + a.h + `</div>
+                                    `;
                                 }
                                 u(0);
                             </script>
@@ -157,22 +160,30 @@
                 </div>
             </div>
         </div>
+
+        <p class="intro-text" style="margin-top: 40px; max-width: 100%;"> 
+            Team members have successfully built and deployed training for the UK Military. We offer a single point of contact to bring your training to life with Virtual reality, Mixed reality and 3D.
+        </p> 
     </section> 
 
     <section> 
         <div class="ar-content">SPATIAL_SYNC: CHINOOK_CH47D</div> 
-        <div id="hand-ui"><button class="cam-btn" id="t-btn">LOADING SENSORS...</button></div> 
+        <div id="hand-ui"><button class="cam-btn" id="t-btn">INITIALIZING SENSORS...</button></div> 
         <div class="spatial-sync-wrapper" id="sync-engine"> 
             <div class="model-card"> 
-                <div id="tech-hud"><div>[SYSTEM STATUS: X-RAY ACTIVE]</div></div> 
-                <model-viewer id="xr-model" src="models/chinook-2.glb" camera-controls></model-viewer> 
+                <div id="tech-hud"> 
+                    <div>[SYSTEM STATUS: X-RAY ACTIVE]</div> 
+                    <div>---------------------------</div> 
+                    <div>STRUCTURAL INTEGRITY: 98.4%</div> 
+                </div> 
+                <model-viewer id="xr-model" src="models/chinook-2.glb" camera-controls shadow-intensity="1" camera-orbit="0deg 75deg 12m"></model-viewer> 
             </div> 
             <div id="preview-wrapper"><video id="v-preview" autoplay playsinline muted width="640" height="480"></video></div> 
         </div> 
     </section> 
 
     <script> 
-        // Parallax Logic
+        // Parallax and Particles
         const pCanvas = document.getElementById('particle-canvas'); 
         const pCtx = pCanvas.getContext('2d'); 
         let pWidth, pHeight; 
@@ -183,7 +194,16 @@
         function animate() { pCtx.clearRect(0, 0, pWidth, pHeight); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } 
         window.addEventListener('resize', resize); resize(); animate(); 
 
-        // HAND TRACKING FIX
+        // Video Card Interactivity
+        const cards = document.querySelectorAll('.video-card'); 
+        cards.forEach(card => { 
+            const iframe = card.querySelector('iframe'); 
+            const videoId = card.getAttribute('data-video'); 
+            card.onmouseenter = () => { iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`; }; 
+            card.onmouseleave = () => { iframe.src = iframe.src.replace("&autoplay=1", ""); }; 
+        });
+
+        // Hand Tracking Logic
         const mv = document.querySelector('#xr-model'); 
         const vTrack = document.getElementById("v-preview"); 
         const btnTrack = document.getElementById("t-btn"); 
@@ -206,7 +226,7 @@
                         isTracking = true; 
                         syncEngine.classList.add('tracking-active'); 
                         previewWrapper.style.display = "block"; 
-                        btnTrack.innerText = "TERMINATE"; 
+                        btnTrack.innerText = "TERMINATE SENSORS"; 
                         btnTrack.style.background = "var(--error-red)"; 
                         detectHand(); 
                     } 
@@ -216,7 +236,7 @@
                 isTracking = false; 
                 syncEngine.classList.remove('tracking-active'); 
                 previewWrapper.style.display = "none"; 
-                btnTrack.innerText = "INITIALIZE"; 
+                btnTrack.innerText = "INITIALIZE SENSORS"; 
                 btnTrack.style.background = "var(--accent-color)"; 
             } 
         }); 
