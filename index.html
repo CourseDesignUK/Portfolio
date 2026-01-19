@@ -41,26 +41,34 @@
         .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; text-align: justify; } 
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; } 
 
-        /* VIDEO GRID WITH TILT */ 
         .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1600px; margin: 20px auto; perspective: 2000px; } 
         .video-card { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); cursor: pointer; transform-style: preserve-3d; transition: z-index 0.3s; } 
         .shine { position: absolute; top: 0; left: 0; width: 150%; height: 150%; background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%); pointer-events: none; z-index: 5; opacity: 0; transform: translate(-50%, -50%); } 
         .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.02); } 
 
-        .iphone-wrapper { display: flex; justify-content: center; padding: 60px 0; } 
+        .iphone-section-container { display: flex; align-items: center; justify-content: space-between; gap: 50px; max-width: 1400px; margin: 40px auto; padding: 0 5%; }
+        .app-description { flex: 1; color: #ccc; }
+        .app-description h3 { color: var(--accent-color); font-size: 1.8rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
+        .app-description p { line-height: 1.7; margin-bottom: 20px; font-size: 1.05rem; }
+        .app-description ul { list-style: none; }
+        .app-description li { margin-bottom: 12px; padding-left: 20px; border-left: 2px solid var(--hud-green); font-size: 0.95rem; }
+
+        .iphone-wrapper { flex-shrink: 0; display: flex; justify-content: center; padding: 20px 0; } 
         .iphone-device { width: 320px; height: 650px; background: #111; border-radius: 40px; border: 8px solid #222; position: relative; box-shadow: 0 50px 100px rgba(0,0,0,0.8); overflow: hidden; } 
         .iphone-device::before { content: ''; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 100px; height: 25px; background: #000; border-radius: 20px; z-index: 20; } 
         .iphone-screen { width: 100%; height: 100%; background: #000; } 
         .iphone-screen iframe { width: 100%; height: 100%; border: none; } 
 
-        /* CHINOOK MANIPULATION LAYOUT */ 
+        @media (max-width: 1000px) {
+            .iphone-section-container { flex-direction: column; text-align: center; }
+            .app-description li { border-left: none; border-bottom: 1px solid var(--hud-green); padding-bottom: 10px; }
+        }
+
         .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto; gap: 30px; align-items: center; justify-content: center; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
         .model-card { width: 100%; height: 75vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); flex-shrink: 0; } 
         .spatial-sync-wrapper.tracking-active .model-card { width: 66.66%; } 
-
         #preview-wrapper { width: 33.33%; height: 75vh; border-radius: 24px; overflow: hidden; border: 1px solid var(--accent-color); background: #000; display: none; } 
         #v-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); } 
-
         #tech-hud { position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace; font-size: 0.7rem; opacity: 0; transition: 0.4s; z-index: 5; pointer-events: none; } 
         #tech-hud.active { opacity: 1; } 
         .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 14px 28px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Source Code Pro', monospace; transition: 0.3s; } 
@@ -96,65 +104,86 @@
         </div> 
 
         <div class="ar-content" style="margin-top: 60px;">MOBILE_INTERFACE: AERO_ASSET_VIEWER</div>
-        <div class="iphone-wrapper">
-            <div class="iphone-device">
-                <div class="iphone-screen">
-                    <iframe srcdoc="
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <script type='module' src='https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js'></script>
-                            <style>
-                                body { margin: 0; background: #0d1117; color: white; font-family: sans-serif; height: 100vh; overflow: hidden; }
-                                #start-screen { position: fixed; inset: 0; background: radial-gradient(circle, #1a202c, #0d1117); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.5s; }
-                                .commence-btn { border: 1px solid white; background: none; color: white; padding: 10px 20px; cursor: pointer; margin-top: 20px; }
-                                .control-panel { position: absolute; top: 50px; left: 10px; right: 10px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; backdrop-filter: blur(10px); z-index: 50; display: flex; justify-content: space-between; }
-                                select { background: transparent; color: white; border: none; width: 70%; outline: none; }
-                                .details-panel { position: absolute; inset: 0; background: #0a0f19; transform: translateX(100%); transition: 0.4s; z-index: 200; padding: 60px 20px; box-sizing: border-box; overflow-y: auto;}
-                                .details-panel.active { transform: translateX(0); }
-                                model-viewer { width: 100%; height: 100%; }
-                                .spec-item { border-top: 1px solid rgba(255,255,255,0.1); padding: 8px 0; font-size: 11px; }
-                                .label { color: #63b3ed; font-size: 9px; text-transform: uppercase; display: block; }
-                            </style>
-                        </head>
-                        <body>
-                            <div id='start-screen'><h2>AERO ASSET</h2><button class='commence-btn' onclick='this.parentElement.style.opacity=0;setTimeout(()=>this.parentElement.style.display=&quot;none&quot;,500)'>START</button></div>
-                            <div id='details' class='details-panel'>
-                                <h3 id='t'>Asset</h3>
-                                <div id='specs'></div>
-                                <button onclick='document.getElementById(&quot;details&quot;).classList.remove(&quot;active&quot;)' style='width:100%; margin-top:20px; background:none; border:1px solid white; color:white; padding:10px;'>CLOSE</button>
-                            </div>
-                            <div class='control-panel'>
-                                <select id='s' onchange='u(this.value)'></select>
-                                <button onclick='document.getElementById(&quot;details&quot;).classList.add(&quot;active&quot;)' style='background:#5d7a8c; color:white; border:none; padding:5px 10px; border-radius:4px; font-size:10px;'>FACTS</button>
-                            </div>
-                            <model-viewer id='m' camera-controls auto-rotate shadow-intensity='2'></model-viewer>
-                            <script>
-                                const d = [
-                                    { n: 'Airbus A319', f: 'models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'Oxygen, Li-ion', rescue: '4 Main exits' },
-                                    { n: 'Airbus A320', f: 'models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Dust', rescue: '4 Main exits, 4 Overwing' },
-                                    { n: 'Airbus A321', f: 'models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Hydraulic Skydrol', rescue: '8 exits' },
-                                    { n: 'Airbus A380', f: 'models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Massive Fuel', rescue: '16 exits' },
-                                    { n: 'CH-47 Chinook', f: 'models/chinook-2.glb', cat: 'Tactical', p: '33', fuel: '3,914 L', haz: 'Military Spec', rescue: 'Rear ramp' }
-                                ];
-                                const sel = document.getElementById('s');
-                                d.forEach((x, i) => { const o = document.createElement('option'); o.value = i; o.innerText = x.n; sel.appendChild(o); });
-                                function u(i) {
-                                    const a = d[i];
-                                    document.getElementById('m').src = a.f;
-                                    document.getElementById('t').innerText = a.n;
-                                    document.getElementById('specs').innerHTML = `
-                                        <div class='spec-item'><span class='label'>ICAO ARFF CAT</span>` + a.cat + `</div>
-                                        <div class='spec-item'><span class='label'>MAX PAX</span>` + a.p + `</div>
-                                        <div class='spec-item'><span class='label'>FUEL LOAD</span>` + a.fuel + `</div>
-                                        <div class='spec-item'><span class='label'>CIVILIAN HAZARDS</span>` + a.haz + `</div>
-                                    `;
-                                }
-                                u(0);
-                            </script>
-                        </body>
-                        </html>
-                    "></iframe>
+        
+        <div class="iphone-section-container">
+            <div class="app-description">
+                <h3>Aero Asset Viewer</h3>
+                <p>Designed for the next generation of defense firefighters, the Aero Asset Viewer is a mobile-first spatial computing application that transforms technical manuals into interactive training tools.</p>
+                <ul>
+                    <li><strong>Augmented Reality Integration:</strong> Deploy 1:1 scale aircraft models directly onto the airfield to practice tactical positioning and egress routes.</li>
+                    <li><strong>Multisector Asset Library:</strong> Access a wide range of civilian aircraft, military transports, and tactical munitions hazards.</li>
+                    <li><strong>ICAO ARFF Firefighting Cards:</strong> Instantly retrieve critical data on fuel loads, passenger capacities, and rescue exit locations for civilian Airbus fleets.</li>
+                    <li><strong>Munition Hazard Intelligence:</strong> Critical data for tactical response when encountering unexploded ordnance or military-grade propellants.</li>
+                </ul>
+            </div>
+
+            <div class="iphone-wrapper">
+                <div class="iphone-device">
+                    <div class="iphone-screen">
+                        <iframe srcdoc="
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <script type='module' src='https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js'></script>
+                                <style>
+                                    body { margin: 0; background: #0d1117; color: white; font-family: sans-serif; height: 100vh; overflow: hidden; }
+                                    #start-screen { position: fixed; inset: 0; background: radial-gradient(circle, #1a202c, #0d1117); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.5s; }
+                                    .radar { position: relative; width: 220px; height: 220px; border: 2px solid rgba(99, 179, 237, 0.2); border-radius: 50%; background: repeating-radial-gradient(circle at center, transparent, transparent 29px, rgba(99, 179, 237, 0.1) 30px); }
+                                    .radar::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(from -90deg, transparent 0deg, rgba(99, 179, 237, 0.4) 90deg, transparent 91deg); animation: sweep 4s linear infinite; }
+                                    @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+                                    .commence-btn { border: 1px solid white; background: none; color: white; padding: 10px 20px; cursor: pointer; margin-top: 30px; letter-spacing: 2px; }
+                                    .control-panel { position: absolute; top: 50px; left: 10px; right: 10px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; backdrop-filter: blur(10px); z-index: 50; display: flex; justify-content: space-between; }
+                                    select { background: transparent; color: white; border: none; width: 70%; outline: none; }
+                                    .details-panel { position: absolute; inset: 0; background: #0a0f19; transform: translateX(100%); transition: 0.4s; z-index: 200; padding: 60px 20px; box-sizing: border-box; overflow-y: auto;}
+                                    .details-panel.active { transform: translateX(0); }
+                                    model-viewer { width: 100%; height: 100%; }
+                                    .spec-item { border-top: 1px solid rgba(255,255,255,0.1); padding: 8px 0; font-size: 11px; }
+                                    .label { color: #63b3ed; font-size: 9px; text-transform: uppercase; display: block; }
+                                </style>
+                            </head>
+                            <body>
+                                <div id='start-screen'>
+                                    <div class='radar'></div>
+                                    <h2 style='letter-spacing:4px; margin-top:20px; font-weight:300;'>AERO ASSET</h2>
+                                    <button class='commence-btn' onclick='this.parentElement.style.opacity=0;setTimeout(()=>this.parentElement.style.display=&quot;none&quot;,500)'>START VIEWER</button>
+                                </div>
+                                <div id='details' class='details-panel'>
+                                    <h3 id='t'>Asset</h3>
+                                    <div id='specs'></div>
+                                    <button onclick='document.getElementById(&quot;details&quot;).classList.remove(&quot;active&quot;)' style='width:100%; margin-top:20px; background:none; border:1px solid white; color:white; padding:10px;'>CLOSE</button>
+                                </div>
+                                <div class='control-panel'>
+                                    <select id='s' onchange='u(this.value)'></select>
+                                    <button onclick='document.getElementById(&quot;details&quot;).classList.add(&quot;active&quot;)' style='background:#5d7a8c; color:white; border:none; padding:5px 10px; border-radius:4px; font-size:10px;'>FACTS</button>
+                                </div>
+                                <model-viewer id='m' camera-controls auto-rotate shadow-intensity='2'></model-viewer>
+                                <script>
+                                    const d = [
+                                        { n: 'Airbus A319', f: 'models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'Oxygen, Li-ion', rescue: '4 Main exits' },
+                                        { n: 'Airbus A320', f: 'models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Dust', rescue: '4 Main exits, 4 Overwing' },
+                                        { n: 'Airbus A321', f: 'models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Hydraulic Skydrol', rescue: '8 exits' },
+                                        { n: 'Airbus A380', f: 'models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Massive Fuel', rescue: '16 Floor-level exits' },
+                                        { n: 'CH-47 Chinook', f: 'models/chinook-2.glb', cat: 'Tactical', p: '33', fuel: '3,914 L', haz: 'Military Spec', rescue: 'Rear ramp' }
+                                    ];
+                                    const sel = document.getElementById('s');
+                                    d.forEach((x, i) => { const o = document.createElement('option'); o.value = i; o.innerText = x.n; sel.appendChild(o); });
+                                    function u(i) {
+                                        const a = d[i];
+                                        document.getElementById('m').src = 'models/' + a.f.split('/').pop();
+                                        document.getElementById('t').innerText = a.n;
+                                        document.getElementById('specs').innerHTML = `
+                                            <div class='spec-item'><span class='label'>ICAO ARFF CAT</span>` + a.cat + `</div>
+                                            <div class='spec-item'><span class='label'>MAX PAX</span>` + a.p + `</div>
+                                            <div class='spec-item'><span class='label'>FUEL LOAD</span>` + a.fuel + `</div>
+                                            <div class='spec-item'><span class='label'>CIVILIAN HAZARDS</span>` + a.haz + `</div>
+                                        `;
+                                    }
+                                    u(0);
+                                </script>
+                            </body>
+                            </html>
+                        "></iframe>
+                    </div>
                 </div>
             </div>
         </div>
@@ -181,7 +210,7 @@
     </section> 
 
     <script> 
-        /* --- VIDEO TILT --- */
+        /* --- HAND TRACKING & VIDEO TILT LOGIC --- */
         const cards = document.querySelectorAll('.video-card'); 
         cards.forEach(card => { 
             const iframe = card.querySelector('iframe'); 
@@ -208,7 +237,6 @@
             }); 
         });
 
-        /* --- HAND TRACKING --- */
         const mv = document.querySelector('#xr-model'); 
         const vTrack = document.getElementById("v-preview"); 
         const btnTrack = document.getElementById("t-btn"); 
@@ -268,7 +296,6 @@
             }); 
         } 
 
-        /* --- PARALLAX --- */
         const pCanvas = document.getElementById('particle-canvas'); 
         const pCtx = pCanvas.getContext('2d'); 
         let pWidth, pHeight; 
