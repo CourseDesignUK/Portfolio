@@ -33,7 +33,6 @@
             overflow-x: hidden; 
         } 
 
-        /* --- PARALLAX BACKGROUND --- */ 
         #parallax-container { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
             background: radial-gradient(circle at center, #0a0c14 0%, #030508 100%); 
@@ -52,48 +51,39 @@
         .logo { font-weight: 700; font-family: 'Source Code Pro', monospace; color: var(--accent-color); font-size: 1rem; } 
 
         section { padding: 140px 5% 60px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 10; } 
-         
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 10px; text-transform: uppercase; letter-spacing: -2px; } 
         h2.sub-heading { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 300; color: var(--accent-color); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; } 
-         
-        .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; text-align: justify; hyphens: auto; } 
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; } 
 
         .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1600px; margin: 20px auto; perspective: 2000px; } 
         @media (max-width: 1100px) { .grid-container { grid-template-columns: repeat(2, 1fr); } } 
         @media (max-width: 600px) { .grid-container { grid-template-columns: 1fr; } } 
 
-        .video-card { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); cursor: pointer; transform-style: preserve-3d; box-shadow: 0 10px 20px rgba(0,0,0,0.4); transition: z-index 0.3s; } 
-        .shine { position: absolute; top: 0; left: 0; width: 150%; height: 150%; background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%); pointer-events: none; z-index: 5; opacity: 0; transform: translate(-50%, -50%); } 
-        .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.02); } 
+        .video-card { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); cursor: pointer; transition: 0.3s; } 
+        .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; } 
 
-        .iphone-wrapper { display: flex; justify-content: center; align-items: center; padding: 40px 0; perspective: 1000px; } 
+        .iphone-wrapper { display: flex; justify-content: center; padding: 40px 0; } 
         .iphone-device { width: 320px; height: 650px; background: #111; border-radius: 40px; border: 8px solid #222; position: relative; box-shadow: 0 50px 100px rgba(0,0,0,0.8); overflow: hidden; } 
         .iphone-device::before { content: ''; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 100px; height: 25px; background: #000; border-radius: 20px; z-index: 20; } 
-        .iphone-screen { width: 100%; height: 100%; background: #000; border-radius: 32px; overflow: hidden; } 
+        .iphone-screen { width: 100%; height: 100%; background: #000; } 
         .iphone-screen iframe { width: 100%; height: 100%; border: none; } 
 
-        .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto 0; gap: 30px; align-items: flex-start; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
-        .model-card { width: 100%; height: 65vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); flex-shrink: 0; } 
+        .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto 0; gap: 30px; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
+        .model-card { width: 100%; height: 65vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; } 
         .spatial-sync-wrapper.tracking-active .model-card { width: 66.66%; } 
-        #preview-wrapper { width: 33.33%; height: 65vh; position: relative; display: none; border-radius: 24px; overflow: hidden; border: 1px solid var(--accent-color); background: #000; } 
-        #v-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); filter: grayscale(1) brightness(0.8) contrast(1.2); } 
-        model-viewer { width: 100%; height: 100%; outline: none; } 
-        #tech-hud { position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace; font-size: 0.7rem; pointer-events: none; opacity: 0; transition: 0.4s ease; z-index: 5; } 
+        #preview-wrapper { width: 33.33%; height: 65vh; border-radius: 24px; overflow: hidden; border: 1px solid var(--accent-color); background: #000; display: none; } 
+        #v-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); } 
+        #tech-hud { position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace; font-size: 0.7rem; opacity: 0; transition: 0.4s; z-index: 5; } 
         #tech-hud.active { opacity: 1; } 
-        #hand-ui { margin-bottom: 20px; display: flex; align-items: center; gap: 20px; } 
-        .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 12px 24px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.75rem; font-family: 'Source Code Pro', monospace; transition: 0.3s; } 
-        .ar-controls { display: flex; justify-content: center; margin-top: 25px; } 
-        .ar-launch-btn { background: #fff; color: #000; border: none; padding: 18px 45px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; } 
+        #hand-ui { margin-bottom: 20px; } 
+        .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 12px 24px; border-radius: 4px; font-weight: 700; cursor: pointer; } 
     </style> 
 </head> 
 <body> 
 
     <div id="parallax-container"> 
         <div id="grid-layer" class="parallax-layer"></div> 
-        <div id="particle-layer" class="parallax-layer"> 
-            <canvas id="particle-canvas"></canvas> 
-        </div> 
+        <div id="particle-layer" class="parallax-layer"><canvas id="particle-canvas"></canvas></div> 
     </div> 
 
     <nav><div class="logo">XR_TRAINING_LABS_v2.0</div></nav> 
@@ -101,92 +91,65 @@
     <section> 
         <h1>XR Training Labs</h1> 
         <h2 class="sub-heading">Spatial Computing Training Systems</h2> 
-        <p class="intro-text"> 
-            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application.
-        </p> 
-
         <div class="ar-content">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div> 
          
         <div class="grid-container"> 
-            <div class="video-card" data-video="_ckPvnl4HQI"><div class="shine"></div><iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="2OvfLt13D6Y"><div class="shine"></div><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="8kNXOVutOJc"><div class="shine"></div><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="0m-LbA8E97Q"><div class="shine"></div><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="DfQ2xc5ygGc"><div class="shine"></div><iframe src="https://www.youtube.com/embed/DfQ2xc5ygGc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="LvSaP_7rMbM"><div class="shine"></div><iframe src="https://www.youtube.com/embed/LvSaP_7rMbM?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="hwnwM5zI8To"><div class="shine"></div><iframe src="https://www.youtube.com/embed/hwnwM5zI8To?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="inC-Lab04aA"><div class="shine"></div><iframe src="https://www.youtube.com/embed/inC-Lab04aA?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="_ckPvnl4HQI"><iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="2OvfLt13D6Y"><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="8kNXOVutOJc"><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="0m-LbA8E97Q"><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe></div> 
         </div> 
 
-        <div class="ar-content" style="margin-top: 60px;">MOBILE_INTERFACE: AERO_ASSET_VIEWER</div>
         <div class="iphone-wrapper">
             <div class="iphone-device">
                 <div class="iphone-screen">
                     <iframe srcdoc="
                         <!DOCTYPE html>
-                        <html lang='en'>
+                        <html>
                         <head>
                             <script type='module' src='https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js'></script>
                             <style>
-                                :root { --app-bg: #0d1117; --raf-blue: #5d7a8c; --raf-red: #c21807; --icao-gold: #d4af37; --accent: #63b3ed; --glass: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1); }
-                                body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: var(--app-bg); font-family: sans-serif; color: white; }
-                                #start-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, #1a202c 0%, #0d1117 100%); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.8s; }
-                                .radar { position: relative; width: 220px; height: 220px; border: 2px solid rgba(99, 179, 237, 0.2); border-radius: 50%; }
-                                .radar::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(from -90deg, transparent 0deg, rgba(99, 179, 237, 0.4) 90deg, transparent 91deg); animation: sweep 4s linear infinite; }
-                                @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-                                .commence-btn { margin-top: 30px; background: transparent; color: white; border: 1px solid white; padding: 10px 20px; border-radius: 4px; cursor: pointer; letter-spacing: 2px; }
-                                .app-overlay { position: absolute; top: 50px; left: 50%; transform: translateX(-50%); z-index: 100; width: 90%; }
-                                .control-panel { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); padding: 10px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
-                                select { background: transparent; color: white; border: none; font-size: 12px; outline: none; width: 100%; cursor: pointer; }
-                                .details-panel { position: absolute; top: 0; right: -100%; width: 100%; height: 100%; background: #0a0f19; z-index: 300; transition: 0.5s; padding: 50px 20px; box-sizing: border-box; }
-                                .details-panel.active { right: 0; }
-                                .spec-item { border-top: 1px solid var(--glass-border); padding: 10px 0; }
-                                .spec-label { font-size: 9px; color: var(--accent); text-transform: uppercase; font-weight: 800; }
-                                .spec-value { display: block; font-size: 13px; margin-top: 4px; font-family: monospace; }
+                                body { margin: 0; background: #0d1117; color: white; font-family: sans-serif; height: 100vh; overflow: hidden; }
+                                #start-screen { position: fixed; inset: 0; background: radial-gradient(circle, #1a202c, #0d1117); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.5s; }
+                                .commence-btn { border: 1px solid white; background: none; color: white; padding: 10px 20px; cursor: pointer; margin-top: 20px; }
+                                .control-panel { position: absolute; top: 50px; left: 10px; right: 10px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; backdrop-filter: blur(10px); z-index: 50; display: flex; justify-content: space-between; }
+                                select { background: transparent; color: white; border: none; width: 70%; outline: none; }
+                                .details-panel { position: absolute; inset: 0; background: #0a0f19; transform: translateX(100%); transition: 0.4s; z-index: 200; padding: 60px 20px; }
+                                .details-panel.active { transform: translateX(0); }
+                                model-viewer { width: 100%; height: 100%; }
+                                .spec-item { border-top: 1px solid rgba(255,255,255,0.1); padding: 8px 0; font-size: 12px; }
+                                .label { color: #63b3ed; font-size: 9px; text-transform: uppercase; display: block; }
                             </style>
                         </head>
                         <body>
-                            <div id='start-screen'><div class='radar'></div><button class='commence-btn' onclick='enterApp()'>START VIEWER</button></div>
-                            <div id='details-panel' class='details-panel'>
-                                <div id='classif' style='font-size:10px;'>ICAO ARFF DATA</div>
-                                <h2 id='asset-title' style='text-transform:uppercase;'>Asset</h2>
-                                <div id='spec-container'></div>
-                                <button onclick='toggleDetails()' style='width:100%; margin-top:30px; background:none; border:1px solid white; color:white; padding:10px;'>CLOSE</button>
+                            <div id='start-screen'><h2>AERO ASSET</h2><button class='commence-btn' onclick='this.parentElement.style.opacity=0;setTimeout(()=>this.parentElement.style.display=&quot;none&quot;,500)'>START</button></div>
+                            <div id='details' class='details-panel'>
+                                <h3 id='t'>Asset</h3>
+                                <div id='specs'></div>
+                                <button onclick='document.getElementById(&quot;details&quot;).classList.remove(&quot;active&quot;)' style='width:100%; margin-top:20px; background:none; border:1px solid white; color:white; padding:10px;'>CLOSE</button>
                             </div>
-                            <div class='app-overlay'><div class='control-panel'><div style='flex-grow:1'><span style='font-size:8px; color:var(--accent)'>Primary Asset</span><select id='model-select'></select></div><button onclick='toggleDetails()' style='background:var(--raf-blue); color:white; border:none; padding:5px 10px; border-radius:4px; font-size:9px;'>FACTS</button></div></div>
-                            <model-viewer id='main-viewer' ar camera-controls auto-rotate shadow-intensity='2' environment-image='neutral'></model-viewer>
+                            <div class='control-panel'>
+                                <select id='s' onchange='u(this.value)'></select>
+                                <button onclick='document.getElementById(&quot;details&quot;).classList.add(&quot;active&quot;)' style='background:#5d7a8c; color:white; border:none; padding:5px 10px; border-radius:4px; font-size:10px;'>FACTS</button>
+                            </div>
+                            <model-viewer id='m' camera-controls auto-rotate shadow-intensity='2'></model-viewer>
                             <script>
-                                const data = [
-                                    { name: 'Airbus A319', file: 'airbus_a319', type: 'civilian', arff_cat: '6', max_pax: '160', fuel: '24,210 L', exits: '6', hazards: 'High Pressure Oxygen, Lithium Batteries' },
-                                    { name: 'Airbus A320', file: 'airbus_a320', type: 'civilian', arff_cat: '6', max_pax: '180', fuel: '27,200 L', exits: '8', hazards: 'Composite Material Dust' },
-                                    { name: 'Airbus A321', file: 'airbus_a321', type: 'civilian', arff_cat: '7', max_pax: '236', fuel: '30,030 L', exits: '8', hazards: 'Cryogenic cooling systems' },
-                                    { name: 'Airbus A380', file: 'airbus_a380', type: 'civilian', arff_cat: '10', max_pax: '853', fuel: '320,000 L', exits: '16', hazards: 'Massive Fuel Load, Multi-deck Egress' },
-                                    { name: 'CH-47 Chinook', file: 'chinook-2', type: 'military', crew: '3', base: 'RAF Odiham', weight: '22,680 kg', weapons: 'M134 Minigun, M60 Machine Gun', desc: 'Heavy-lift transport helicopter.' }
+                                const d = [
+                                    { n: 'Airbus A319', f: 'airbus_a319.glb', c: '6', p: '160', h: 'Oxygen, Li-ion' },
+                                    { n: 'Airbus A320', f: 'airbus_a320.glb', c: '6', p: '180', h: 'Composite Dust' },
+                                    { n: 'Airbus A321', f: 'airbus_a321.glb', c: '7', p: '236', h: 'Cryo Systems' },
+                                    { n: 'Airbus A380', f: 'airbus_a380.glb', c: '10', p: '853', h: 'Massive Fuel' },
+                                    { n: 'CH-47 Chinook', f: 'chinook-2.glb', c: 'Tactical', p: '33', h: 'Military Spec' }
                                 ];
-                                const viewer = document.getElementById('main-viewer');
-                                const sel = document.getElementById('model-select');
-                                function enterApp() { document.getElementById('start-screen').style.opacity = '0'; setTimeout(() => document.getElementById('start-screen').style.display='none', 800); }
-                                function toggleDetails() { document.getElementById('details-panel').classList.toggle('active'); }
-                                function update(i) {
-                                    const a = data[i];
-                                    viewer.src = 'models/' + a.file + '.glb';
-                                    document.getElementById('asset-title').innerText = a.name;
-                                    let html = '';
-                                    if(a.type === 'civilian') {
-                                        html = `<div class='spec-item'><span class='spec-label'>ARFF CAT</span><span class='spec-value'>${a.arff_cat}</span></div>
-                                                <div class='spec-item'><span class='spec-label'>MAX PAX</span><span class='spec-value'>${a.max_pax}</span></div>
-                                                <div class='spec-item'><span class='spec-label'>FUEL</span><span class='spec-value'>${a.fuel}</span></div>
-                                                <div class='spec-item'><span class='spec-label'>RESCUE HAZARDS</span><span class='spec-value'>${a.hazards}</span></div>`;
-                                    } else {
-                                        html = `<div class='spec-item'><span class='spec-label'>CREW</span><span class='spec-value'>${a.crew}</span></div>
-                                                <div class='spec-item'><span class='spec-label'>MTOW</span><span class='spec-value'>${a.weight}</span></div>
-                                                <div class='spec-item'><span class='spec-label'>ARMAMENT</span><span class='spec-value'>${a.weapons}</span></div>`;
-                                    }
-                                    document.getElementById('spec-container').innerHTML = html;
+                                const sel = document.getElementById('s');
+                                d.forEach((x, i) => { const o = document.createElement('option'); o.value = i; o.innerText = x.n; sel.appendChild(o); });
+                                function u(i) {
+                                    const a = d[i];
+                                    document.getElementById('m').src = '../models/' + a.f;
+                                    document.getElementById('t').innerText = a.n;
+                                    document.getElementById('specs').innerHTML = `<div class='spec-item'><span class='label'>ARFF CAT</span>${a.c}</div><div class='spec-item'><span class='label'>MAX PAX</span>${a.p}</div><div class='spec-item'><span class='label'>HAZARDS</span>${a.h}</div>`;
                                 }
-                                data.forEach((d, i) => { const o = document.createElement('option'); o.value = i; o.innerText = d.name; sel.appendChild(o); });
-                                sel.onchange = (e) => update(e.target.value);
-                                update(0);
+                                u(0);
                             </script>
                         </body>
                         </html>
@@ -196,27 +159,20 @@
         </div>
     </section> 
 
-    <section style="min-height: 100vh;"> 
+    <section> 
         <div class="ar-content">SPATIAL_SYNC: CHINOOK_CH47D</div> 
-        <div id="hand-ui"> 
-            <button class="cam-btn" id="t-btn">LOADING SENSORS...</button> 
-        </div> 
+        <div id="hand-ui"><button class="cam-btn" id="t-btn">LOADING SENSORS...</button></div> 
         <div class="spatial-sync-wrapper" id="sync-engine"> 
             <div class="model-card"> 
-                <div id="tech-hud"> 
-                    <div>[SYSTEM STATUS: X-RAY ACTIVE]</div> 
-                    <div>---------------------------</div> 
-                    <div>STRUCTURAL INTEGRITY: 98.4%</div> 
-                </div> 
-                <model-viewer id="xr-model" src="models/chinook-2.glb" ar camera-controls camera-orbit="0deg 75deg 12m"></model-viewer> 
+                <div id="tech-hud"><div>[SYSTEM STATUS: X-RAY ACTIVE]</div></div> 
+                <model-viewer id="xr-model" src="models/chinook-2.glb" camera-controls></model-viewer> 
             </div> 
-            <div id="preview-wrapper"><video id="v-preview" autoplay playsinline muted></video></div> 
+            <div id="preview-wrapper"><video id="v-preview" autoplay playsinline muted width="640" height="480"></video></div> 
         </div> 
-        <div class="ar-controls"><button class="ar-launch-btn" onclick="document.querySelector('#xr-model').activateAR()">Launch Spatial AR</button></div> 
     </section> 
 
     <script> 
-        // Logic for Parallax, Video Tilt, and Hand Tracking from original code
+        // Parallax Logic
         const pCanvas = document.getElementById('particle-canvas'); 
         const pCtx = pCanvas.getContext('2d'); 
         let pWidth, pHeight; 
@@ -226,25 +182,67 @@
         for(let i=0; i<80; i++) particles.push(new Particle()); 
         function animate() { pCtx.clearRect(0, 0, pWidth, pHeight); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } 
         window.addEventListener('resize', resize); resize(); animate(); 
-        window.addEventListener('mousemove', (e) => { 
-            const moveX = (e.clientX - window.innerWidth/2) / window.innerWidth; 
-            const moveY = (e.clientY - window.innerHeight/2) / window.innerHeight; 
-            gsap.to('#grid-layer', { x: moveX * 45, y: moveY * 45, duration: 2.5 }); 
-            gsap.to('#particle-layer', { x: moveX * 80, y: moveY * 80, duration: 2.5 }); 
+
+        // HAND TRACKING FIX
+        const mv = document.querySelector('#xr-model'); 
+        const vTrack = document.getElementById("v-preview"); 
+        const btnTrack = document.getElementById("t-btn"); 
+        const previewWrapper = document.getElementById("preview-wrapper"); 
+        const syncEngine = document.getElementById("sync-engine"); 
+        const hud = document.getElementById("tech-hud"); 
+        let isTracking = false; 
+        let dModel = null; 
+
+        handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.6 }).then(m => { 
+            dModel = m; 
+            btnTrack.innerText = "SENSORS READY"; 
+            btnTrack.style.background = "var(--hud-green)"; 
         }); 
 
-        const cards = document.querySelectorAll('.video-card'); 
-        cards.forEach(card => { 
-            const iframe = card.querySelector('iframe'); 
-            const videoId = card.getAttribute('data-video'); 
-            card.onmouseenter = () => { iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&enablejsapi=1`; }; 
-            card.onmouseleave = () => { iframe.src = iframe.src.replace("&autoplay=1", ""); }; 
-        });
+        btnTrack.addEventListener("click", () => { 
+            if (!isTracking) { 
+                handTrack.startVideo(vTrack).then(status => { 
+                    if (status) { 
+                        isTracking = true; 
+                        syncEngine.classList.add('tracking-active'); 
+                        previewWrapper.style.display = "block"; 
+                        btnTrack.innerText = "TERMINATE"; 
+                        btnTrack.style.background = "var(--error-red)"; 
+                        detectHand(); 
+                    } 
+                }); 
+            } else { 
+                handTrack.stopVideo(vTrack); 
+                isTracking = false; 
+                syncEngine.classList.remove('tracking-active'); 
+                previewWrapper.style.display = "none"; 
+                btnTrack.innerText = "INITIALIZE"; 
+                btnTrack.style.background = "var(--accent-color)"; 
+            } 
+        }); 
 
-        // Hand tracking init
-        const mv = document.querySelector('#xr-model'); 
-        const btnTrack = document.getElementById("t-btn"); 
-        handTrack.load().then(m => { btnTrack.innerText = "SENSORS READY"; btnTrack.style.background = "var(--hud-green)"; });
+        function detectHand() { 
+            if (!isTracking) return; 
+            dModel.detect(vTrack).then(preds => { 
+                const hand = preds.find(p => p.label !== 'face'); 
+                if (hand) { 
+                    const [x, y, w, h] = hand.bbox; 
+                    const centerX = x + w / 2; 
+                    const percentX = centerX / 640; 
+                    mv.cameraOrbit = `${(percentX * 360) - 180}deg 75deg 12m`; 
+                    
+                    const xray = ["closed", "fist", "pinch"].includes(hand.label); 
+                    hud.classList.toggle('active', xray); 
+                    if (mv.model) { 
+                        mv.model.materials.forEach(mat => { 
+                            mat.setAlphaMode(xray ? "BLEND" : "OPAQUE"); 
+                            mat.pbrMetallicRoughness.setBaseColorFactor(xray ? [0.2, 0.4, 1.0, 0.3] : [1, 1, 1, 1]); 
+                        }); 
+                    } 
+                } 
+                requestAnimationFrame(detectHand); 
+            }); 
+        } 
     </script> 
 </body> 
 </html>
