@@ -59,15 +59,56 @@
         .iphone-screen { width: 100%; height: 100%; background: #000; } 
         .iphone-screen iframe { width: 100%; height: 100%; border: none; } 
 
-        @media (max-width: 1000px) {
-            .iphone-section-container { flex-direction: column; text-align: center; }
-            .app-description li { border-left: none; border-bottom: 1px solid var(--hud-green); padding-bottom: 10px; }
+        /* Spatial Sync Layout Grid */
+        .spatial-sync-wrapper { 
+            display: grid; 
+            grid-template-columns: 1fr 2fr; 
+            width: 100%; 
+            max-width: 1600px; 
+            margin: 30px auto; 
+            gap: 40px; 
+            align-items: center; 
+        } 
+
+        .tracking-info { 
+            color: #ccc; 
+            padding-right: 20px; 
+        }
+        .tracking-info h3 { 
+            color: var(--hud-green); 
+            font-family: 'Source Code Pro', monospace; 
+            margin-bottom: 15px; 
+            font-size: 1.4rem; 
+        }
+        .tracking-info p { 
+            line-height: 1.6; 
+            margin-bottom: 15px; 
+            font-size: 1rem; 
+        }
+        .use-case-list { 
+            list-style: none; 
+            margin-top: 20px; 
+        }
+        .use-case-list li { 
+            margin-bottom: 15px; 
+            font-size: 0.9rem; 
+            padding: 10px; 
+            background: rgba(255, 255, 255, 0.03); 
+            border-radius: 4px; 
+            border-left: 2px solid var(--accent-color); 
         }
 
-        .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto; gap: 30px; align-items: center; justify-content: center; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
-        .model-card { width: 100%; height: 75vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); flex-shrink: 0; } 
+        .model-card { 
+            width: 100%; 
+            height: 75vh; 
+            background: var(--model-bg); 
+            border-radius: 24px; 
+            border: 1px solid var(--glass-border); 
+            position: relative; 
+            overflow: hidden; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4); 
+        } 
         
-        /* Camera preview hidden but still functional */
         #preview-wrapper { 
             position: fixed; 
             bottom: -500px; 
@@ -82,7 +123,13 @@
         #v-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); } 
         #tech-hud { position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace; font-size: 0.7rem; opacity: 0; transition: 0.4s; z-index: 5; pointer-events: none; } 
         #tech-hud.active { opacity: 1; } 
-        .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 14px 28px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Source Code Pro', monospace; transition: 0.3s; } 
+        .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 14px 28px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Source Code Pro', monospace; transition: 0.3s; margin-bottom: 20px; } 
+
+        @media (max-width: 1000px) {
+            .spatial-sync-wrapper { grid-template-columns: 1fr; }
+            .iphone-section-container { flex-direction: column; text-align: center; }
+            .app-description li { border-left: none; border-bottom: 1px solid var(--hud-green); padding-bottom: 10px; }
+        }
     </style> 
 </head> 
 <body> 
@@ -98,7 +145,7 @@
         <h1>XR Training Labs</h1> 
         <h2 class="sub-heading">Spatial Computing Training Systems</h2> 
         <p class="intro-text"> 
-            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application. We have experience in designing, developing and deployment of training in 3d, mixed and virtual reality, using Moodle, Web, Apps and VR headsets.
+            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application.
         </p>
 
         <div class="ar-content">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div> 
@@ -108,120 +155,41 @@
             <div class="video-card" data-video="2OvfLt13D6Y"><div class="shine"></div><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe></div> 
             <div class="video-card" data-video="8kNXOVutOJc"><div class="shine"></div><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
             <div class="video-card" data-video="0m-LbA8E97Q"><div class="shine"></div><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="DfQ2xc5ygGc"><div class="shine"></div><iframe src="https://www.youtube.com/embed/DfQ2xc5ygGc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="LvSaP_7rMbM"><div class="shine"></div><iframe src="https://www.youtube.com/embed/LvSaP_7rMbM?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="hwnwM5zI8To"><div class="shine"></div><iframe src="https://www.youtube.com/embed/hwnwM5zI8To?controls=0&mute=1&enablejsapi=1"></iframe></div> 
-            <div class="video-card" data-video="inC-Lab04aA"><div class="shine"></div><iframe src="https://www.youtube.com/embed/inC-Lab04aA?controls=0&mute=1&enablejsapi=1"></iframe></div> 
         </div> 
-
-        <div class="ar-content" style="margin-top: 60px;">MOBILE_INTERFACE: AERO_ASSET_VIEWER</div>
-        
-        <div class="iphone-section-container">
-            <div class="app-description">
-                <h3>Aero Asset Viewer</h3>
-                <p>Designed for the next generation of defense firefighters, the Aero Asset Viewer is a mobile-first spatial computing application that transforms technical manuals into interactive training tools.</p>
-                <ul>
-                    <li><strong>Augmented Reality Integration:</strong> Deploy 1:1 scale aircraft models directly onto the airfield to practice tactical positioning and egress routes.</li>
-                    <li><strong>Multisector Asset Library:</strong> Access a wide range of civilian aircraft, military transports, and tactical munitions hazards.</li>
-                    <li><strong>ICAO ARFF Firefighting Cards:</strong> Instantly retrieve critical data on fuel loads, passenger capacities, and rescue exit locations for civilian Airbus fleets.</li>
-                    <li><strong>Munition Hazard Intelligence:</strong> Critical data for tactical response when encountering unexploded ordnance or military-grade propellants.</li>
-                </ul>
-            </div>
-
-            <div class="iphone-wrapper">
-                <div class="iphone-device">
-                    <div class="iphone-screen">
-                        <iframe srcdoc="
-                            <!DOCTYPE html>
-                            <html>
-                            <head>
-                                <script type='module' src='https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js'></script>
-                                <style>
-                                    body { margin: 0; background: #0d1117; color: white; font-family: sans-serif; height: 100vh; overflow: hidden; }
-                                    #start-screen { position: fixed; inset: 0; background: radial-gradient(circle, #1a202c, #0d1117); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.5s; }
-                                    .radar { position: relative; width: 220px; height: 220px; border: 2px solid rgba(99, 179, 237, 0.2); border-radius: 50%; background: repeating-radial-gradient(circle at center, transparent, transparent 29px, rgba(99, 179, 237, 0.1) 30px); }
-                                    .radar::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(from -90deg, transparent 0deg, rgba(99, 179, 237, 0.4) 90deg, transparent 91deg); animation: sweep 4s linear infinite; }
-                                    @keyframes sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-                                    .commence-btn { border: 1px solid white; background: none; color: white; padding: 10px 20px; cursor: pointer; margin-top: 30px; letter-spacing: 2px; }
-                                    .control-panel { position: absolute; top: 50px; left: 10px; right: 10px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; backdrop-filter: blur(10px); z-index: 50; display: flex; justify-content: space-between; }
-                                    select { background: transparent; color: white; border: none; width: 70%; outline: none; }
-                                    .details-panel { position: absolute; inset: 0; background: #0a0f19; transform: translateX(100%); transition: 0.4s; z-index: 200; padding: 60px 20px; box-sizing: border-box; overflow-y: auto;}
-                                    .details-panel.active { transform: translateX(0); }
-                                    model-viewer { width: 100%; height: 100%; }
-                                    .spec-item { border-top: 1px solid rgba(255,255,255,0.1); padding: 8px 0; font-size: 11px; }
-                                    .label { color: #63b3ed; font-size: 9px; text-transform: uppercase; display: block; }
-                                </style>
-                            </head>
-                            <body>
-                                <div id='start-screen'>
-                                    <div class='radar'></div>
-                                    <h2 style='letter-spacing:4px; margin-top:20px; font-weight:300;'>AERO ASSET</h2>
-                                    <button class='commence-btn' onclick='this.parentElement.style.opacity=0;setTimeout(()=>this.parentElement.style.display=&quot;none&quot;,500)'>START VIEWER</button>
-                                </div>
-                                <div id='details' class='details-panel'>
-                                    <h3 id='t'>Asset</h3>
-                                    <div id='specs'></div>
-                                    <button onclick='document.getElementById(&quot;details&quot;).classList.remove(&quot;active&quot;)' style='width:100%; margin-top:20px; background:none; border:1px solid white; color:white; padding:10px;'>CLOSE</button>
-                                </div>
-                                <div class='control-panel'>
-                                    <select id='s' onchange='u(this.value)'></select>
-                                    <button onclick='document.getElementById(&quot;details&quot;).classList.add(&quot;active&quot;)' style='background:#5d7a8c; color:white; border:none; padding:5px 10px; border-radius:4px; font-size:10px;'>FACTS</button>
-                                </div>
-                                <model-viewer id='m' camera-controls auto-rotate shadow-intensity='2'></model-viewer>
-                                <script>
-                                    const d = [
-                                        { n: 'Airbus A319', f: 'models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'Oxygen, Li-ion', rescue: '4 Main exits' },
-                                        { n: 'Airbus A320', f: 'models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Dust', rescue: '4 Main exits, 4 Overwing' },
-                                        { n: 'Airbus A321', f: 'models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Hydraulic Skydrol', rescue: '8 exits' },
-                                        { n: 'Airbus A380', f: 'models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Massive Fuel', rescue: '16 Floor-level exits' },
-                                        { n: 'CH-47 Chinook', f: 'models/chinook-2.glb', cat: 'Tactical', p: '33', fuel: '3,914 L', haz: 'Military Spec', rescue: 'Rear ramp' }
-                                    ];
-                                    const sel = document.getElementById('s');
-                                    d.forEach((x, i) => { const o = document.createElement('option'); o.value = i; o.innerText = x.n; sel.appendChild(o); });
-                                    function u(i) {
-                                        const a = d[i];
-                                        document.getElementById('m').src = 'models/' + a.f.split('/').pop();
-                                        document.getElementById('t').innerText = a.n;
-                                        document.getElementById('specs').innerHTML = `
-                                            <div class='spec-item'><span class='label'>ICAO ARFF CAT</span>` + a.cat + `</div>
-                                            <div class='spec-item'><span class='label'>MAX PAX</span>` + a.p + `</div>
-                                            <div class='spec-item'><span class='label'>FUEL LOAD</span>` + a.fuel + `</div>
-                                            <div class='spec-item'><span class='label'>CIVILIAN HAZARDS</span>` + a.haz + `</div>
-                                        `;
-                                    }
-                                    u(0);
-                                </script>
-                            </body>
-                            </html>
-                        "></iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <p class="intro-text" style="margin-top: 40px; max-width: 100%;"> 
-            Team members have successfully built and deployed training for the UK Military. We offer a single point of contact to bring your training to life with Virtual reality, Mixed reality and 3D.
-        </p> 
     </section> 
 
     <section> 
-        <div class="ar-content">SPATIAL_SYNC: CHINOOK_CH47D</div> 
-        <div id="hand-ui"><button class="cam-btn" id="t-btn">INITIALIZING SENSORS...</button></div> 
-        <div class="spatial-sync-wrapper" id="sync-engine"> 
+        <div class="ar-content">SPATIAL_SYNC: CHINOOK_CH47D_CONTROL</div> 
+        
+        <div class="spatial-sync-wrapper"> 
+            <div class="tracking-info">
+                <h3>Bio-Metric Tracking</h3>
+                <p>Interactive hand-tracking eliminates the friction of physical controllers, allowing trainees to interact with virtual assets using natural gestures.</p>
+                <ul class="use-case-list">
+                    <li><strong>Maintenance Simulators:</strong> Practice bolt-turning, wiring, and component replacement without the need for physical hardware.</li>
+                    <li><strong>Safety Inspections:</strong> Point to identify hazards or use "pinch-to-zoom" to inspect micro-cracks on airframe surfaces.</li>
+                    <li><strong>Muscle Memory:</strong> Develop true tactile response by performing the exact manual movements required in the field.</li>
+                    <li><strong>X-Ray Interaction:</strong> Use a closed-fist gesture to activate the diagnostic HUD and "see through" the hull for internal inspections.</li>
+                </ul>
+                <button class="cam-btn" id="t-btn">INITIALIZING SENSORS...</button>
+            </div>
+
             <div class="model-card"> 
                 <div id="tech-hud"> 
                     <div>[SYSTEM STATUS: X-RAY ACTIVE]</div> 
                     <div>---------------------------</div> 
                     <div>STRUCTURAL INTEGRITY: 98.4%</div> 
+                    <div>INTERNAL SCAN COMPLETE</div>
                 </div> 
                 <model-viewer id="xr-model" src="models/chinook-2.glb" camera-controls shadow-intensity="1" camera-orbit="0deg 75deg 12m" style="width:100%; height:100%;"></model-viewer> 
             </div> 
+
             <div id="preview-wrapper"><video id="v-preview" autoplay playsinline muted width="640" height="480"></video></div> 
         </div> 
     </section> 
 
     <script> 
-        /* --- HAND TRACKING & VIDEO TILT LOGIC --- */
+        /* --- VIDEO TILT LOGIC --- */
         const cards = document.querySelectorAll('.video-card'); 
         cards.forEach(card => { 
             const iframe = card.querySelector('iframe'); 
@@ -233,7 +201,7 @@
                 const y = e.clientY - rect.top; 
                 const rX = ((y - rect.height/2) / (rect.height/2)) * -20; 
                 const rY = ((x - rect.width/2) / (rect.width/2)) * 20; 
-                gsap.to(card, { rotateX: rX, rotateY: rY, scale: 1.4, zIndex: 100, boxShadow: "0 40px 80px rgba(99, 102, 241, 0.6)", duration: 0.1 }); 
+                gsap.to(card, { rotateX: rX, rotateY: rY, scale: 1.1, zIndex: 100, boxShadow: "0 40px 80px rgba(99, 102, 241, 0.6)", duration: 0.1 }); 
                 gsap.to(shine, { opacity: 1, x: `${(x/rect.width)*100 - 50}%`, y: `${(y/rect.height)*100 - 50}%`, duration: 0.1 }); 
             }); 
             card.addEventListener('mouseenter', () => { 
@@ -248,6 +216,7 @@
             }); 
         });
 
+        /* --- HAND TRACKING LOGIC --- */
         const mv = document.querySelector('#xr-model'); 
         const vTrack = document.getElementById("v-preview"); 
         const btnTrack = document.getElementById("t-btn"); 
@@ -276,6 +245,7 @@
                 isTracking = false; 
                 btnTrack.innerText = "INITIALIZE SENSORS"; 
                 btnTrack.style.background = "var(--accent-color)"; 
+                hud.classList.remove('active');
             } 
         }); 
 
@@ -301,6 +271,7 @@
             }); 
         } 
 
+        /* --- PARALLAX & PARTICLES --- */
         const pCanvas = document.getElementById('particle-canvas'); 
         const pCtx = pCanvas.getContext('2d'); 
         let pWidth, pHeight; 
