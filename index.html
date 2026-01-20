@@ -66,8 +66,19 @@
 
         .spatial-sync-wrapper { display: flex; width: 100%; max-width: 1600px; margin: 30px auto; gap: 30px; align-items: center; justify-content: center; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); } 
         .model-card { width: 100%; height: 75vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); flex-shrink: 0; } 
-        .spatial-sync-wrapper.tracking-active .model-card { width: 66.66%; } 
-        #preview-wrapper { width: 33.33%; height: 75vh; border-radius: 24px; overflow: hidden; border: 1px solid var(--accent-color); background: #000; display: none; } 
+        
+        /* Camera preview hidden but still functional */
+        #preview-wrapper { 
+            position: fixed; 
+            bottom: -500px; 
+            right: -500px; 
+            width: 1px; 
+            height: 1px; 
+            overflow: hidden; 
+            opacity: 0; 
+            pointer-events: none; 
+        } 
+        
         #v-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); } 
         #tech-hud { position: absolute; top: 25px; left: 25px; padding: 20px; background: rgba(5, 7, 10, 0.9); border: 1px solid var(--hud-green); color: var(--hud-green); font-family: 'Source Code Pro', monospace; font-size: 0.7rem; opacity: 0; transition: 0.4s; z-index: 5; pointer-events: none; } 
         #tech-hud.active { opacity: 1; } 
@@ -240,8 +251,6 @@
         const mv = document.querySelector('#xr-model'); 
         const vTrack = document.getElementById("v-preview"); 
         const btnTrack = document.getElementById("t-btn"); 
-        const previewWrapper = document.getElementById("preview-wrapper"); 
-        const syncEngine = document.getElementById("sync-engine"); 
         const hud = document.getElementById("tech-hud"); 
         let isTracking = false; 
         let dModel = null; 
@@ -257,8 +266,6 @@
                 handTrack.startVideo(vTrack).then(status => { 
                     if (status) { 
                         isTracking = true; 
-                        syncEngine.classList.add('tracking-active'); 
-                        previewWrapper.style.display = "block"; 
                         btnTrack.innerText = "TERMINATE SENSORS"; 
                         btnTrack.style.background = "var(--error-red)"; 
                         detectHand(); 
@@ -267,8 +274,6 @@
             } else { 
                 handTrack.stopVideo(vTrack); 
                 isTracking = false; 
-                syncEngine.classList.remove('tracking-active'); 
-                previewWrapper.style.display = "none"; 
                 btnTrack.innerText = "INITIALIZE SENSORS"; 
                 btnTrack.style.background = "var(--accent-color)"; 
             } 
