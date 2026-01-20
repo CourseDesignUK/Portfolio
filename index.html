@@ -32,8 +32,10 @@
         #grid-layer { background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(ellipse at center, black, transparent 85%); } 
         #particle-canvas { width: 100%; height: 100%; } 
 
-        nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); } 
+        nav { position: fixed; top: 0; width: 100%; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); } 
         .logo { font-weight: 700; font-family: 'Source Code Pro', monospace; color: var(--accent-color); font-size: 1rem; } 
+        .contact-btn { padding: 8px 20px; border: 1px solid var(--accent-color); color: var(--text-color); text-decoration: none; font-family: 'Source Code Pro', monospace; font-size: 0.8rem; border-radius: 4px; transition: 0.3s; background: rgba(99, 102, 241, 0.1); }
+        .contact-btn:hover { background: var(--accent-color); box-shadow: 0 0 15px var(--accent-color); }
 
         section { padding: 140px 5% 60px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 10; } 
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 10px; text-transform: uppercase; letter-spacing: -2px; } 
@@ -46,7 +48,6 @@
         .shine { position: absolute; top: 0; left: 0; width: 150%; height: 150%; background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%); pointer-events: none; z-index: 5; opacity: 0; transform: translate(-50%, -50%); } 
         .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.02); } 
 
-        /* Aero Viewer / iPhone styles */
         .iphone-section-container { display: flex; align-items: center; justify-content: space-between; gap: 50px; max-width: 1400px; margin: 40px auto; padding: 0 5%; }
         .app-description { flex: 1; color: #ccc; }
         .app-description h3 { color: var(--accent-color); font-size: 1.8rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
@@ -59,16 +60,7 @@
         .iphone-screen { width: 100%; height: 100%; background: #000; } 
         .iphone-screen iframe { width: 100%; height: 100%; border: none; } 
 
-        /* Spatial Sync Layout Grid */
-        .spatial-sync-wrapper { 
-            display: grid; 
-            grid-template-columns: 1fr 2fr; 
-            width: 100%; 
-            max-width: 1600px; 
-            margin: 30px auto; 
-            gap: 40px; 
-            align-items: center; 
-        } 
+        .spatial-sync-wrapper { display: grid; grid-template-columns: 1fr 2fr; width: 100%; max-width: 1600px; margin: 30px auto; gap: 40px; align-items: center; } 
         .tracking-info { color: #ccc; }
         .tracking-info h3 { color: var(--hud-green); font-family: 'Source Code Pro', monospace; margin-bottom: 15px; font-size: 1.4rem; }
         .tracking-info p { line-height: 1.6; margin-bottom: 15px; font-size: 1rem; }
@@ -83,9 +75,9 @@
         .cam-btn { background: var(--accent-color); color: #fff; border: none; padding: 14px 28px; border-radius: 4px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Source Code Pro', monospace; transition: 0.3s; margin-bottom: 20px; } 
 
         @media (max-width: 1000px) {
+            .grid-container { grid-template-columns: repeat(2, 1fr); }
             .spatial-sync-wrapper { grid-template-columns: 1fr; }
             .iphone-section-container { flex-direction: column; text-align: center; }
-            .app-description li { border-left: none; border-bottom: 1px solid var(--hud-green); padding-bottom: 10px; }
         }
     </style> 
 </head> 
@@ -96,7 +88,10 @@
         <div id="particle-layer" class="parallax-layer"><canvas id="particle-canvas"></canvas></div> 
     </div> 
 
-    <nav><div class="logo">XR_TRAINING_LABS_v2.0</div></nav> 
+    <nav>
+        <div class="logo">XR_TRAINING_LABS_v2.0</div>
+        <a href="mailto:info@xrtraininglabs.co.uk" class="contact-btn">ESTABLISH_CONTACT</a>
+    </nav> 
 
     <section> 
         <h1>XR Training Labs</h1> 
@@ -111,6 +106,10 @@
             <div class="video-card" data-video="2OvfLt13D6Y"><div class="shine"></div><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe></div> 
             <div class="video-card" data-video="8kNXOVutOJc"><div class="shine"></div><iframe src="https://www.youtube.com/embed/8kNXOVutOJc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
             <div class="video-card" data-video="0m-LbA8E97Q"><div class="shine"></div><iframe src="https://www.youtube.com/embed/0m-LbA8E97Q?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="DfQ2xc5ygGc"><div class="shine"></div><iframe src="https://www.youtube.com/embed/DfQ2xc5ygGc?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="LvSaP_7rMbM"><div class="shine"></div><iframe src="https://www.youtube.com/embed/LvSaP_7rMbM?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="hwnwM5zI8To"><div class="shine"></div><iframe src="https://www.youtube.com/embed/hwnwM5zI8To?controls=0&mute=1&enablejsapi=1"></iframe></div> 
+            <div class="video-card" data-video="inC-Lab04aA"><div class="shine"></div><iframe src="https://www.youtube.com/embed/inC-Lab04aA?controls=0&mute=1&enablejsapi=1"></iframe></div> 
         </div> 
     </section>
 
@@ -197,9 +196,9 @@
                 <h3>Bio-Metric Tracking</h3>
                 <p>Natural hand-tracking allows trainees to interact with virtual assets using intuitive gestures.</p>
                 <ul class="use-case-list">
-                    <li><strong>Maintenance Simulators:</strong> Practice manual maneuvers without physical hardware.</li>
-                    <li><strong>X-Ray Interaction:</strong> Use a closed-fist gesture to "see through" airframes and identify internal faults.</li>
-                    <li><strong>Safety Inspections:</strong> Point to identify hazards or inspect micro-cracks on airframe surfaces.</li>
+                    <li><strong>Maintenance Simulators:</strong> Practice manual maneuvers without hardware.</li>
+                    <li><strong>X-Ray Interaction:</strong> Use a fist gesture to "see through" airframes.</li>
+                    <li><strong>Safety Inspections:</strong> Point to identify hazards or inspect micro-cracks.</li>
                 </ul>
                 <button class="cam-btn" id="t-btn">INITIALIZING SENSORS...</button>
             </div>
@@ -216,7 +215,7 @@
     </section> 
 
     <script> 
-        /* --- VIDEO TILT & HAND TRACKING LOGIC --- */
+        /* --- CORE LOGIC --- */
         const cards = document.querySelectorAll('.video-card'); 
         cards.forEach(card => { 
             const iframe = card.querySelector('iframe'); 
@@ -282,7 +281,6 @@
             }); 
         } 
 
-        /* --- BACKGROUND PARTICLES --- */
         const pCanvas = document.getElementById('particle-canvas'); 
         const pCtx = pCanvas.getContext('2d'); 
         let pWidth, pHeight; 
