@@ -41,7 +41,6 @@
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 10px; text-transform: uppercase; letter-spacing: -2px; } 
         h2.sub-heading { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 300; color: var(--accent-color); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; } 
         
-        /* Updated Justification Class */
         .intro-text, .app-description p, .tracking-info p { 
             font-size: 1.1rem; 
             color: #aaa; 
@@ -58,6 +57,11 @@
         .video-card { position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 10px; overflow: hidden; background: #000; border: 1px solid var(--glass-border); cursor: pointer; transform-style: preserve-3d; transition: z-index 0.3s; } 
         .shine { position: absolute; top: 0; left: 0; width: 150%; height: 150%; background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%); pointer-events: none; z-index: 5; opacity: 0; transform: translate(-50%, -50%); } 
         .video-card iframe { width: 100%; height: 100%; border: 0; pointer-events: none; transform: scale(1.02); } 
+
+        /* Layout for VR Section with Video */
+        .vr-rev-container { display: flex; align-items: center; gap: 60px; max-width: 1400px; margin: 40px auto; }
+        .vr-video-wrapper { flex: 1; border-radius: 12px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .vr-video-wrapper video { width: 100%; display: block; filter: saturate(1.2) contrast(1.1); }
 
         .iphone-section-container { display: flex; align-items: center; justify-content: space-between; gap: 50px; max-width: 1400px; margin: 40px auto; padding: 0 5%; }
         .app-description { flex: 1; color: #ccc; }
@@ -88,8 +92,8 @@
         @media (max-width: 1000px) {
             .grid-container { grid-template-columns: repeat(2, 1fr); }
             .spatial-sync-wrapper { grid-template-columns: 1fr; }
-            .iphone-section-container { flex-direction: column; text-align: center; }
-            .intro-text, .app-description p, .tracking-info p { text-align: left; } /* Better readability on mobile */
+            .iphone-section-container, .vr-rev-container { flex-direction: column; text-align: center; }
+            .intro-text, .app-description p, .tracking-info p { text-align: left; }
         }
     </style> 
 </head> 
@@ -127,14 +131,19 @@
 
     <section style="background: rgba(99, 102, 241, 0.02); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
         <div class="ar-content">TOTAL_IMMERSION: MULTI-PLATFORM_FRAMEWORK</div>
-        <div class="app-description" style="max-width: 1000px;">
-            <h3>The VR Training Revolution</h3>
-            <p>
-                Virtual Reality revolutionizes training by moving beyond observation into <strong>active presence</strong>. By creating a risk-free environment for high-stakes scenarios—from emergency response to complex engineering—VR builds muscle memory and cognitive retention that traditional 2D media cannot replicate. It allows trainees to fail safely, iterate quickly, and achieve technical proficiency in a fraction of the time.
-            </p>
-            <p>
-                However, true effectiveness lies in <strong>omni-channel deployment</strong>. We architect training systems that are platform-agnostic; we build effective training across different media including high-fidelity VR, mobile AR, and web-based 3D modules. Our systems are designed to integrate seamlessly with <strong>LMS (Learning Management Systems)</strong> via SCORM or xAPI protocols. This ensures that a trainee can start with browser-based theory and transition into a spatial 3D environment, while their performance data remains synchronized, providing stakeholders with real-time analytics on workforce readiness.
-            </p>
+        <div class="vr-rev-container">
+            <div class="vr-video-wrapper">
+                <video src="folder/wall.mp4" autoplay loop muted playsinline></video>
+            </div>
+            <div class="app-description">
+                <h3>The VR Training Revolution</h3>
+                <p>
+                    Virtual Reality revolutionizes training by moving beyond observation into <strong>active presence</strong>. By creating a risk-free environment for high-stakes scenarios—from emergency response to complex engineering—VR builds muscle memory and cognitive retention that traditional 2D media cannot replicate. It allows trainees to fail safely, iterate quickly, and achieve technical proficiency in a fraction of the time.
+                </p>
+                <p>
+                    However, true effectiveness lies in <strong>omni-channel deployment</strong>. We architect training systems that are platform-agnostic; we build effective training across different media including high-fidelity VR, mobile AR, and web-based 3D modules. Our systems are designed to integrate seamlessly with <strong>LMS (Learning Management Systems)</strong> via SCORM or xAPI protocols. This ensures that performance data remains synchronized, providing stakeholders with real-time analytics on workforce readiness.
+                </p>
+            </div>
         </div>
     </section>
 
@@ -271,4 +280,69 @@
                 gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, zIndex: 1, boxShadow: "0 10px 20px rgba(0,0,0,0.4)", duration: 0.6, ease: "elastic.out(1, 0.3)" }); 
                 gsap.to(shine, { opacity: 0 }); 
                 iframe.src = iframe.src.replace("&autoplay=1", ""); 
-                cards.forEach(other
+                cards.forEach(other => { gsap.to(other, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.4 }); }); 
+            }); 
+        });
+
+        /* --- HAND TRACKING LOGIC --- */
+        const mv = document.querySelector('#xr-model'); 
+        const vTrack = document.getElementById("v-preview"); 
+        const btnTrack = document.getElementById("t-btn"); 
+        const hud = document.getElementById("tech-hud"); 
+        let isTracking = false; 
+        let dModel = null; 
+
+        handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.6 }).then(m => { 
+            dModel = m; 
+            btnTrack.innerText = "Enable camera"; 
+            btnTrack.style.background = "var(--hud-green)"; 
+        }); 
+
+        btnTrack.addEventListener("click", () => { 
+            if (!isTracking) { 
+                handTrack.startVideo(vTrack).then(status => { 
+                    if (status) { isTracking = true; btnTrack.innerText = "TERMINATE SENSORS"; btnTrack.style.background = "var(--error-red)"; detectHand(); } 
+                }); 
+            } else { 
+                handTrack.stopVideo(vTrack); isTracking = false; btnTrack.innerText = "Enable camera"; btnTrack.style.background = "var(--hud-green)"; hud.classList.remove('active');
+            } 
+        }); 
+
+        function detectHand() { 
+            if (!isTracking) return; 
+            dModel.detect(vTrack).then(preds => { 
+                const hand = preds.find(p => p.label !== 'face'); 
+                if (hand) { 
+                    const [x, y, w, h] = hand.bbox; 
+                    const centerX = x + w / 2; 
+                    const percentX = centerX / 640; 
+                    mv.cameraOrbit = `${(percentX * 360) - 180}deg 75deg 12m`; 
+                    const xray = ["closed", "fist", "pinch"].includes(hand.label); 
+                    hud.classList.toggle('active', xray); 
+                    if (mv.model) { 
+                        mv.model.materials.forEach(mat => { mat.setAlphaMode(xray ? "BLEND" : "OPAQUE"); mat.pbrMetallicRoughness.setBaseColorFactor(xray ? [0.2, 0.4, 1.0, 0.3] : [1, 1, 1, 1]); }); 
+                    } 
+                } 
+                requestAnimationFrame(detectHand); 
+            }); 
+        } 
+
+        /* --- PARALLAX BACKGROUND --- */
+        const pCanvas = document.getElementById('particle-canvas'); 
+        const pCtx = pCanvas.getContext('2d'); 
+        let pWidth, pHeight; 
+        const particles = []; 
+        function resize() { pWidth = window.innerWidth; pHeight = window.innerHeight; pCanvas.width = pWidth; pCanvas.height = pHeight; } 
+        class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * pWidth; this.y = Math.random() * pHeight; this.size = Math.random() * 1.5; this.speed = Math.random() * 0.4 + 0.1; this.opacity = Math.random() * 0.4 + 0.1; } update() { this.y -= this.speed; if (this.y < 0) this.reset(); } draw() { pCtx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`; pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); pCtx.fill(); } } 
+        for(let i=0; i<80; i++) particles.push(new Particle()); 
+        function animate() { pCtx.clearRect(0, 0, pWidth, pHeight); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } 
+        window.addEventListener('resize', resize); resize(); animate(); 
+        window.addEventListener('mousemove', (e) => { 
+            const moveX = (e.clientX - window.innerWidth/2) / window.innerWidth; 
+            const moveY = (e.clientY - window.innerHeight/2) / window.innerHeight; 
+            gsap.to('#grid-layer', { x: moveX * 45, y: moveY * 45, duration: 2.5, ease: "power2.out" }); 
+            gsap.to('#particle-layer', { x: moveX * 80, y: moveY * 80, duration: 2.5, ease: "power2.out" }); 
+        }); 
+    </script> 
+</body> 
+</html>
