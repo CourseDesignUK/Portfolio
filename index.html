@@ -40,7 +40,18 @@
         section { padding: 140px 5% 60px; min-height: 90vh; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 10; } 
         h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; line-height: 1; margin-bottom: 10px; text-transform: uppercase; letter-spacing: -2px; } 
         h2.sub-heading { font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 300; color: var(--accent-color); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; } 
-        .intro-text { font-size: 1.1rem; color: #aaa; max-width: 800px; line-height: 1.6; margin-bottom: 40px; text-align: justify; } 
+        
+        /* Updated Justification Class */
+        .intro-text, .app-description p, .tracking-info p { 
+            font-size: 1.1rem; 
+            color: #aaa; 
+            max-width: 800px; 
+            line-height: 1.6; 
+            margin-bottom: 30px; 
+            text-align: justify; 
+            hyphens: auto;
+        } 
+
         .ar-content { margin-bottom: 20px; display: inline-block; padding: 5px 15px; border-left: 3px solid var(--accent-color); background: rgba(99, 102, 241, 0.05); font-family: 'Source Code Pro', monospace; font-size: 0.8rem; } 
 
         .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1600px; margin: 20px auto; perspective: 2000px; } 
@@ -51,9 +62,9 @@
         .iphone-section-container { display: flex; align-items: center; justify-content: space-between; gap: 50px; max-width: 1400px; margin: 40px auto; padding: 0 5%; }
         .app-description { flex: 1; color: #ccc; }
         .app-description h3 { color: var(--accent-color); font-size: 1.8rem; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
-        .app-description p { line-height: 1.7; margin-bottom: 20px; font-size: 1.05rem; }
-        .app-description ul { list-style: none; }
-        .app-description li { margin-bottom: 12px; padding-left: 20px; border-left: 2px solid var(--hud-green); font-size: 0.95rem; }
+        .app-description ul { list-style: none; margin-bottom: 30px; }
+        .app-description li { margin-bottom: 12px; padding-left: 20px; border-left: 2px solid var(--hud-green); font-size: 0.95rem; text-align: left; }
+        
         .iphone-wrapper { flex-shrink: 0; display: flex; justify-content: center; padding: 20px 0; } 
         .iphone-device { width: 300px; height: 610px; background: #111; border-radius: 40px; border: 8px solid #222; position: relative; box-shadow: 0 50px 100px rgba(0,0,0,0.8); overflow: hidden; } 
         .iphone-device::before { content: ''; position: absolute; top: 15px; left: 50%; transform: translateX(-50%); width: 100px; height: 25px; background: #000; border-radius: 20px; z-index: 20; } 
@@ -63,9 +74,9 @@
         .spatial-sync-wrapper { display: grid; grid-template-columns: 1fr 2fr; width: 100%; max-width: 1600px; margin: 30px auto; gap: 40px; align-items: center; } 
         .tracking-info { color: #ccc; }
         .tracking-info h3 { color: var(--hud-green); font-family: 'Source Code Pro', monospace; margin-bottom: 15px; font-size: 1.4rem; }
-        .tracking-info p { line-height: 1.6; margin-bottom: 15px; font-size: 1rem; }
         .use-case-list { list-style: none; margin-top: 20px; }
-        .use-case-list li { margin-bottom: 15px; font-size: 0.9rem; padding: 10px; background: rgba(255, 255, 255, 0.03); border-radius: 4px; border-left: 2px solid var(--accent-color); }
+        .use-case-list li { margin-bottom: 15px; font-size: 0.9rem; padding: 10px; background: rgba(255, 255, 255, 0.03); border-radius: 4px; border-left: 2px solid var(--accent-color); text-align: left; }
+        
         .model-card { width: 100%; height: 75vh; background: var(--model-bg); border-radius: 24px; border: 1px solid var(--glass-border); position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4); } 
         
         #preview-wrapper { position: fixed; bottom: -500px; right: -500px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; } 
@@ -78,6 +89,7 @@
             .grid-container { grid-template-columns: repeat(2, 1fr); }
             .spatial-sync-wrapper { grid-template-columns: 1fr; }
             .iphone-section-container { flex-direction: column; text-align: center; }
+            .intro-text, .app-description p, .tracking-info p { text-align: left; } /* Better readability on mobile */
         }
     </style> 
 </head> 
@@ -97,20 +109,10 @@
         <h1>XR Training Labs</h1> 
         <h2 class="sub-heading">Spatial Computing Training Systems</h2> 
         <p class="intro-text"> 
-            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application.
+            Spatial Computing Training Systems leverage augmented reality and computer vision to bridge the gap between theoretical knowledge and practical application. By projecting digital intelligence into the physical workspace, we provide operators with real-time, context-aware guidance that accelerates mastery.
         </p>
-<section style="background: rgba(99, 102, 241, 0.01); border-top: 1px solid var(--glass-border);">
-    <div class="ar-content">ECOSYSTEM_INTEGRATION: MULTI-MODAL_LEARNING</div>
-    <div class="app-description" style="max-width: 1000px;">
-        <h3>The VR Training Revolution</h3>
-        <p class="intro-text">
-            Virtual Reality revolutionizes training by moving beyond observation into <strong>active presence</strong>. By creating a risk-free environment for high-stakes scenarios, VR builds muscle memory and cognitive retention that 2D media cannot replicate. However, true effectiveness lies in <strong>omni-channel deployment</strong>. 
-        </p>
-        <p class="intro-text">
-            We architect training systems that are platform-agnostic; whether it is a high-fidelity VR simulation for deep technical mastery or a lightweight, SCORM-compliant module for a standard <strong>LMS (Learning Management System)</strong>, the core data remains synchronized. This ensures that while a trainee might start with a browser-based theory lesson, their transition into a spatial 3D environment is a seamless expansion of the same pedagogical framework, fully trackable via xAPI for real-time performance analytics.
-        </p>
-    </div>
-</section>        <div class="ar-content">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div> 
+
+        <div class="ar-content">DIAGNOSTIC_RECORDS // VIDEO_LIBRARY</div> 
         <div class="grid-container"> 
             <div class="video-card" data-video="_ckPvnl4HQI"><div class="shine"></div><iframe src="https://www.youtube.com/embed/_ckPvnl4HQI?controls=0&mute=1&enablejsapi=1"></iframe></div> 
             <div class="video-card" data-video="2OvfLt13D6Y"><div class="shine"></div><iframe src="https://www.youtube.com/embed/2OvfLt13D6Y?controls=0&mute=1&enablejsapi=1"></iframe></div> 
@@ -123,12 +125,25 @@
         </div> 
     </section>
 
-    <section style="background: rgba(99, 102, 241, 0.02);">
+    <section style="background: rgba(99, 102, 241, 0.02); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border);">
+        <div class="ar-content">TOTAL_IMMERSION: MULTI-PLATFORM_FRAMEWORK</div>
+        <div class="app-description" style="max-width: 1000px;">
+            <h3>The VR Training Revolution</h3>
+            <p>
+                Virtual Reality revolutionizes training by moving beyond observation into <strong>active presence</strong>. By creating a risk-free environment for high-stakes scenarios—from emergency response to complex engineering—VR builds muscle memory and cognitive retention that traditional 2D media cannot replicate. It allows trainees to fail safely, iterate quickly, and achieve technical proficiency in a fraction of the time.
+            </p>
+            <p>
+                However, true effectiveness lies in <strong>omni-channel deployment</strong>. We architect training systems that are platform-agnostic; we build effective training across different media including high-fidelity VR, mobile AR, and web-based 3D modules. Our systems are designed to integrate seamlessly with <strong>LMS (Learning Management Systems)</strong> via SCORM or xAPI protocols. This ensures that a trainee can start with browser-based theory and transition into a spatial 3D environment, while their performance data remains synchronized, providing stakeholders with real-time analytics on workforce readiness.
+            </p>
+        </div>
+    </section>
+
+    <section>
         <div class="ar-content">MOBILE_INTERFACE: AERO_ASSET_VIEWER</div>
         <div class="iphone-section-container">
             <div class="app-description">
                 <h3>Aero Asset Viewer</h3>
-                <p>Designed for defense firefighters, this mobile-first application transforms technical aircraft manuals into interactive 3D/AR training tools.</p>
+                <p>Designed for defense firefighters, this mobile-first application transforms technical aircraft manuals into interactive 3D/AR training tools. It bridges the gap between the classroom and the airfield.</p>
                 <ul>
                     <li><strong>Airbus Fleet Management:</strong> Dedicated data for the A319, A320, A321, and A380 fleets.</li>
                     <li><strong>1:1 Scaling:</strong> Practice tactical positioning on airfield locations using AR.</li>
@@ -212,11 +227,11 @@
         <div class="spatial-sync-wrapper"> 
             <div class="tracking-info">
                 <h3>Bio-Metric Tracking</h3>
-                <p>Natural hand-tracking allows trainees to interact with virtual assets using intuitive gestures without physical hardware.</p>
+                <p>Natural hand-tracking allows trainees to interact with virtual assets using intuitive gestures without physical hardware. By analyzing skeletal hand data, we enable complex interactions that feel native to the human touch.</p>
                 <ul class="use-case-list">
                     <li><strong>Maintenance Simulators:</strong> Practice manual maneuvers and component inspection.</li>
                     <li><strong>X-Ray Interaction:</strong> Use a closed-fist gesture to activate hull penetration.</li>
-                    <li><strong>Model manipulation:</strong> Move hand left and right to spin model. More complex manipulation is possible with practice.</li>
+                    <li><strong>Model manipulation:</strong> Move hand left and right to spin model.</li>
                 </ul>
                 <button class="cam-btn" id="t-btn">Enable camera</button>
             </div>
@@ -256,69 +271,4 @@
                 gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, zIndex: 1, boxShadow: "0 10px 20px rgba(0,0,0,0.4)", duration: 0.6, ease: "elastic.out(1, 0.3)" }); 
                 gsap.to(shine, { opacity: 0 }); 
                 iframe.src = iframe.src.replace("&autoplay=1", ""); 
-                cards.forEach(other => { gsap.to(other, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.4 }); }); 
-            }); 
-        });
-
-        /* --- HAND TRACKING LOGIC --- */
-        const mv = document.querySelector('#xr-model'); 
-        const vTrack = document.getElementById("v-preview"); 
-        const btnTrack = document.getElementById("t-btn"); 
-        const hud = document.getElementById("tech-hud"); 
-        let isTracking = false; 
-        let dModel = null; 
-
-        handTrack.load({ flipHorizontal: true, maxNumBoxes: 1, scoreThreshold: 0.6 }).then(m => { 
-            dModel = m; 
-            btnTrack.innerText = "Enable camera"; 
-            btnTrack.style.background = "var(--hud-green)"; 
-        }); 
-
-        btnTrack.addEventListener("click", () => { 
-            if (!isTracking) { 
-                handTrack.startVideo(vTrack).then(status => { 
-                    if (status) { isTracking = true; btnTrack.innerText = "TERMINATE SENSORS"; btnTrack.style.background = "var(--error-red)"; detectHand(); } 
-                }); 
-            } else { 
-                handTrack.stopVideo(vTrack); isTracking = false; btnTrack.innerText = "Enable camera"; btnTrack.style.background = "var(--hud-green)"; hud.classList.remove('active');
-            } 
-        }); 
-
-        function detectHand() { 
-            if (!isTracking) return; 
-            dModel.detect(vTrack).then(preds => { 
-                const hand = preds.find(p => p.label !== 'face'); 
-                if (hand) { 
-                    const [x, y, w, h] = hand.bbox; 
-                    const centerX = x + w / 2; 
-                    const percentX = centerX / 640; 
-                    mv.cameraOrbit = `${(percentX * 360) - 180}deg 75deg 12m`; 
-                    const xray = ["closed", "fist", "pinch"].includes(hand.label); 
-                    hud.classList.toggle('active', xray); 
-                    if (mv.model) { 
-                        mv.model.materials.forEach(mat => { mat.setAlphaMode(xray ? "BLEND" : "OPAQUE"); mat.pbrMetallicRoughness.setBaseColorFactor(xray ? [0.2, 0.4, 1.0, 0.3] : [1, 1, 1, 1]); }); 
-                    } 
-                } 
-                requestAnimationFrame(detectHand); 
-            }); 
-        } 
-
-        /* --- PARALLAX BACKGROUND --- */
-        const pCanvas = document.getElementById('particle-canvas'); 
-        const pCtx = pCanvas.getContext('2d'); 
-        let pWidth, pHeight; 
-        const particles = []; 
-        function resize() { pWidth = window.innerWidth; pHeight = window.innerHeight; pCanvas.width = pWidth; pCanvas.height = pHeight; } 
-        class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * pWidth; this.y = Math.random() * pHeight; this.size = Math.random() * 1.5; this.speed = Math.random() * 0.4 + 0.1; this.opacity = Math.random() * 0.4 + 0.1; } update() { this.y -= this.speed; if (this.y < 0) this.reset(); } draw() { pCtx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`; pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); pCtx.fill(); } } 
-        for(let i=0; i<80; i++) particles.push(new Particle()); 
-        function animate() { pCtx.clearRect(0, 0, pWidth, pHeight); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animate); } 
-        window.addEventListener('resize', resize); resize(); animate(); 
-        window.addEventListener('mousemove', (e) => { 
-            const moveX = (e.clientX - window.innerWidth/2) / window.innerWidth; 
-            const moveY = (e.clientY - window.innerHeight/2) / window.innerHeight; 
-            gsap.to('#grid-layer', { x: moveX * 45, y: moveY * 45, duration: 2.5, ease: "power2.out" }); 
-            gsap.to('#particle-layer', { x: moveX * 80, y: moveY * 80, duration: 2.5, ease: "power2.out" }); 
-        }); 
-    </script> 
-</body> 
-</html>
+                cards.forEach(other
