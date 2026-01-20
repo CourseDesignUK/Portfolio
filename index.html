@@ -3,32 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FocusStudy</title>
+    <title>FocusStudy Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #f8fafc; height: 100vh; overflow: hidden; }
         .flip-card-inner { transition: transform 0.6s; transform-style: preserve-3d; }
         .is-flipped { transform: rotateY(180deg); }
         .backface-hidden { backface-visibility: hidden; }
-        .tab-content { height: calc(100vh - 180px); overflow-y: auto; }
-        /* Hide scrollbar for clean mobile look */
+        .tab-content { height: calc(100vh - 180px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .tab-content::-webkit-scrollbar { display: none; }
+        .perspective-1000 { perspective: 1000px; }
     </style>
 </head>
 <body class="font-sans text-slate-700 flex flex-col">
 
-    <header class="p-4 bg-white border-b border-slate-100 shrink-0">
+    <header class="p-4 bg-white border-b border-slate-100 shrink-0 shadow-sm">
         <div class="flex justify-between items-center mb-3">
-            <h1 class="text-xl font-bold text-emerald-900">FocusStudy</h1>
+            <h1 class="text-xl font-bold text-emerald-900 tracking-tight">FocusStudy</h1>
             <div class="bg-emerald-100 px-3 py-1 rounded-full flex items-center gap-2">
-                <span class="text-[10px] font-bold text-emerald-700 uppercase">Streak</span>
+                <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-tighter">Streak</span>
                 <span id="streak-count" class="text-sm font-black text-emerald-900">0</span>
             </div>
         </div>
         <div class="flex gap-2">
-            <select id="deck-selector" onchange="switchDeck()" class="flex-1 bg-slate-50 border-none rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500">
+            <select id="deck-selector" onchange="switchDeck()" class="flex-1 bg-slate-50 border-none rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-emerald-500">
             </select>
-            <button onclick="createNewDeck()" class="bg-emerald-800 text-white rounded-lg px-4 py-2 font-bold">+</button>
+            <button onclick="createNewDeck()" class="bg-emerald-800 text-white rounded-xl px-4 py-2 font-bold">+</button>
         </div>
     </header>
 
@@ -36,83 +36,100 @@
         
         <div id="tab-study" class="tab-content flex flex-col justify-center">
             <div id="study-ui" class="hidden">
+                <p id="stats" class="text-center text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-2">0 Reviews Due</p>
                 <div class="relative h-64 w-full perspective-1000 mb-6">
-                    <div id="card-inner" class="flip-card-inner relative w-full h-full text-center shadow-lg rounded-3xl cursor-pointer">
-                        <div class="backface-hidden absolute inset-0 bg-white flex items-center justify-center p-6 rounded-3xl border border-slate-200">
-                            <p id="card-front" class="text-lg font-semibold text-slate-800"></p>
+                    <div id="card-inner" onclick="flipCard()" class="flip-card-inner relative w-full h-full text-center shadow-xl rounded-3xl cursor-pointer">
+                        <div class="backface-hidden absolute inset-0 bg-white flex items-center justify-center p-8 rounded-3xl border border-slate-200">
+                            <p id="card-front" class="text-lg font-semibold text-slate-800 leading-relaxed"></p>
                         </div>
-                        <div class="backface-hidden absolute inset-0 bg-emerald-50 flex items-center justify-center p-6 rounded-3xl border border-emerald-100" style="transform: rotateY(180deg);">
-                            <p id="card-back" class="text-lg font-semibold text-emerald-900"></p>
+                        <div class="backface-hidden absolute inset-0 bg-emerald-50 flex items-center justify-center p-8 rounded-3xl border border-emerald-100" style="transform: rotateY(180deg);">
+                            <p id="card-back" class="text-lg font-semibold text-emerald-900 leading-relaxed"></p>
                         </div>
                     </div>
                 </div>
                 <div id="controls" class="space-y-3">
-                    <button id="show-btn" onclick="flipCard()" class="w-full bg-emerald-800 text-white py-4 rounded-2xl font-bold shadow-md">Show Answer</button>
+                    <button id="show-btn" onclick="flipCard()" class="w-full bg-emerald-800 text-white py-4 rounded-2xl font-bold shadow-lg transition">Reveal Answer</button>
                     <div id="rating-btns" class="hidden grid grid-cols-3 gap-2">
                         <button onclick="rateCard(1)" class="bg-slate-200 text-slate-700 py-4 rounded-xl font-bold">Again</button>
                         <button onclick="rateCard(3)" class="bg-emerald-100 text-emerald-700 py-4 rounded-xl font-bold">Good</button>
-                        <button onclick="rateCard(7)" class="bg-emerald-800 text-white py-4 rounded-xl font-bold">Easy</button>
+                        <button onclick="rateCard(7)" class="bg-emerald-800 text-white py-4 rounded-xl font-bold shadow-lg">Easy</button>
                     </div>
                 </div>
             </div>
             <div id="empty-state" class="text-center py-10">
-                <p class="text-slate-400 font-medium">No reviews due today.</p>
+                <div class="text-4xl mb-2">✨</div>
+                <p class="text-slate-500 font-medium">Session Complete</p>
             </div>
         </div>
 
         <div id="tab-add" class="tab-content hidden">
-            <h3 class="font-bold text-slate-800 mb-4">New Card</h3>
-            <textarea id="new-front" placeholder="Front" class="w-full mb-3 p-3 bg-white border border-slate-200 rounded-xl h-24 focus:ring-2 focus:ring-emerald-500"></textarea>
-            <textarea id="new-back" placeholder="Back" class="w-full mb-4 p-3 bg-white border border-slate-200 rounded-xl h-24 focus:ring-2 focus:ring-emerald-500"></textarea>
-            <button onclick="addCard()" class="w-full bg-emerald-800 text-white py-4 rounded-xl font-bold">Save Card</button>
+            <h3 class="font-bold text-slate-800 mb-4 px-1">New Flashcard</h3>
+            <textarea id="new-front" placeholder="Front Content" class="w-full mb-3 p-4 bg-white border border-slate-200 rounded-2xl h-32 focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
+            <textarea id="new-back" placeholder="Back Content" class="w-full mb-4 p-4 bg-white border border-slate-200 rounded-2xl h-32 focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
+            <button onclick="addCard()" class="w-full bg-emerald-800 text-white py-4 rounded-2xl font-bold">Save Card</button>
         </div>
 
         <div id="tab-lib" class="tab-content hidden">
             <div class="space-y-6">
                 <div>
-                    <h3 class="font-bold text-slate-800 mb-2">Card Library</h3>
+                    <h3 class="font-bold text-slate-800 mb-2">Deck Library</h3>
                     <div id="card-list" class="space-y-2"></div>
                 </div>
-                <div class="pt-4 border-t border-slate-200 grid grid-cols-2 gap-2">
-                    <button onclick="exportDeck()" class="text-[10px] bg-slate-200 py-2 rounded-lg font-bold">EXPORT JSON</button>
-                    <label class="text-[10px] bg-slate-200 py-2 rounded-lg font-bold text-center cursor-pointer">
-                        IMPORT JSON
-                        <input type="file" class="hidden" onchange="importDeck(event)">
-                    </label>
-                    <button onclick="deleteCurrentDeck()" class="col-span-2 text-[10px] text-red-400 py-2 font-bold uppercase tracking-widest">Delete Current Deck</button>
+                <div class="pt-6 border-t border-slate-200 flex flex-col gap-3">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="exportCSV()" class="text-[10px] bg-white border border-slate-200 py-3 rounded-xl font-bold text-slate-500 uppercase">Export CSV</button>
+                        <label class="text-[10px] bg-white border border-slate-200 py-3 rounded-xl font-bold text-slate-500 text-center cursor-pointer uppercase">
+                            Import File
+                            <input type="file" class="hidden" onchange="importFile(event)">
+                        </label>
+                    </div>
+                    <button onclick="deleteCurrentDeck()" class="text-[10px] text-red-400 py-2 font-bold uppercase tracking-widest">Delete Entire Deck</button>
                 </div>
             </div>
         </div>
     </main>
 
-    <nav class="h-20 bg-white border-t border-slate-100 flex items-center justify-around pb-4 shadow-[0_-2px_10px_rgba(0,0,0,0.02)]">
-        <button onclick="showTab('study')" class="flex flex-col items-center gap-1 opacity-40 nav-link" id="nav-study">
-            <span class="text-xl">📖</span><span class="text-[10px] font-bold">STUDY</span>
+    <nav class="h-20 bg-white border-t border-slate-100 flex items-center justify-around pb-4 shadow-lg">
+        <button onclick="showTab('study')" class="flex flex-col items-center gap-1 opacity-40" id="nav-study">
+            <span class="text-xl">📖</span><span class="text-[10px] font-black tracking-tighter">STUDY</span>
         </button>
-        <button onclick="showTab('add')" class="flex flex-col items-center gap-1 opacity-40 nav-link" id="nav-add">
-            <span class="text-xl">➕</span><span class="text-[10px] font-bold">ADD</span>
+        <button onclick="showTab('add')" class="flex flex-col items-center gap-1 opacity-40" id="nav-add">
+            <span class="text-xl">➕</span><span class="text-[10px] font-black tracking-tighter">ADD</span>
         </button>
-        <button onclick="showTab('lib')" class="flex flex-col items-center gap-1 opacity-40 nav-link" id="nav-lib">
-            <span class="text-xl">⚙️</span><span class="text-[10px] font-bold">MANAGE</span>
+        <button onclick="showTab('lib')" class="flex flex-col items-center gap-1 opacity-40" id="nav-lib">
+            <span class="text-xl">⚙️</span><span class="text-[10px] font-black tracking-tighter">MANAGE</span>
         </button>
     </nav>
 
     <script>
-        let storage = JSON.parse(localStorage.getItem('focus-v2')) || { 
-            decks: { "General": [] }, currentDeckName: "General", streak: 0, lastReviewDate: null 
+        const starterData = {
+            decks: {
+                "HTML Mastery": [
+                    { id: 1, front: "What is HTML?", back: "HyperText Markup Language", nextReview: "2020-01-01" },
+                    { id: 2, front: "Which tag is used for links?", back: "The <a> tag", nextReview: "2020-01-01" }
+                ],
+                "CSS Mastery": [
+                    { id: 3, front: "What is the Box Model?", back: "Margin, Border, Padding, Content", nextReview: "2020-01-01" }
+                ]
+            },
+            currentDeckName: "HTML Mastery",
+            streak: 0,
+            lastReviewDate: null
         };
+
+        let storage = JSON.parse(localStorage.getItem('focus-v-final')) || starterData;
         let dueCards = [];
         let currentCardIndex = 0;
 
         function save() {
-            localStorage.setItem('focus-v2', JSON.stringify(storage));
+            localStorage.setItem('focus-v-final', JSON.stringify(storage));
             updateUI();
         }
 
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
             document.getElementById('tab-' + tabId).classList.remove('hidden');
-            document.querySelectorAll('.nav-link').forEach(l => l.style.opacity = '0.4');
+            document.querySelectorAll('nav button').forEach(l => l.style.opacity = '0.3');
             document.getElementById('nav-' + tabId).style.opacity = '1';
         }
 
@@ -124,7 +141,7 @@
             const today = new Date().toISOString().split('T')[0];
             dueCards = deck.filter(card => card.nextReview <= today);
             
-            document.getElementById('stats').innerText = `${dueCards.length} Reviews Due`;
+            document.getElementById('stats').innerText = `${dueCards.length} Reviews Remaining`;
             document.getElementById('streak-count').innerText = storage.streak;
             
             if (dueCards.length > 0) {
@@ -137,11 +154,11 @@
             }
 
             document.getElementById('card-list').innerHTML = deck.map((c, i) => `
-                <div class="flex justify-between items-center p-3 bg-white border border-slate-100 rounded-xl text-xs">
-                    <span class="truncate">${c.front}</span>
-                    <button onclick="deleteCard(${i})" class="text-red-400 ml-2">✕</button>
+                <div class="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-2xl text-xs mb-2">
+                    <span class="truncate font-medium">${c.front}</span>
+                    <button onclick="deleteCard(${i})" class="text-red-300 ml-4">✕</button>
                 </div>
-            `).join('') || '<p class="text-slate-400 text-center py-4">Deck is empty</p>';
+            `).join('');
         }
 
         function showCard() {
@@ -162,10 +179,12 @@
         function rateCard(days) {
             const today = new Date().toISOString().split('T')[0];
             if (storage.lastReviewDate !== today) {
-                storage.streak = (storage.lastReviewDate === new Date(Date.now() - 86400000).toISOString().split('T')[0]) ? storage.streak + 1 : 1;
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                storage.streak = (storage.lastReviewDate === yesterday.toISOString().split('T')[0]) ? storage.streak + 1 : 1;
                 storage.lastReviewDate = today;
             }
-            
+
             const card = dueCards[currentCardIndex];
             const nextDate = new Date();
             nextDate.setDate(nextDate.getDate() + days);
@@ -185,13 +204,8 @@
         }
 
         function deleteCard(i) { storage.decks[storage.currentDeckName].splice(i, 1); save(); }
-        
         function switchDeck() { storage.currentDeckName = document.getElementById('deck-selector').value; currentCardIndex = 0; save(); }
-        
-        function createNewDeck() { 
-            const n = prompt("Deck name:"); 
-            if (n && !storage.decks[n]) { storage.decks[n] = []; storage.currentDeckName = n; save(); } 
-        }
+        function createNewDeck() { const n = prompt("Name:"); if (n && !storage.decks[n]) { storage.decks[n] = []; storage.currentDeckName = n; save(); } }
 
         function deleteCurrentDeck() {
             if (Object.keys(storage.decks).length > 1 && confirm("Delete deck?")) {
@@ -201,24 +215,34 @@
             }
         }
 
-        function exportDeck() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(storage));
+        function exportCSV() {
+            const deck = storage.decks[storage.currentDeckName];
+            let csv = "Front,Back\n" + deck.map(c => `"${c.front.replace(/"/g,'""')}","${c.back.replace(/"/g,'""')}"`).join("\n");
             const dl = document.createElement('a');
-            dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", "focus_backup.json");
+            dl.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+            dl.download = storage.currentDeckName + '.csv';
             dl.click();
         }
 
-        function importDeck(e) {
+        function importFile(e) {
+            const file = e.target.files[0];
             const reader = new FileReader();
-            reader.onload = function(event) {
-                try {
-                    storage = JSON.parse(event.target.result);
-                    save();
-                    alert("Imported successfully!");
-                } catch { alert("Invalid file"); }
+            reader.onload = function(evt) {
+                if (file.name.endsWith('.csv')) {
+                    const rows = evt.target.result.split('\n').slice(1);
+                    const cards = rows.filter(r => r.includes(',')).map(r => {
+                        const parts = r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                        return { id: Date.now()+Math.random(), front: parts[0].replace(/^"|"$/g,''), back: parts[1].replace(/^"|"$/g,''), nextReview: new Date().toISOString().split('T')[0] };
+                    });
+                    storage.decks[storage.currentDeckName].push(...cards);
+                    alert(`Imported ${cards.length} cards`);
+                } else {
+                    const data = JSON.parse(evt.target.result);
+                    storage.decks = {...storage.decks, ...data.decks};
+                }
+                save();
             };
-            reader.readAsText(e.target.files[0]);
+            reader.readAsText(file);
         }
 
         showTab('study');
