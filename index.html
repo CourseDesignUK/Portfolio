@@ -120,9 +120,9 @@
                 <h3>Aero Asset Viewer</h3>
                 <p>Designed for defense firefighters, this mobile-first application transforms technical aircraft manuals into interactive 3D training tools.</p>
                 <ul>
-                    <li><strong>1:1 Scaling:</strong> Deploy aircraft directly onto airfields for tactical positioning.</li>
-                    <li><strong>ICAO ARFF Cards:</strong> Instant retrieval of fuel loads and rescue exit locations.</li>
-                    <li><strong>Munition Hazard Intel:</strong> Critical data for tactical response to military payloads.</li>
+                    <li><strong>Airbus Fleet Management:</strong> Dedicated data for the A319, A320, A321, and A380 fleets.</li>
+                    <li><strong>1:1 Scaling:</strong> Practice tactical positioning on airfield locations using AR.</li>
+                    <li><strong>Tactical Intel:</strong> Retrieval of hazard data and rescue exit locations for civilian fleet assets.</li>
                 </ul>
             </div>
             <div class="iphone-wrapper">
@@ -152,7 +152,7 @@
                             <body>
                                 <div id='start-screen'>
                                     <div class='radar'></div>
-                                    <h3 style='letter-spacing:4px; margin-top:20px; font-weight:300;'>AERO ASSET</h3>
+                                    <h3 style='letter-spacing:4px; margin-top:20px; font-weight:300;'>AIRBUS FLEET</h3>
                                     <button class='commence-btn' onclick='this.parentElement.style.opacity=0;setTimeout(()=>this.parentElement.style.display=&quot;none&quot;,500)'>INITIALIZE</button>
                                 </div>
                                 <div id='details' class='details-panel'>
@@ -167,8 +167,10 @@
                                 <model-viewer id='m' camera-controls auto-rotate shadow-intensity='2'></model-viewer>
                                 <script>
                                     const d = [
-                                        { n: 'Airbus A319', f: 'models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'Oxygen, Li-ion' },
-                                        { n: 'CH-47 Chinook', f: 'models/chinook-2.glb', cat: 'Tactical', p: '33', fuel: '3,914 L', haz: 'Military Spec' }
+                                        { n: 'Airbus A319', f: 'models/airbus_a319.glb', cat: '6', p: '160', fuel: '23,860 L', haz: 'Oxygen, Li-ion', rescue: '4 Main exits' },
+                                        { n: 'Airbus A320', f: 'models/airbus_a320.glb', cat: '6', p: '180', fuel: '24,210 L', haz: 'Composite Dust', rescue: '4 Main exits, 4 Overwing' },
+                                        { n: 'Airbus A321', f: 'models/airbus_a321.glb', cat: '7', p: '236', fuel: '29,680 L', haz: 'Hydraulic Skydrol', rescue: '8 exits' },
+                                        { n: 'Airbus A380', f: 'models/airbus_a380.glb', cat: '10', p: '853', fuel: '320,000 L', haz: 'Massive Fuel', rescue: '16 Floor-level exits' }
                                     ];
                                     const sel = document.getElementById('s');
                                     d.forEach((x, i) => { const o = document.createElement('option'); o.value = i; o.innerText = x.n; sel.appendChild(o); });
@@ -176,7 +178,13 @@
                                         const a = d[i];
                                         document.getElementById('m').src = 'models/' + a.f.split('/').pop();
                                         document.getElementById('t').innerText = a.n;
-                                        document.getElementById('specs').innerHTML = `<div class='spec-item'><span class='label'>ICAO CAT</span>` + a.cat + `</div><div class='spec-item'><span class='label'>MAX PAX</span>` + a.p + `</div><div class='spec-item'><span class='label'>FUEL</span>` + a.fuel + `</div><div class='spec-item'><span class='label'>HAZARDS</span>` + a.haz + `</div>`;
+                                        document.getElementById('specs').innerHTML = `
+                                            <div class='spec-item'><span class='label'>ICAO CAT</span>` + a.cat + `</div>
+                                            <div class='spec-item'><span class='label'>MAX PAX</span>` + a.p + `</div>
+                                            <div class='spec-item'><span class='label'>FUEL</span>` + a.fuel + `</div>
+                                            <div class='spec-item'><span class='label'>HAZARDS</span>` + a.haz + `</div>
+                                            <div class='spec-item'><span class='label'>RESCUE</span>` + a.rescue + `</div>
+                                        `;
                                     }
                                     u(0);
                                 </script>
@@ -194,14 +202,15 @@
         <div class="spatial-sync-wrapper"> 
             <div class="tracking-info">
                 <h3>Bio-Metric Tracking</h3>
-                <p>Natural hand-tracking allows trainees to interact with virtual assets using intuitive gestures.</p>
+                <p>Natural hand-tracking allows trainees to interact with virtual assets using intuitive gestures without physical hardware.</p>
                 <ul class="use-case-list">
-                    <li><strong>Maintenance Simulators:</strong> Practice manual maneuvers without hardware.</li>
-                    <li><strong>X-Ray Interaction:</strong> Use a fist gesture to "see through" airframes.</li>
+                    <li><strong>Maintenance Simulators:</strong> Practice manual maneuvers and component inspection.</li>
+                    <li><strong>X-Ray Interaction:</strong> Use a closed-fist gesture to activate hull penetration.</li>
                     <li><strong>Safety Inspections:</strong> Point to identify hazards or inspect micro-cracks.</li>
                 </ul>
-                <button class="cam-btn" id="t-btn">INITIALIZING SENSORS...</button>
+                <button class="cam-btn" id="t-btn">Enable camera</button>
             </div>
+
             <div class="model-card"> 
                 <div id="tech-hud"> 
                     <div>[SYSTEM STATUS: X-RAY ACTIVE]</div> 
@@ -210,12 +219,13 @@
                 </div> 
                 <model-viewer id="xr-model" src="models/chinook-2.glb" camera-controls shadow-intensity="1" camera-orbit="0deg 75deg 12m" style="width:100%; height:100%;"></model-viewer> 
             </div> 
+
             <div id="preview-wrapper"><video id="v-preview" autoplay playsinline muted width="640" height="480"></video></div> 
         </div> 
     </section> 
 
     <script> 
-        /* --- CORE LOGIC --- */
+        /* --- VIDEO CARD LOGIC --- */
         const cards = document.querySelectorAll('.video-card'); 
         cards.forEach(card => { 
             const iframe = card.querySelector('iframe'); 
@@ -225,7 +235,7 @@
                 const rect = card.getBoundingClientRect(); 
                 const x = e.clientX - rect.left; 
                 const y = e.clientY - rect.top; 
-                gsap.to(card, { rotateX: ((y - rect.height/2) / (rect.height/2)) * -20, rotateY: ((x - rect.width/2) / (rect.width/2)) * 20, scale: 1.1, zIndex: 100, duration: 0.1 }); 
+                gsap.to(card, { rotateX: ((y - rect.height/2) / (rect.height/2)) * -20, rotateY: ((x - rect.width/2) / (rect.width/2)) * 20, scale: 1.1, zIndex: 100, boxShadow: "0 40px 80px rgba(99, 102, 241, 0.6)", duration: 0.1 }); 
                 gsap.to(shine, { opacity: 1, x: `${(x/rect.width)*100 - 50}%`, y: `${(y/rect.height)*100 - 50}%`, duration: 0.1 }); 
             }); 
             card.addEventListener('mouseenter', () => { 
@@ -233,13 +243,14 @@
                 cards.forEach(other => { if(other !== card) gsap.to(other, { opacity: 0.1, scale: 0.8, filter: "blur(4px)", duration: 0.4 }); }); 
             }); 
             card.addEventListener('mouseleave', () => { 
-                gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, zIndex: 1, duration: 0.6, ease: "elastic.out(1, 0.3)" }); 
+                gsap.to(card, { rotateX: 0, rotateY: 0, scale: 1, zIndex: 1, boxShadow: "0 10px 20px rgba(0,0,0,0.4)", duration: 0.6, ease: "elastic.out(1, 0.3)" }); 
                 gsap.to(shine, { opacity: 0 }); 
                 iframe.src = iframe.src.replace("&autoplay=1", ""); 
                 cards.forEach(other => { gsap.to(other, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.4 }); }); 
             }); 
         });
 
+        /* --- HAND TRACKING LOGIC --- */
         const mv = document.querySelector('#xr-model'); 
         const vTrack = document.getElementById("v-preview"); 
         const btnTrack = document.getElementById("t-btn"); 
@@ -259,7 +270,7 @@
                     if (status) { isTracking = true; btnTrack.innerText = "TERMINATE SENSORS"; btnTrack.style.background = "var(--error-red)"; detectHand(); } 
                 }); 
             } else { 
-                handTrack.stopVideo(vTrack); isTracking = false; btnTrack.innerText = "INITIALIZE SENSORS"; btnTrack.style.background = "var(--accent-color)"; hud.classList.remove('active');
+                handTrack.stopVideo(vTrack); isTracking = false; btnTrack.innerText = "Enable camera"; btnTrack.style.background = "var(--hud-green)"; hud.classList.remove('active');
             } 
         }); 
 
@@ -270,7 +281,8 @@
                 if (hand) { 
                     const [x, y, w, h] = hand.bbox; 
                     const centerX = x + w / 2; 
-                    mv.cameraOrbit = `${( (centerX / 640) * 360) - 180}deg 75deg 12m`; 
+                    const percentX = centerX / 640; 
+                    mv.cameraOrbit = `${(percentX * 360) - 180}deg 75deg 12m`; 
                     const xray = ["closed", "fist", "pinch"].includes(hand.label); 
                     hud.classList.toggle('active', xray); 
                     if (mv.model) { 
@@ -281,6 +293,7 @@
             }); 
         } 
 
+        /* --- PARALLAX BACKGROUND --- */
         const pCanvas = document.getElementById('particle-canvas'); 
         const pCtx = pCanvas.getContext('2d'); 
         let pWidth, pHeight; 
