@@ -26,9 +26,8 @@
             </div>
         </div>
         <div class="flex gap-2">
-            <select id="deck-selector" onchange="switchDeck()" class="flex-1 bg-slate-50 border-none rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-emerald-500">
-            </select>
-            <button onclick="createNewDeck()" class="bg-emerald-800 text-white rounded-xl px-4 py-2 font-bold">+</button>
+            <select id="deck-selector" onchange="switchDeck()" class="flex-1 bg-slate-50 border-none rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-emerald-500"></select>
+            <button onclick="createNewDeck()" class="bg-emerald-800 text-white rounded-xl px-4 py-2 font-bold hover:bg-emerald-900">+</button>
         </div>
     </header>
 
@@ -48,7 +47,7 @@
                     </div>
                 </div>
                 <div id="controls" class="space-y-3">
-                    <button id="show-btn" onclick="flipCard()" class="w-full bg-emerald-800 text-white py-4 rounded-2xl font-bold shadow-lg transition">Reveal Answer</button>
+                    <button id="show-btn" onclick="flipCard()" class="w-full bg-emerald-800 text-white py-4 rounded-2xl font-bold shadow-lg">Reveal Answer</button>
                     <div id="rating-btns" class="hidden grid grid-cols-3 gap-2">
                         <button onclick="rateCard(1)" class="bg-slate-200 text-slate-700 py-4 rounded-xl font-bold">Again</button>
                         <button onclick="rateCard(3)" class="bg-emerald-100 text-emerald-700 py-4 rounded-xl font-bold">Good</button>
@@ -102,27 +101,56 @@
     </nav>
 
     <script>
+        // Synthesize Flip Sound (No external file needed)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playFlipSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        const buildPack = (name, qas) => qas.map((qa, i) => ({
+            id: `${name}-${i}`, front: qa[0], back: qa[1], nextReview: "2020-01-01"
+        }));
+
+        const htmlQAs = [
+            ["What does HTML stand for?", "HyperText Markup Language"], ["Which tag is for links?", "<a>"], ["Tag for largest heading?", "<h1>"], ["Purpose of <head>?", "Contains metadata/links"], ["How to make a list item?", "<li>"], ["Tag for images?", "<img>"], ["What is an attribute?", "Extra info for an element"], ["Tag for a line break?", "<br>"], ["Tag for a table row?", "<tr>"], ["What is <!DOCTYPE>?", "Instruction to the browser"], ["Element for a footer?", "<footer>"], ["Element for navigation?", "<nav>"], ["How to comment?", ""], ["Tag for a dropdown?", "<select>"], ["Tag for bold text?", "<strong> or <b>"], ["Tag for italics?", "<em> or <i>"], ["Tag for a script?", "<script>"], ["Tag for CSS links?", "<link>"], ["Input type for email?", "<input type='email'>"], ["Input type for dates?", "<input type='date'>"], ["What is a <div>?", "Generic container"], ["What is <span>?", "Inline container"], ["Tag for paragraphs?", "<p>"], ["Tag for buttons?", "<button>"], ["Tag for forms?", "<form>"], ["Attribute for image alternate text?", "alt"], ["Tag for ordered lists?", "<ol>"], ["Tag for unordered lists?", "<ul>"], ["Tag for text areas?", "<textarea>"], ["The root element of HTML?", "<html>"]
+        ];
+
+        const cssQAs = [
+            ["What is CSS?", "Cascading Style Sheets"], ["Property for text color?", "color"], ["Property for background?", "background-color"], ["Property for font size?", "font-size"], ["How to select an ID?", "#idName"], ["How to select a Class?", ".className"], ["What is the Box Model?", "Margin, Border, Padding, Content"], ["Property for bold text?", "font-weight"], ["Property for centering text?", "text-align: center"], ["Property for space inside border?", "padding"], ["Property for space outside border?", "margin"], ["What is 'z-index'?", "Stack order of elements"], ["Property for font type?", "font-family"], ["How to remove list bullets?", "list-style: none"], ["How to make text uppercase?", "text-transform: uppercase"], ["Property for border width?", "border-width"], ["Property for rounding corners?", "border-radius"], ["What is 'Flexbox'?", "One-dimensional layout method"], ["What is 'Grid'?", "Two-dimensional layout method"], ["Property for transparency?", "opacity"], ["Value for hidden element?", "display: none or visibility: hidden"], ["Property for line spacing?", "line-height"], ["How to select all <p> elements?", "p { ... }"], ["What is a Pseudo-class?", "Selector for a state (e.g., :hover)"], ["What is a Pseudo-element?", "Selector for part of element (e.g., ::after)"], ["Property for image size in div?", "object-fit"], ["What is '@media'?", "Rules for responsive design"], ["Property for transitions?", "transition"], ["Property for shadows?", "box-shadow"], ["Property for cursor style?", "cursor"]
+        ];
+
+        const jsQAs = [
+            ["What is JavaScript?", "A high-level programming language"], ["How to declare a constant?", "const"], ["How to declare a let variable?", "let"], ["What is the DOM?", "Document Object Model"], ["How to log to console?", "console.log()"], ["What is an Array?", "A list-like object"], ["What is an Object?", "A collection of key-value pairs"], ["How to write an arrow function?", "() => { ... }"], ["What is a String?", "Sequence of characters"], ["What is a Boolean?", "True or False"], ["How to find ID in JS?", "document.getElementById()"], ["How to add an event listener?", ".addEventListener()"], ["What is JSON?", "JavaScript Object Notation"], ["What is 'NaN'?", "Not a Number"], ["What does '===' check?", "Value and Type equality"], ["How to get array length?", "array.length"], ["How to add item to array?", "array.push()"], ["What is a loop?", "Sequence of repeated instructions"], ["What is a 'Promise'?", "Object for async operations"], ["What is 'async/await'?", "Syntax for handling promises"], ["How to convert string to number?", "Number() or parseInt()"], ["What is 'scope'?", "Where a variable is accessible"], ["What is a Template Literal?", "String with backticks for variables"], ["How to round a number?", "Math.round()"], ["How to get a random number?", "Math.random()"], ["What is 'this' keyword?", "Refers to current object context"], ["What is 'null'?", "Intentional absence of value"], ["What is 'undefined'?", "Variable declared but not assigned"], ["How to call a function?", "functionName()"], ["What is an 'operator'?", "Symbol for operations (e.g., +, -, *)"]
+        ];
+
         const starterData = {
             decks: {
-                "HTML Mastery": [
-                    { id: 1, front: "What is HTML?", back: "HyperText Markup Language", nextReview: "2020-01-01" },
-                    { id: 2, front: "Which tag is used for links?", back: "The <a> tag", nextReview: "2020-01-01" }
-                ],
-                "CSS Mastery": [
-                    { id: 3, front: "What is the Box Model?", back: "Margin, Border, Padding, Content", nextReview: "2020-01-01" }
-                ]
+                "HTML Mastery": buildPack("HTML", htmlQAs),
+                "CSS Mastery": buildPack("CSS", cssQAs),
+                "JS Logic": buildPack("JS", jsQAs)
             },
             currentDeckName: "HTML Mastery",
             streak: 0,
             lastReviewDate: null
         };
 
-        let storage = JSON.parse(localStorage.getItem('focus-v-final')) || starterData;
+        let storage = JSON.parse(localStorage.getItem('focus-v-pro-90')) || starterData;
         let dueCards = [];
         let currentCardIndex = 0;
 
         function save() {
-            localStorage.setItem('focus-v-final', JSON.stringify(storage));
+            localStorage.setItem('focus-v-pro-90', JSON.stringify(storage));
             updateUI();
         }
 
@@ -171,9 +199,12 @@
         }
 
         function flipCard() {
-            document.getElementById('card-inner').classList.add('is-flipped');
-            document.getElementById('show-btn').classList.add('hidden');
-            document.getElementById('rating-btns').classList.remove('hidden');
+            if (!document.getElementById('card-inner').classList.contains('is-flipped')) {
+                playFlipSound();
+                document.getElementById('card-inner').classList.add('is-flipped');
+                document.getElementById('show-btn').classList.add('hidden');
+                document.getElementById('rating-btns').classList.remove('hidden');
+            }
         }
 
         function rateCard(days) {
