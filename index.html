@@ -3,70 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LiteAnki - Simple Flashcards</title>
+    <title>Study Cards - Spaced Repetition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .flip-card-inner {
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
+        body { background-color: #f0f4f0; }
+        .garden-card { background: #ffffff; border-bottom: 4px solid #86a789; }
+        .flip-card-inner { transition: transform 0.6s; transform-style: preserve-3d; }
         .is-flipped { transform: rotateY(180deg); }
         .backface-hidden { backface-visibility: hidden; }
+        .leaf-icon { color: #4f6f52; }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen font-sans">
+<body class="min-h-screen font-sans pb-20 text-slate-700">
 
-    <div class="max-w-md mx-auto py-10 px-4">
+    <div class="max-w-md mx-auto py-8 px-4">
         <header class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-slate-800">🧠 LiteAnki</h1>
-            <p id="stats" class="text-slate-500 text-sm mt-2">0 cards due today</p>
+            <h1 class="text-3xl font-bold text-emerald-900 flex items-center justify-center gap-2">
+                🌿 GardenStudy
+            </h1>
+            <div class="mt-4 flex items-center justify-center gap-2">
+                <select id="deck-selector" onchange="switchDeck()" class="bg-white border-2 border-emerald-100 rounded-lg px-3 py-1 text-sm focus:outline-emerald-500 shadow-sm">
+                    </select>
+                <button onclick="createNewDeck()" class="text-emerald-700 font-bold text-xl px-2 hover:scale-110 transition">+</button>
+            </div>
+            <p id="stats" class="text-emerald-600/70 text-xs mt-2 uppercase tracking-widest font-semibold">0 seeds to water</p>
         </header>
 
         <div id="study-section" class="hidden">
             <div class="relative h-64 w-full perspective-1000">
-                <div id="card-inner" class="flip-card-inner relative w-full h-full text-center shadow-xl rounded-2xl cursor-pointer">
-                    <div class="backface-hidden absolute inset-0 bg-white flex items-center justify-center p-6 rounded-2xl border-2 border-slate-200">
+                <div id="card-inner" class="flip-card-inner relative w-full h-full text-center shadow-lg rounded-3xl cursor-pointer">
+                    <div class="backface-hidden absolute inset-0 bg-white flex items-center justify-center p-8 rounded-3xl border-2 border-emerald-50">
                         <p id="card-front" class="text-xl font-medium text-slate-800"></p>
                     </div>
-                    <div class="backface-hidden absolute inset-0 bg-indigo-50 flex items-center justify-center p-6 rounded-2xl border-2 border-indigo-200" style="transform: rotateY(180deg);">
-                        <p id="card-back" class="text-xl font-medium text-indigo-900"></p>
+                    <div class="backface-hidden absolute inset-0 bg-emerald-50 flex items-center justify-center p-8 rounded-3xl border-2 border-emerald-100" style="transform: rotateY(180deg);">
+                        <p id="card-back" class="text-xl font-medium text-emerald-900"></p>
                     </div>
                 </div>
             </div>
 
             <div id="controls" class="mt-8 space-y-4">
-                <button id="show-btn" onclick="flipCard()" class="w-full bg-slate-800 text-white py-3 rounded-xl font-semibold hover:bg-slate-700 transition">Show Answer</button>
-                
-                <div id="rating-btns" class="hidden grid grid-cols-3 gap-2">
-                    <button onclick="rateCard(1)" class="bg-red-100 text-red-700 py-3 rounded-lg font-bold hover:bg-red-200">Again</button>
-                    <button onclick="rateCard(3)" class="bg-yellow-100 text-yellow-700 py-3 rounded-lg font-bold hover:bg-yellow-200">Good</button>
-                    <button onclick="rateCard(7)" class="bg-green-100 text-green-700 py-3 rounded-lg font-bold hover:bg-green-200">Easy</button>
+                <button id="show-btn" onclick="flipCard()" class="w-full bg-emerald-700 text-white py-4 rounded-2xl font-bold shadow-md hover:bg-emerald-800 transition transform active:scale-95">Reveal Card</button>
+                <div id="rating-btns" class="hidden grid grid-cols-3 gap-3">
+                    <button onclick="rateCard(1)" class="bg-orange-100 text-orange-700 py-4 rounded-2xl font-bold hover:bg-orange-200">Wilt</button>
+                    <button onclick="rateCard(3)" class="bg-emerald-100 text-emerald-700 py-4 rounded-2xl font-bold hover:bg-emerald-200">Grow</button>
+                    <button onclick="rateCard(7)" class="bg-emerald-600 text-white py-4 rounded-2xl font-bold hover:bg-emerald-700 shadow-lg">Bloom</button>
                 </div>
             </div>
         </div>
 
-        <div id="empty-state" class="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-300">
-            <p class="text-slate-400">No cards due for review!</p>
+        <div id="empty-state" class="text-center py-16 bg-white/50 rounded-3xl border-2 border-dashed border-emerald-200">
+            <p class="text-emerald-800/50 italic">Your garden is fully watered for today.</p>
         </div>
 
-        <div class="mt-12 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <h3 class="font-bold text-slate-700 mb-4">Add New Card</h3>
-            <input type="text" id="new-front" placeholder="Question (Front)" class="w-full mb-2 p-2 border rounded-lg focus:outline-indigo-500">
-            <input type="text" id="new-back" placeholder="Answer (Back)" class="w-full mb-4 p-2 border rounded-lg focus:outline-indigo-500">
-            <button onclick="addCard()" class="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700">Add to Deck</button>
+        <div class="mt-12 space-y-6">
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-emerald-50">
+                <h3 class="font-bold text-emerald-900 mb-4 flex items-center gap-2">🌱 Plant a New Seed</h3>
+                <input type="text" id="new-front" placeholder="Question" class="w-full mb-2 p-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-500">
+                <input type="text" id="new-back" placeholder="Answer" class="w-full mb-4 p-3 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-emerald-500">
+                <button onclick="addCard()" class="w-full bg-emerald-900 text-white py-3 rounded-xl font-bold hover:opacity-90 transition">Add to Current Deck</button>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-emerald-50">
+                <h3 class="font-bold text-emerald-900 mb-4">View All Seeds</h3>
+                <div id="card-list" class="max-h-60 overflow-y-auto space-y-2 pr-2 custom-scrollbar text-sm">
+                    </div>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="exportDeck()" class="flex-1 text-xs bg-slate-200 text-slate-600 py-2 rounded-xl hover:bg-slate-300 transition uppercase font-bold tracking-tighter">Backup Library</button>
+                <button onclick="deleteCurrentDeck()" class="flex-1 text-xs bg-red-50 text-red-400 py-2 rounded-xl hover:bg-red-100 transition uppercase font-bold tracking-tighter">Burn Deck</button>
+            </div>
         </div>
     </div>
 
     <script>
-        let deck = JSON.parse(localStorage.getItem('anki-deck')) || [];
+        // Storage Structure: { decks: { "Default": [...cards] }, currentDeckName: "Default" }
+        let storage = JSON.parse(localStorage.getItem('garden-study-v1')) || { 
+            decks: { "General": [] }, 
+            currentDeckName: "General" 
+        };
+
         let dueCards = [];
         let currentCardIndex = 0;
 
-        function updateDeck() {
+        function save() {
+            localStorage.setItem('garden-study-v1', JSON.stringify(storage));
+            renderDeckSelector();
+            updateUI();
+        }
+
+        function renderDeckSelector() {
+            const selector = document.getElementById('deck-selector');
+            selector.innerHTML = Object.keys(storage.decks).map(name => 
+                `<option value="${name}" ${name === storage.currentDeckName ? 'selected' : ''}>${name}</option>`
+            ).join('');
+        }
+
+        function switchDeck() {
+            storage.currentDeckName = document.getElementById('deck-selector').value;
+            currentCardIndex = 0;
+            save();
+        }
+
+        function createNewDeck() {
+            const name = prompt("Enter new deck name:");
+            if (name && !storage.decks[name]) {
+                storage.decks[name] = [];
+                storage.currentDeckName = name;
+                save();
+            }
+        }
+
+        function deleteCurrentDeck() {
+            if (confirm(`Delete entire deck "${storage.currentDeckName}"?`)) {
+                delete storage.decks[storage.currentDeckName];
+                const remaining = Object.keys(storage.decks);
+                storage.currentDeckName = remaining.length > 0 ? remaining[0] : "General";
+                if (!storage.decks["General"]) storage.decks["General"] = [];
+                save();
+            }
+        }
+
+        function updateUI() {
+            const deck = storage.decks[storage.currentDeckName];
             const today = new Date().toISOString().split('T')[0];
             dueCards = deck.filter(card => card.nextReview <= today);
             
-            document.getElementById('stats').innerText = `${dueCards.length} cards due today | ${deck.length} total`;
+            document.getElementById('stats').innerText = `${dueCards.length} seeds to water | ${deck.length} total`;
             
             if (dueCards.length > 0) {
                 document.getElementById('study-section').classList.remove('hidden');
@@ -76,7 +139,15 @@
                 document.getElementById('study-section').classList.add('hidden');
                 document.getElementById('empty-state').classList.remove('hidden');
             }
-            localStorage.setItem('anki-deck', JSON.stringify(deck));
+
+            // Update Card List for management
+            const listEl = document.getElementById('card-list');
+            listEl.innerHTML = deck.map((c, i) => `
+                <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl group">
+                    <span class="truncate mr-2"><strong>Q:</strong> ${c.front}</span>
+                    <button onclick="deleteCard(${i})" class="text-red-300 hover:text-red-600 opacity-0 group-hover:opacity-100 transition">✕</button>
+                </div>
+            `).join('') || '<p class="text-slate-400 italic">No seeds planted here yet.</p>';
         }
 
         function showCard() {
@@ -99,36 +170,47 @@
             const nextDate = new Date();
             nextDate.setDate(nextDate.getDate() + days);
             
-            // Find card in original deck and update
+            const deck = storage.decks[storage.currentDeckName];
             const originalCard = deck.find(c => c.id === card.id);
             originalCard.nextReview = nextDate.toISOString().split('T')[0];
             
             currentCardIndex++;
             if (currentCardIndex >= dueCards.length) currentCardIndex = 0;
-            
-            updateDeck();
+            save();
         }
 
         function addCard() {
             const front = document.getElementById('new-front').value;
             const back = document.getElementById('new-back').value;
-            if (!front || !back) return alert("Fill both sides!");
+            if (!front || !back) return;
 
-            const newCard = {
+            storage.decks[storage.currentDeckName].push({
                 id: Date.now(),
                 front,
                 back,
                 nextReview: new Date().toISOString().split('T')[0]
-            };
+            });
 
-            deck.push(newCard);
             document.getElementById('new-front').value = '';
             document.getElementById('new-back').value = '';
-            updateDeck();
+            save();
+        }
+
+        function deleteCard(index) {
+            storage.decks[storage.currentDeckName].splice(index, 1);
+            save();
+        }
+
+        function exportDeck() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(storage));
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", "garden_backup.json");
+            dl.click();
         }
 
         // Initialize
-        updateDeck();
+        save();
     </script>
 </body>
 </html>
