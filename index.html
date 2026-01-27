@@ -5,89 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator</title>
     <style>
-        body {
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: -apple-system, sans-serif;
-            user-select: none;
-        }
-
-        .calc-container {
-            width: 320px;
-            background: #000;
-            padding: 20px;
-            border-radius: 40px;
-        }
-
-        #display {
-            color: white;
-            font-size: 70px;
-            text-align: right;
-            margin-bottom: 10px;
-            padding: 10px;
-            font-weight: 300;
-            height: 80px;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
-
-        button {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            border: none;
-            font-size: 30px;
-            cursor: pointer;
-            transition: filter 0.1s;
-        }
-
+        :root { --ios-orange: #f1a33c; --ios-grey: #333; --ios-light-grey: #a5a5a5; }
+        body { background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: -apple-system, sans-serif; user-select: none; }
+        
+        /* Calculator Styling */
+        .calc-container { width: 320px; background: #000; padding: 20px; border-radius: 40px; }
+        #display { color: white; font-size: 70px; text-align: right; margin-bottom: 10px; padding: 10px; font-weight: 300; height: 80px; overflow: hidden; }
+        .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        button { width: 72px; height: 72px; border-radius: 50%; border: none; font-size: 30px; cursor: pointer; transition: brightness 0.1s; }
         button:active { filter: brightness(1.5); }
+        .num { background-color: var(--ios-grey); color: white; }
+        .op { background-color: var(--ios-orange); color: white; font-size: 35px; }
+        .spec { background-color: var(--ios-light-grey); color: black; }
+        .zero { grid-column: span 2; width: 156px; border-radius: 40px; text-align: left; padding-left: 28px; }
 
-        .num { background-color: #333; color: white; }
-        .op { background-color: #f1a33c; color: white; font-size: 35px; }
-        .spec { background-color: #a5a5a5; color: black; }
-
-        .zero {
-            grid-column: span 2;
-            width: 156px;
-            border-radius: 40px;
-            text-align: left;
-            padding-left: 28px;
-        }
-
-        /* Hidden Browser */
-        #secret-vault {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 100;
-        }
-
-        iframe { width: 100%; height: calc(100% - 40px); border: none; }
-
-        .browser-bar {
-            height: 40px;
-            background: #f1f1f1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 15px;
-            border-bottom: 1px solid #ccc;
-        }
+        /* Notes App Styling */
+        #secret-vault { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 100; flex-direction: column; }
+        .notes-header { background: #f8f8f8; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; font-weight: bold; }
+        .notes-header button { width: auto; height: auto; border-radius: 5px; font-size: 14px; padding: 5px 10px; background: var(--ios-orange); color: white; }
+        #notes-container { flex: 1; padding: 20px; overflow-y: auto; }
+        .note-item { background: #fff9c4; padding: 15px; border-radius: 8px; margin-bottom: 10px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .note-item button { position: absolute; top: 5px; right: 5px; background: #ff5252; color: white; width: 24px; height: 24px; font-size: 12px; padding: 0; }
+        #note-input { width: 100%; height: 100px; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 10px; font-family: inherit; }
     </style>
 </head>
 <body>
@@ -99,22 +38,18 @@
         <button class="spec" onclick="toggleSign()">+/-</button>
         <button class="spec" onclick="percentage()">%</button>
         <button class="op" onclick="setOp('/')">÷</button>
-        
         <button class="num" onclick="pressNum('7')">7</button>
         <button class="num" onclick="pressNum('8')">8</button>
         <button class="num" onclick="pressNum('9')">9</button>
         <button class="op" onclick="setOp('*')">×</button>
-        
         <button class="num" onclick="pressNum('4')">4</button>
         <button class="num" onclick="pressNum('5')">5</button>
         <button class="num" onclick="pressNum('6')">6</button>
         <button class="op" onclick="setOp('-')">−</button>
-        
         <button class="num" onclick="pressNum('1')">1</button>
         <button class="num" onclick="pressNum('2')">2</button>
         <button class="num" onclick="pressNum('3')">3</button>
         <button class="op" onclick="setOp('+')">+</button>
-        
         <button class="num zero" onclick="pressNum('0')">0</button>
         <button class="num" onclick="pressNum('.')">.</button>
         <button class="op" onclick="calculate()">=</button>
@@ -122,89 +57,82 @@
 </div>
 
 <div id="secret-vault">
-    <div class="browser-bar">
-        <span>Secret Browser</span>
-        <button onclick="location.reload()">Close</button>
+    <div class="notes-header">
+        <span>Secret Notes</span>
+        <button onclick="location.reload()" style="background:#333">Lock</button>
     </div>
-    <iframe src="https://www.bing.com"></iframe>
+    <div id="notes-container">
+        <textarea id="note-input" placeholder="Write something secret..."></textarea>
+        <button onclick="addNote()" style="width:100%; border-radius:8px; height:40px; margin-bottom:20px; background:var(--ios-orange); color:white; font-size:16px;">Save Note</button>
+        <div id="notes-list"></div>
+    </div>
 </div>
 
 <script>
-    let currentVal = "0";
-    let prevVal = "";
-    let operator = null;
-    let resetDisplay = false;
+    /* Calculator Logic */
+    let currentVal = "0", prevVal = "", operator = null, resetDisplay = false;
     const secretCode = "640673";
-
     const display = document.getElementById("display");
 
-    function updateDisplay() {
-        display.innerText = currentVal;
+    function updateDisplay() { display.innerText = currentVal; }
+    function pressNum(n) { 
+        if (currentVal === "0" || resetDisplay) { currentVal = n; resetDisplay = false; } 
+        else { currentVal += n; } 
+        updateDisplay(); 
     }
-
-    function pressNum(num) {
-        if (currentVal === "0" || resetDisplay) {
-            currentVal = num;
-            resetDisplay = false;
-        } else {
-            currentVal += num;
-        }
-        updateDisplay();
-    }
-
-    function setOp(op) {
-        operator = op;
-        prevVal = currentVal;
-        resetDisplay = true;
-    }
-
-    function clearAll() {
-        currentVal = "0";
-        prevVal = "";
-        operator = null;
-        updateDisplay();
-    }
-
-    function toggleSign() {
-        currentVal = (parseFloat(currentVal) * -1).toString();
-        updateDisplay();
-    }
-
-    function percentage() {
-        currentVal = (parseFloat(currentVal) / 100).toString();
-        updateDisplay();
-    }
+    function setOp(op) { operator = op; prevVal = currentVal; resetDisplay = true; }
+    function clearAll() { currentVal = "0"; prevVal = ""; operator = null; updateDisplay(); }
+    function toggleSign() { currentVal = (parseFloat(currentVal) * -1).toString(); updateDisplay(); }
+    function percentage() { currentVal = (parseFloat(currentVal) / 100).toString(); updateDisplay(); }
 
     function calculate() {
-        // SECRET CODE CHECK
         if (currentVal === secretCode) {
             document.getElementById("calculator").style.display = "none";
-            document.getElementById("secret-vault").style.display = "block";
+            document.getElementById("secret-vault").style.display = "flex";
+            loadNotes();
             return;
         }
-
-        // NORMAL MATH
         if (!operator || !prevVal) return;
-        
-        let result;
-        const prev = parseFloat(prevVal);
-        const current = parseFloat(currentVal);
-
-        switch (operator) {
-            case '+': result = prev + current; break;
-            case '-': result = prev - current; break;
-            case '*': result = prev * current; break;
-            case '/': result = prev / current; break;
+        let res;
+        const p = parseFloat(prevVal), c = parseFloat(currentVal);
+        switch(operator) {
+            case '+': res = p + c; break;
+            case '-': res = p - c; break;
+            case '*': res = p * c; break;
+            case '/': res = p / c; break;
         }
+        currentVal = res.toString(); operator = null; prevVal = ""; resetDisplay = true; updateDisplay();
+    }
 
-        currentVal = result.toString();
-        operator = null;
-        prevVal = "";
-        resetDisplay = true;
-        updateDisplay();
+    /* Notes Logic */
+    function addNote() {
+        const input = document.getElementById('note-input');
+        if (!input.value.trim()) return;
+        const notes = JSON.parse(localStorage.getItem('vault_notes') || '[]');
+        notes.unshift({ text: input.value, id: Date.now() });
+        localStorage.setItem('vault_notes', JSON.stringify(notes));
+        input.value = '';
+        loadNotes();
+    }
+
+    function loadNotes() {
+        const list = document.getElementById('notes-list');
+        const notes = JSON.parse(localStorage.getItem('vault_notes') || '[]');
+        list.innerHTML = notes.map(n => `
+            <div class="note-item">
+                ${n.text.replace(/\n/g, '<br>')}
+                <button onclick="deleteNote(${n.id})">X</button>
+            </div>
+        `).join('');
+    }
+
+    function deleteNote(id) {
+        let notes = JSON.parse(localStorage.getItem('vault_notes') || '[]');
+        notes = notes.filter(n => n.id !== id);
+        localStorage.setItem('vault_notes', JSON.stringify(notes));
+        loadNotes();
     }
 </script>
 
 </body>
 </html>
-
