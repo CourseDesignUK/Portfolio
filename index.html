@@ -2,282 +2,209 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FocusStudy Pro</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
     <style>
-        body { background-color: #f8fafc; height: 100vh; overflow: hidden; }
-        .flip-card-inner { transition: transform 0.6s; transform-style: preserve-3d; }
-        .is-flipped { transform: rotateY(180deg); }
-        .backface-hidden { backface-visibility: hidden; }
-        .tab-content { height: calc(100vh - 180px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        .tab-content::-webkit-scrollbar { display: none; }
-        .perspective-1000 { perspective: 1000px; }
+        body {
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: -apple-system, sans-serif;
+            user-select: none;
+        }
+
+        .calc-container {
+            width: 320px;
+            background: #000;
+            padding: 20px;
+            border-radius: 40px;
+        }
+
+        #display {
+            color: white;
+            font-size: 70px;
+            text-align: right;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-weight: 300;
+            height: 80px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: none;
+            font-size: 30px;
+            cursor: pointer;
+            transition: filter 0.1s;
+        }
+
+        button:active { filter: brightness(1.5); }
+
+        .num { background-color: #333; color: white; }
+        .op { background-color: #f1a33c; color: white; font-size: 35px; }
+        .spec { background-color: #a5a5a5; color: black; }
+
+        .zero {
+            grid-column: span 2;
+            width: 156px;
+            border-radius: 40px;
+            text-align: left;
+            padding-left: 28px;
+        }
+
+        /* Hidden Browser */
+        #secret-vault {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 100;
+        }
+
+        iframe { width: 100%; height: calc(100% - 40px); border: none; }
+
+        .browser-bar {
+            height: 40px;
+            background: #f1f1f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+            border-bottom: 1px solid #ccc;
+        }
     </style>
 </head>
-<body class="font-sans text-slate-700 flex flex-col">
+<body>
 
-    <header class="p-4 bg-white border-b border-slate-100 shrink-0 shadow-sm">
-        <div class="flex justify-between items-center mb-3">
-            <h1 class="text-xl font-bold text-emerald-900 tracking-tight">FocusStudy</h1>
-            <div class="bg-emerald-100 px-3 py-1 rounded-full flex items-center gap-2">
-                <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-tighter">Streak</span>
-                <span id="streak-count" class="text-sm font-black text-emerald-900">0</span>
-            </div>
-        </div>
-        <div class="flex gap-2">
-            <select id="deck-selector" onchange="switchDeck()" class="flex-1 bg-slate-50 border-none rounded-xl px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-emerald-500"></select>
-            <button onclick="createNewDeck()" class="bg-emerald-800 text-white rounded-xl px-4 py-2 font-bold hover:bg-emerald-900">+</button>
-        </div>
-    </header>
-
-    <main class="flex-1 p-4 overflow-hidden">
+<div class="calc-container" id="calculator">
+    <div id="display">0</div>
+    <div class="buttons">
+        <button class="spec" onclick="clearAll()">AC</button>
+        <button class="spec" onclick="toggleSign()">+/-</button>
+        <button class="spec" onclick="percentage()">%</button>
+        <button class="op" onclick="setOp('/')">÷</button>
         
-        <div id="tab-study" class="tab-content flex flex-col justify-center">
-            <div id="study-ui" class="hidden">
-                <p id="stats" class="text-center text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-2">0 Reviews Due</p>
-                <div class="relative h-64 w-full perspective-1000 mb-6">
-                    <div id="card-inner" onclick="flipCard()" class="flip-card-inner relative w-full h-full text-center shadow-xl rounded-3xl cursor-pointer">
-                        <div class="backface-hidden absolute inset-0 bg-white flex items-center justify-center p-8 rounded-3xl border border-slate-200">
-                            <p id="card-front" class="text-lg font-semibold text-slate-800 leading-relaxed"></p>
-                        </div>
-                        <div class="backface-hidden absolute inset-0 bg-emerald-50 flex items-center justify-center p-8 rounded-3xl border border-emerald-100" style="transform: rotateY(180deg);">
-                            <p id="card-back" class="text-lg font-semibold text-emerald-900 leading-relaxed"></p>
-                        </div>
-                    </div>
-                </div>
-                <div id="controls" class="space-y-3">
-                    <button id="show-btn" onclick="flipCard()" class="w-full bg-emerald-800 text-white py-4 rounded-2xl font-bold shadow-lg">Reveal Answer</button>
-                    <div id="rating-btns" class="hidden grid grid-cols-3 gap-2">
-                        <button onclick="rateCard(1)" class="bg-slate-200 text-slate-700 py-4 rounded-xl font-bold">Again</button>
-                        <button onclick="rateCard(3)" class="bg-emerald-100 text-emerald-700 py-4 rounded-xl font-bold">Good</button>
-                        <button onclick="rateCard(7)" class="bg-emerald-800 text-white py-4 rounded-xl font-bold shadow-lg">Easy</button>
-                    </div>
-                </div>
-            </div>
-            <div id="empty-state" class="text-center py-10">
-                <div class="text-4xl mb-2">✨</div>
-                <p class="text-slate-500 font-medium">Session Complete</p>
-            </div>
-        </div>
+        <button class="num" onclick="pressNum('7')">7</button>
+        <button class="num" onclick="pressNum('8')">8</button>
+        <button class="num" onclick="pressNum('9')">9</button>
+        <button class="op" onclick="setOp('*')">×</button>
+        
+        <button class="num" onclick="pressNum('4')">4</button>
+        <button class="num" onclick="pressNum('5')">5</button>
+        <button class="num" onclick="pressNum('6')">6</button>
+        <button class="op" onclick="setOp('-')">−</button>
+        
+        <button class="num" onclick="pressNum('1')">1</button>
+        <button class="num" onclick="pressNum('2')">2</button>
+        <button class="num" onclick="pressNum('3')">3</button>
+        <button class="op" onclick="setOp('+')">+</button>
+        
+        <button class="num zero" onclick="pressNum('0')">0</button>
+        <button class="num" onclick="pressNum('.')">.</button>
+        <button class="op" onclick="calculate()">=</button>
+    </div>
+</div>
 
-        <div id="tab-add" class="tab-content hidden">
-            <h3 class="font-bold text-slate-800 mb-4 px-1">New Flashcard</h3>
-            <textarea id="new-front" placeholder="Front Content" class="w-full mb-3 p-4 bg-white border border-slate-200 rounded-2xl h-32 focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
-            <textarea id="new-back" placeholder="Back Content" class="w-full mb-4 p-4 bg-white border border-slate-200 rounded-2xl h-32 focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
-            <button onclick="addCard()" class="w-full bg-emerald-800 text-white py-4 rounded-2xl font-bold">Save Card</button>
-        </div>
+<div id="secret-vault">
+    <div class="browser-bar">
+        <span>Secret Browser</span>
+        <button onclick="location.reload()">Close</button>
+    </div>
+    <iframe src="https://www.bing.com"></iframe>
+</div>
 
-        <div id="tab-lib" class="tab-content hidden">
-            <div class="space-y-6">
-                <div>
-                    <h3 class="font-bold text-slate-800 mb-2">Deck Library</h3>
-                    <div id="card-list" class="space-y-2"></div>
-                </div>
-                <div class="pt-6 border-t border-slate-200 flex flex-col gap-3">
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="exportCSV()" class="text-[10px] bg-white border border-slate-200 py-3 rounded-xl font-bold text-slate-500 uppercase">Export CSV</button>
-                        <label class="text-[10px] bg-white border border-slate-200 py-3 rounded-xl font-bold text-slate-500 text-center cursor-pointer uppercase">
-                            Import File
-                            <input type="file" class="hidden" onchange="importFile(event)">
-                        </label>
-                    </div>
-                    <button onclick="deleteCurrentDeck()" class="text-[10px] text-red-400 py-2 font-bold uppercase tracking-widest">Delete Entire Deck</button>
-                </div>
-            </div>
-        </div>
-    </main>
+<script>
+    let currentVal = "0";
+    let prevVal = "";
+    let operator = null;
+    let resetDisplay = false;
+    const secretCode = "640673";
 
-    <nav class="h-20 bg-white border-t border-slate-100 flex items-center justify-around pb-4 shadow-lg">
-        <button onclick="showTab('study')" class="flex flex-col items-center gap-1 opacity-40" id="nav-study">
-            <span class="text-xl">📖</span><span class="text-[10px] font-black tracking-tighter">STUDY</span>
-        </button>
-        <button onclick="showTab('add')" class="flex flex-col items-center gap-1 opacity-40" id="nav-add">
-            <span class="text-xl">➕</span><span class="text-[10px] font-black tracking-tighter">ADD</span>
-        </button>
-        <button onclick="showTab('lib')" class="flex flex-col items-center gap-1 opacity-40" id="nav-lib">
-            <span class="text-xl">⚙️</span><span class="text-[10px] font-black tracking-tighter">MANAGE</span>
-        </button>
-    </nav>
+    const display = document.getElementById("display");
 
-    <script>
-        // Synthesize Flip Sound (No external file needed)
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playFlipSound() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
+    function updateDisplay() {
+        display.innerText = currentVal;
+    }
+
+    function pressNum(num) {
+        if (currentVal === "0" || resetDisplay) {
+            currentVal = num;
+            resetDisplay = false;
+        } else {
+            currentVal += num;
+        }
+        updateDisplay();
+    }
+
+    function setOp(op) {
+        operator = op;
+        prevVal = currentVal;
+        resetDisplay = true;
+    }
+
+    function clearAll() {
+        currentVal = "0";
+        prevVal = "";
+        operator = null;
+        updateDisplay();
+    }
+
+    function toggleSign() {
+        currentVal = (parseFloat(currentVal) * -1).toString();
+        updateDisplay();
+    }
+
+    function percentage() {
+        currentVal = (parseFloat(currentVal) / 100).toString();
+        updateDisplay();
+    }
+
+    function calculate() {
+        // SECRET CODE CHECK
+        if (currentVal === secretCode) {
+            document.getElementById("calculator").style.display = "none";
+            document.getElementById("secret-vault").style.display = "block";
+            return;
         }
 
-        const buildPack = (name, qas) => qas.map((qa, i) => ({
-            id: `${name}-${i}`, front: qa[0], back: qa[1], nextReview: "2020-01-01"
-        }));
+        // NORMAL MATH
+        if (!operator || !prevVal) return;
+        
+        let result;
+        const prev = parseFloat(prevVal);
+        const current = parseFloat(currentVal);
 
-        const htmlQAs = [
-            ["What does HTML stand for?", "HyperText Markup Language"], ["Which tag is for links?", "<a>"], ["Tag for largest heading?", "<h1>"], ["Purpose of <head>?", "Contains metadata/links"], ["How to make a list item?", "<li>"], ["Tag for images?", "<img>"], ["What is an attribute?", "Extra info for an element"], ["Tag for a line break?", "<br>"], ["Tag for a table row?", "<tr>"], ["What is <!DOCTYPE>?", "Instruction to the browser"], ["Element for a footer?", "<footer>"], ["Element for navigation?", "<nav>"], ["How to comment?", ""], ["Tag for a dropdown?", "<select>"], ["Tag for bold text?", "<strong> or <b>"], ["Tag for italics?", "<em> or <i>"], ["Tag for a script?", "<script>"], ["Tag for CSS links?", "<link>"], ["Input type for email?", "<input type='email'>"], ["Input type for dates?", "<input type='date'>"], ["What is a <div>?", "Generic container"], ["What is <span>?", "Inline container"], ["Tag for paragraphs?", "<p>"], ["Tag for buttons?", "<button>"], ["Tag for forms?", "<form>"], ["Attribute for image alternate text?", "alt"], ["Tag for ordered lists?", "<ol>"], ["Tag for unordered lists?", "<ul>"], ["Tag for text areas?", "<textarea>"], ["The root element of HTML?", "<html>"]
-        ];
-
-        const cssQAs = [
-            ["What is CSS?", "Cascading Style Sheets"], ["Property for text color?", "color"], ["Property for background?", "background-color"], ["Property for font size?", "font-size"], ["How to select an ID?", "#idName"], ["How to select a Class?", ".className"], ["What is the Box Model?", "Margin, Border, Padding, Content"], ["Property for bold text?", "font-weight"], ["Property for centering text?", "text-align: center"], ["Property for space inside border?", "padding"], ["Property for space outside border?", "margin"], ["What is 'z-index'?", "Stack order of elements"], ["Property for font type?", "font-family"], ["How to remove list bullets?", "list-style: none"], ["How to make text uppercase?", "text-transform: uppercase"], ["Property for border width?", "border-width"], ["Property for rounding corners?", "border-radius"], ["What is 'Flexbox'?", "One-dimensional layout method"], ["What is 'Grid'?", "Two-dimensional layout method"], ["Property for transparency?", "opacity"], ["Value for hidden element?", "display: none or visibility: hidden"], ["Property for line spacing?", "line-height"], ["How to select all <p> elements?", "p { ... }"], ["What is a Pseudo-class?", "Selector for a state (e.g., :hover)"], ["What is a Pseudo-element?", "Selector for part of element (e.g., ::after)"], ["Property for image size in div?", "object-fit"], ["What is '@media'?", "Rules for responsive design"], ["Property for transitions?", "transition"], ["Property for shadows?", "box-shadow"], ["Property for cursor style?", "cursor"]
-        ];
-
-        const jsQAs = [
-            ["What is JavaScript?", "A high-level programming language"], ["How to declare a constant?", "const"], ["How to declare a let variable?", "let"], ["What is the DOM?", "Document Object Model"], ["How to log to console?", "console.log()"], ["What is an Array?", "A list-like object"], ["What is an Object?", "A collection of key-value pairs"], ["How to write an arrow function?", "() => { ... }"], ["What is a String?", "Sequence of characters"], ["What is a Boolean?", "True or False"], ["How to find ID in JS?", "document.getElementById()"], ["How to add an event listener?", ".addEventListener()"], ["What is JSON?", "JavaScript Object Notation"], ["What is 'NaN'?", "Not a Number"], ["What does '===' check?", "Value and Type equality"], ["How to get array length?", "array.length"], ["How to add item to array?", "array.push()"], ["What is a loop?", "Sequence of repeated instructions"], ["What is a 'Promise'?", "Object for async operations"], ["What is 'async/await'?", "Syntax for handling promises"], ["How to convert string to number?", "Number() or parseInt()"], ["What is 'scope'?", "Where a variable is accessible"], ["What is a Template Literal?", "String with backticks for variables"], ["How to round a number?", "Math.round()"], ["How to get a random number?", "Math.random()"], ["What is 'this' keyword?", "Refers to current object context"], ["What is 'null'?", "Intentional absence of value"], ["What is 'undefined'?", "Variable declared but not assigned"], ["How to call a function?", "functionName()"], ["What is an 'operator'?", "Symbol for operations (e.g., +, -, *)"]
-        ];
-
-        const starterData = {
-            decks: {
-                "HTML Mastery": buildPack("HTML", htmlQAs),
-                "CSS Mastery": buildPack("CSS", cssQAs),
-                "JS Logic": buildPack("JS", jsQAs)
-            },
-            currentDeckName: "HTML Mastery",
-            streak: 0,
-            lastReviewDate: null
-        };
-
-        let storage = JSON.parse(localStorage.getItem('focus-v-pro-90')) || starterData;
-        let dueCards = [];
-        let currentCardIndex = 0;
-
-        function save() {
-            localStorage.setItem('focus-v-pro-90', JSON.stringify(storage));
-            updateUI();
+        switch (operator) {
+            case '+': result = prev + current; break;
+            case '-': result = prev - current; break;
+            case '*': result = prev * current; break;
+            case '/': result = prev / current; break;
         }
 
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            document.querySelectorAll('nav button').forEach(l => l.style.opacity = '0.3');
-            document.getElementById('nav-' + tabId).style.opacity = '1';
-        }
+        currentVal = result.toString();
+        operator = null;
+        prevVal = "";
+        resetDisplay = true;
+        updateDisplay();
+    }
+</script>
 
-        function updateUI() {
-            const selector = document.getElementById('deck-selector');
-            selector.innerHTML = Object.keys(storage.decks).map(name => `<option value="${name}" ${name === storage.currentDeckName ? 'selected' : ''}>${name}</option>`).join('');
-            
-            const deck = storage.decks[storage.currentDeckName];
-            const today = new Date().toISOString().split('T')[0];
-            dueCards = deck.filter(card => card.nextReview <= today);
-            
-            document.getElementById('stats').innerText = `${dueCards.length} Reviews Remaining`;
-            document.getElementById('streak-count').innerText = storage.streak;
-            
-            if (dueCards.length > 0) {
-                document.getElementById('study-ui').classList.remove('hidden');
-                document.getElementById('empty-state').classList.add('hidden');
-                showCard();
-            } else {
-                document.getElementById('study-ui').classList.add('hidden');
-                document.getElementById('empty-state').classList.remove('hidden');
-            }
-
-            document.getElementById('card-list').innerHTML = deck.map((c, i) => `
-                <div class="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-2xl text-xs mb-2">
-                    <span class="truncate font-medium">${c.front}</span>
-                    <button onclick="deleteCard(${i})" class="text-red-300 ml-4">✕</button>
-                </div>
-            `).join('');
-        }
-
-        function showCard() {
-            const card = dueCards[currentCardIndex];
-            document.getElementById('card-front').innerText = card.front;
-            document.getElementById('card-back').innerText = card.back;
-            document.getElementById('card-inner').classList.remove('is-flipped');
-            document.getElementById('show-btn').classList.remove('hidden');
-            document.getElementById('rating-btns').classList.add('hidden');
-        }
-
-        function flipCard() {
-            if (!document.getElementById('card-inner').classList.contains('is-flipped')) {
-                playFlipSound();
-                document.getElementById('card-inner').classList.add('is-flipped');
-                document.getElementById('show-btn').classList.add('hidden');
-                document.getElementById('rating-btns').classList.remove('hidden');
-            }
-        }
-
-        function rateCard(days) {
-            const today = new Date().toISOString().split('T')[0];
-            if (storage.lastReviewDate !== today) {
-                const yesterday = new Date();
-                yesterday.setDate(yesterday.getDate() - 1);
-                storage.streak = (storage.lastReviewDate === yesterday.toISOString().split('T')[0]) ? storage.streak + 1 : 1;
-                storage.lastReviewDate = today;
-            }
-
-            const card = dueCards[currentCardIndex];
-            const nextDate = new Date();
-            nextDate.setDate(nextDate.getDate() + days);
-            
-            storage.decks[storage.currentDeckName].find(c => c.id === card.id).nextReview = nextDate.toISOString().split('T')[0];
-            currentCardIndex = (currentCardIndex + 1) % dueCards.length;
-            save();
-        }
-
-        function addCard() {
-            const f = document.getElementById('new-front'), b = document.getElementById('new-back');
-            if (!f.value || !b.value) return;
-            storage.decks[storage.currentDeckName].push({ id: Date.now(), front: f.value, back: b.value, nextReview: new Date().toISOString().split('T')[0] });
-            f.value = ''; b.value = '';
-            save();
-            showTab('study');
-        }
-
-        function deleteCard(i) { storage.decks[storage.currentDeckName].splice(i, 1); save(); }
-        function switchDeck() { storage.currentDeckName = document.getElementById('deck-selector').value; currentCardIndex = 0; save(); }
-        function createNewDeck() { const n = prompt("Name:"); if (n && !storage.decks[n]) { storage.decks[n] = []; storage.currentDeckName = n; save(); } }
-
-        function deleteCurrentDeck() {
-            if (Object.keys(storage.decks).length > 1 && confirm("Delete deck?")) {
-                delete storage.decks[storage.currentDeckName];
-                storage.currentDeckName = Object.keys(storage.decks)[0];
-                save();
-            }
-        }
-
-        function exportCSV() {
-            const deck = storage.decks[storage.currentDeckName];
-            let csv = "Front,Back\n" + deck.map(c => `"${c.front.replace(/"/g,'""')}","${c.back.replace(/"/g,'""')}"`).join("\n");
-            const dl = document.createElement('a');
-            dl.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-            dl.download = storage.currentDeckName + '.csv';
-            dl.click();
-        }
-
-        function importFile(e) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                if (file.name.endsWith('.csv')) {
-                    const rows = evt.target.result.split('\n').slice(1);
-                    const cards = rows.filter(r => r.includes(',')).map(r => {
-                        const parts = r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                        return { id: Date.now()+Math.random(), front: parts[0].replace(/^"|"$/g,''), back: parts[1].replace(/^"|"$/g,''), nextReview: new Date().toISOString().split('T')[0] };
-                    });
-                    storage.decks[storage.currentDeckName].push(...cards);
-                    alert(`Imported ${cards.length} cards`);
-                } else {
-                    const data = JSON.parse(evt.target.result);
-                    storage.decks = {...storage.decks, ...data.decks};
-                }
-                save();
-            };
-            reader.readAsText(file);
-        }
-
-        showTab('study');
-        updateUI();
-    </script>
 </body>
 </html>
+
