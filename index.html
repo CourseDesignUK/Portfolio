@@ -11,10 +11,18 @@
     
     <style>
         :root { 
+            /* Calculator Colors (Classic iOS) */
             --ios-orange: #ff9f0a; 
             --ios-grey: #333333; 
             --ios-light-grey: #a5a5a5; 
             --ios-bg: #000000;
+            
+            /* Mind Garden Colors */
+            --mg-green: #7BA67E;        /* Sage Green */
+            --mg-dark-green: #5A7D5D;
+            --mg-cream: #F9F7F2;        /* Background */
+            --mg-text: #4A4A4A;         /* Charcoal Soft */
+            --mg-card: #FFFFFF;
         }
 
         body { 
@@ -23,64 +31,58 @@
             flex-direction: column; 
             height: 100vh; 
             margin: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
             color: white; 
             overflow: hidden; 
             user-select: none;
         }
 
-        .calc-container { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-end; 
-            padding: 20px; 
-            padding-bottom: 30px; 
-        }
-
-        #display { 
-            font-size: 94px; 
-            text-align: right; 
-            margin-bottom: 10px; 
-            font-weight: 300; 
-            padding: 0 10px; 
-            overflow: hidden; 
-            white-space: nowrap; 
-            letter-spacing: -2px;
-        }
-
+        /* Stealth Calculator Styling */
+        .calc-container { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; padding-bottom: 30px; }
+        #display { font-size: 94px; text-align: right; margin-bottom: 10px; font-weight: 300; padding: 0 10px; overflow: hidden; white-space: nowrap; letter-spacing: -2px; }
         .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        
-        button { 
-            width: 100%; aspect-ratio: 1/1; border-radius: 50%; border: none; font-size: 36px; 
-            cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s;
-        }
+        button { width: 100%; aspect-ratio: 1/1; border-radius: 50%; border: none; font-size: 36px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
         button:active { filter: brightness(1.6); }
-        
         .num { background-color: var(--ios-grey); color: white; }
         .op { background-color: var(--ios-orange); color: white; font-size: 42px; }
         .spec { background-color: var(--ios-light-grey); color: black; font-weight: 500; }
         .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 30px; }
 
-        /* Vault Styling */
-        #secret-vault { display: none; position: fixed; inset: 0; background: #000; z-index: 100; flex-direction: column; user-select: text; }
-        .vault-header { padding: 50px 20px 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; background: #111; }
-        #notes-container { flex: 1; padding: 20px; overflow-y: auto; }
+        /* Mind Garden Vault Styling */
+        #secret-vault { display: none; position: fixed; inset: 0; background: var(--mg-cream); z-index: 100; flex-direction: column; user-select: text; color: var(--mg-text); }
+        .vault-header { padding: 50px 20px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--mg-cream); }
+        .vault-header h2 { margin:0; font-weight: 700; color: var(--mg-dark-green); letter-spacing: -0.5px; }
         
-        .note-item { background: #1c1c1e; padding: 18px; border-radius: 14px; margin-bottom: 15px; position: relative; color: #efefef; line-height: 1.5; font-size: 16px; border: 1px solid #2c2c2e; }
+        #notes-container { flex: 1; padding: 0 20px 20px; overflow-y: auto; }
+        
+        .note-item { 
+            background: var(--mg-card); padding: 20px; border-radius: 20px; margin-bottom: 15px; 
+            position: relative; color: var(--mg-text); line-height: 1.5; font-size: 16px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer; border: 1px solid rgba(123, 166, 126, 0.1);
+        }
+
+        .note-preview { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 20px; font-weight: 500; }
+        .note-full { display: none; padding-top: 12px; margin-top: 12px; border-top: 1px dashed #eee; color: #666; }
+        .note-item.expanded .note-preview { white-space: normal; color: var(--mg-green); }
+        .note-item.expanded .note-full { display: block; }
 
         textarea { 
-            width: 100%; height: 120px; background: #1c1c1e; border: none; color: white; 
-            border-radius: 14px; padding: 15px; box-sizing: border-box; margin-bottom: 15px; 
-            font-size: 17px; outline: none; font-family: inherit; resize: none;
+            width: 100%; height: 110px; background: var(--mg-card); border: 1.5px solid rgba(123, 166, 126, 0.2); color: var(--mg-text); 
+            border-radius: 20px; padding: 15px; box-sizing: border-box; margin-bottom: 15px; 
+            font-size: 16px; outline: none; font-family: inherit; resize: none;
         }
 
-        .action-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        .action-group { display: flex; gap: 10px; margin-bottom: 25px; }
         .action-btn { 
-            flex: 1; background: #2c2c2e; color: white; padding: 12px; 
-            border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;
+            flex: 1; background: var(--mg-green); color: white; padding: 14px; 
+            border-radius: 15px; border: none; font-size: 14px; font-weight: 600; cursor: pointer;
+            transition: opacity 0.2s;
         }
-        .save-btn { background: var(--ios-orange); color: white; }
+        .action-btn:active { opacity: 0.8; }
+        .btn-alt { background: white; color: var(--mg-green); border: 1.5px solid var(--mg-green); }
+        
+        .lock-btn { background: #eee; color: #888; flex: none; width: auto; padding: 8px 18px; border-radius: 12px; }
+        .delete-link { color: #d9534f; font-size: 12px; cursor: pointer; font-weight: 600; margin-top: 15px; display: inline-block; }
     </style>
 </head>
 <body>
@@ -112,16 +114,16 @@
 
 <div id="secret-vault">
     <div class="vault-header">
-        <h2 style="margin:0; font-size: 22px;">Vault</h2>
-        <button onclick="location.reload()" class="action-btn" style="flex:none; width:auto; padding: 8px 15px;">Lock</button>
+        <h2>Mind Vault</h2>
+        <button onclick="location.reload()" class="action-btn lock-btn">Lock</button>
     </div>
     <div id="notes-container">
-        <textarea id="note-input" placeholder="New note..." oninput="autoSaveDraft()"></textarea>
+        <textarea id="note-input" placeholder="Plant a new thought..." oninput="autoSaveDraft()"></textarea>
         
         <div class="action-group">
-            <button class="action-btn save-btn" onclick="commitNote()">Save</button>
-            <button class="action-btn" onclick="exportCSV()">Exp CSV</button>
-            <button class="action-btn" onclick="importCSV()">Imp CSV</button>
+            <button class="action-btn" onclick="commitNote()">Save Note</button>
+            <button class="action-btn btn-alt" onclick="exportCSV()">Export</button>
+            <button class="action-btn btn-alt" onclick="importCSV()">Import</button>
         </div>
         
         <div id="notes-list"></div>
@@ -130,7 +132,7 @@
 
 <script>
     let currentVal = "0", prevVal = "", operator = null, resetDisplay = false;
-    const secretCode = "640673", salt = "s3cr3t-v2";
+    const secretCode = "640673", salt = "mg-salt-v3";
     const display = document.getElementById("display");
 
     const crypt = (t) => btoa(t.split('').map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ salt.charCodeAt(i % salt.length))).join(''));
@@ -143,7 +145,7 @@
         window.addEventListener('devicemotion', (e) => {
             let a = e.accelerationIncludingGravity;
             if (!a || !a.x) return;
-            if (Math.abs(a.x + a.y + a.z - lx - ly - lz) > 25) location.reload();
+            if (Math.abs(a.x + a.y + a.z - lx - ly - lz) > 30) location.reload();
             lx = a.x; ly = a.y; lz = a.z;
         });
     }
@@ -164,7 +166,7 @@
             document.getElementById("calculator").style.display = "none";
             document.getElementById("secret-vault").style.display = "flex";
             initShake(); loadNotes(); 
-            document.getElementById('note-input').value = decrypt(localStorage.getItem('vault_draft') || "");
+            document.getElementById('note-input').value = decrypt(localStorage.getItem('mg_draft') || "");
             return;
         }
         if (!operator || !prevVal) return;
@@ -175,79 +177,59 @@
     }
 
     /* Note Logic */
-    function autoSaveDraft() { localStorage.setItem('vault_draft', crypt(document.getElementById('note-input').value)); }
+    function autoSaveDraft() { localStorage.setItem('mg_draft', crypt(document.getElementById('note-input').value)); }
 
     function commitNote() {
         const input = document.getElementById('note-input');
         if (!input.value.trim()) return;
-        const notes = JSON.parse(localStorage.getItem('vault_v3') || '[]');
+        const notes = JSON.parse(localStorage.getItem('mg_v1') || '[]');
         notes.unshift({ text: crypt(input.value), id: Date.now() });
-        localStorage.setItem('vault_v3', JSON.stringify(notes));
-        localStorage.removeItem('vault_draft');
+        localStorage.setItem('mg_v1', JSON.stringify(notes));
+        localStorage.removeItem('mg_draft');
         input.value = ''; loadNotes();
     }
 
     function loadNotes() {
         const list = document.getElementById('notes-list');
-        const notes = JSON.parse(localStorage.getItem('vault_v3') || '[]');
-        list.innerHTML = notes.map(n => `
-            <div class="note-item">
-                ${decrypt(n.text).replace(/\n/g, '<br>')}
-                <div style="margin-top:10px; text-align:right;">
-                    <span onclick="deleteNote(${n.id})" style="color:#ff453a; font-size:12px; cursor:pointer; font-weight:600;">DELETE</span>
+        const notes = JSON.parse(localStorage.getItem('mg_v1') || '[]');
+        list.innerHTML = notes.map(n => {
+            const fullText = decrypt(n.text);
+            const firstLine = fullText.split('\n')[0];
+            return `
+                <div class="note-item" onclick="this.classList.toggle('expanded')">
+                    <div class="note-preview">${firstLine}</div>
+                    <div class="note-full">
+                        ${fullText.replace(/\n/g, '<br>')}
+                        <br>
+                        <span class="delete-link" onclick="event.stopPropagation(); deleteNote(${n.id})">Remove thought</span>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `}).join('');
     }
 
-    function deleteNote(id) { if(confirm("Delete note?")) { let n = JSON.parse(localStorage.getItem('vault_v3')); localStorage.setItem('vault_v3', JSON.stringify(n.filter(x => x.id !== id))); loadNotes(); } }
+    function deleteNote(id) { if(confirm("Discard this note?")) { let n = JSON.parse(localStorage.getItem('mg_v1')); localStorage.setItem('mg_v1', JSON.stringify(n.filter(x => x.id !== id))); loadNotes(); } }
 
-    /* CSV Import/Export */
     function exportCSV() {
-        const notes = JSON.parse(localStorage.getItem('vault_v3') || '[]');
-        if (notes.length === 0) return alert("No notes to export");
-        
-        // CSV Header and mapping rows. Escaping quotes for CSV safety.
-        let csvContent = "id,encrypted_text\n";
-        notes.forEach(n => {
-            csvContent += `${n.id},"${n.text.replace(/"/g, '""')}"\n`;
-        });
-
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const notes = JSON.parse(localStorage.getItem('mg_v1') || '[]');
+        let csv = "id,encrypted_text\n" + notes.map(n => `${n.id},"${n.text.replace(/"/g, '""')}"`).join('\n');
         const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.setAttribute("download", "vault_backup.csv");
-        link.click();
+        link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+        link.download = "mind_vault.csv"; link.click();
     }
 
     function importCSV() {
         const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.csv';
+        input.type = 'file'; input.accept = '.csv';
         input.onchange = e => {
             const reader = new FileReader();
             reader.onload = re => {
-                const lines = re.target.result.split('\n');
-                const importedNotes = [];
-                // Start from index 1 to skip header
-                for (let i = 1; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    if (!line) continue;
-                    
-                    // Basic CSV parser to handle id and quoted text
-                    const firstComma = line.indexOf(',');
-                    const id = line.substring(0, firstComma);
-                    let text = line.substring(firstComma + 1);
-                    
-                    // Remove surrounding quotes and handle escaped double quotes
-                    if (text.startsWith('"') && text.endsWith('"')) {
-                        text = text.substring(1, text.length - 1).replace(/""/g, '"');
-                    }
-                    importedNotes.push({ id: parseInt(id) || Date.now(), text: text });
-                }
-                localStorage.setItem('vault_v3', JSON.stringify(importedNotes));
-                loadNotes();
-                alert("Import successful");
+                const lines = re.target.result.split('\n').slice(1);
+                const imported = lines.filter(l => l.trim()).map(l => {
+                    const split = l.split(',');
+                    return { id: split[0], text: split[1].replace(/^"|"$/g, '').replace(/""/g, '"') };
+                });
+                localStorage.setItem('mg_v1', JSON.stringify(imported));
+                loadNotes(); alert("Garden Restored.");
             };
             reader.readAsText(e.target.files[0]);
         };
