@@ -29,7 +29,6 @@
             user-select: none;
         }
 
-        /* Calculator Layout */
         .calc-container { 
             flex: 1; 
             display: flex; 
@@ -50,97 +49,38 @@
             letter-spacing: -2px;
         }
 
-        .buttons { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 12px; 
-        }
+        .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
         
         button { 
-            width: 100%; 
-            aspect-ratio: 1/1; 
-            border-radius: 50%; 
-            border: none; 
-            font-size: 36px; 
-            cursor: pointer; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            transition: background 0.2s;
+            width: 100%; aspect-ratio: 1/1; border-radius: 50%; border: none; font-size: 36px; 
+            cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s;
         }
         button:active { filter: brightness(1.6); }
         
         .num { background-color: var(--ios-grey); color: white; }
         .op { background-color: var(--ios-orange); color: white; font-size: 42px; }
         .spec { background-color: var(--ios-light-grey); color: black; font-weight: 500; }
-        .zero { 
-            grid-column: span 2; 
-            aspect-ratio: auto; 
-            border-radius: 50px; 
-            justify-content: flex-start; 
-            padding-left: 30px; 
-        }
+        .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 30px; }
 
         /* Vault Styling */
-        #secret-vault { 
-            display: none; 
-            position: fixed; 
-            inset: 0; 
-            background: #000; 
-            z-index: 100; 
-            flex-direction: column; 
-            user-select: text; 
-        }
-
-        .vault-header { 
-            padding: 50px 20px 15px; 
-            border-bottom: 1px solid #222; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: #111; 
-        }
-
+        #secret-vault { display: none; position: fixed; inset: 0; background: #000; z-index: 100; flex-direction: column; user-select: text; }
+        .vault-header { padding: 50px 20px 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; background: #111; }
         #notes-container { flex: 1; padding: 20px; overflow-y: auto; }
         
-        .note-item { 
-            background: #1c1c1e; 
-            padding: 18px; 
-            border-radius: 14px; 
-            margin-bottom: 15px; 
-            position: relative; 
-            color: #efefef; 
-            line-height: 1.5;
-            font-size: 16px;
-        }
+        .note-item { background: #1c1c1e; padding: 18px; border-radius: 14px; margin-bottom: 15px; position: relative; color: #efefef; line-height: 1.5; font-size: 16px; }
 
         textarea { 
-            width: 100%; 
-            height: 120px; 
-            background: #1c1c1e; 
-            border: none; 
-            color: white; 
-            border-radius: 14px; 
-            padding: 15px; 
-            box-sizing: border-box; 
-            margin-bottom: 15px; 
-            font-size: 17px; 
-            outline: none; 
-            font-family: inherit;
+            width: 100%; height: 120px; background: #1c1c1e; border: none; color: white; 
+            border-radius: 14px; padding: 15px; box-sizing: border-box; margin-bottom: 15px; 
+            font-size: 17px; outline: none; font-family: inherit; resize: none;
         }
 
+        .action-group { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .action-btn { 
-            padding: 16px; 
-            border-radius: 12px; 
-            border: none; 
-            font-weight: 600; 
-            cursor: pointer; 
-            font-size: 15px;
-            width: 100%;
+            flex: 1; min-width: 80px; background: #2c2c2e; color: white; padding: 12px; 
+            border-radius: 10px; border: none; font-size: 13px; font-weight: 600; cursor: pointer;
         }
-
-        .secondary-group { display: flex; gap: 10px; margin-top: 10px; margin-bottom: 20px; }
-        .secondary-btn { flex: 1; background: #2c2c2e; color: white; padding: 12px; border-radius: 10px; border: none; font-size: 13px; }
+        .save-btn { background: var(--ios-orange); color: white; }
     </style>
 </head>
 <body>
@@ -152,22 +92,18 @@
         <button class="spec" onclick="backspace()">⌫</button>
         <button class="spec" onclick="percentage()">%</button>
         <button class="op" onclick="setOp('/')">÷</button>
-        
         <button class="num" onclick="pressNum('7')">7</button>
         <button class="num" onclick="pressNum('8')">8</button>
         <button class="num" onclick="pressNum('9')">9</button>
         <button class="op" onclick="setOp('*')">×</button>
-        
         <button class="num" onclick="pressNum('4')">4</button>
         <button class="num" onclick="pressNum('5')">5</button>
         <button class="num" onclick="pressNum('6')">6</button>
         <button class="op" onclick="setOp('-')">−</button>
-        
         <button class="num" onclick="pressNum('1')">1</button>
         <button class="num" onclick="pressNum('2')">2</button>
         <button class="num" onclick="pressNum('3')">3</button>
         <button class="op" onclick="setOp('+')">+</button>
-        
         <button class="num zero" onclick="pressNum('0')">0</button>
         <button class="num" onclick="pressNum('.')">.</button>
         <button class="op" onclick="calculate()">=</button>
@@ -176,16 +112,16 @@
 
 <div id="secret-vault">
     <div class="vault-header">
-        <h2 style="margin:0; font-size: 22px;">My Notes</h2>
-        <button onclick="location.reload()" class="action-btn" style="background:#333; color:white; width:auto; padding: 8px 15px;">Lock</button>
+        <h2 style="margin:0; font-size: 22px;">Notes</h2>
+        <button onclick="location.reload()" class="action-btn" style="flex:none; width:auto; padding: 8px 15px;">Lock</button>
     </div>
     <div id="notes-container">
-        <textarea id="note-input" placeholder="New secure note..."></textarea>
-        <button class="action-btn" style="background:var(--ios-orange); color:white;" onclick="addNote()">Save Note</button>
+        <textarea id="note-input" placeholder="New note..." oninput="autoSaveDraft()"></textarea>
         
-        <div class="secondary-group">
-            <button class="secondary-btn" onclick="exportVault()">Export Backup</button>
-            <button class="secondary-btn" onclick="importVault()">Import Backup</button>
+        <div class="action-group">
+            <button class="action-btn save-btn" onclick="commitNote()">Save</button>
+            <button class="action-btn" onclick="exportVault()">Export</button>
+            <button class="action-btn" onclick="importVault()">Import</button>
         </div>
         
         <div id="notes-list"></div>
@@ -194,23 +130,20 @@
 
 <script>
     let currentVal = "0", prevVal = "", operator = null, resetDisplay = false;
-    const secretCode = "640673", salt = "s3cr3t-k3y";
+    const secretCode = "640673", salt = "s3cr3t-v2";
     const display = document.getElementById("display");
 
-    /* Encryption */
     const crypt = (t) => btoa(t.split('').map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ salt.charCodeAt(i % salt.length))).join(''));
-    const decrypt = (e) => { try { return atob(e).split('').map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ salt.charCodeAt(i % salt.length))).join(''); } catch(ex) { return "Error"; }};
+    const decrypt = (e) => { try { return atob(e).split('').map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ salt.charCodeAt(i % salt.length))).join(''); } catch(ex) { return ""; }};
 
     /* Shake to Lock */
     let lx, ly, lz;
     async function initShake() {
-        if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') {
-            DeviceMotionEvent.requestPermission();
-        }
+        if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') DeviceMotionEvent.requestPermission();
         window.addEventListener('devicemotion', (e) => {
             let a = e.accelerationIncludingGravity;
-            if (!a.x) return;
-            if (Math.abs(a.x + a.y + a.z - lx - ly - lz) > 20) location.reload();
+            if (!a || !a.x) return;
+            if (Math.abs(a.x + a.y + a.z - lx - ly - lz) > 25) location.reload();
             lx = a.x; ly = a.y; lz = a.z;
         });
     }
@@ -230,7 +163,9 @@
         if (currentVal === secretCode) {
             document.getElementById("calculator").style.display = "none";
             document.getElementById("secret-vault").style.display = "flex";
-            initShake(); loadNotes(); return;
+            initShake(); loadNotes(); 
+            document.getElementById('note-input').value = decrypt(localStorage.getItem('vault_draft') || "");
+            return;
         }
         if (!operator || !prevVal) return;
         let p = parseFloat(prevVal), c = parseFloat(currentVal), r = 0;
@@ -239,19 +174,26 @@
         currentVal = r.toString(); operator = null; resetDisplay = true; updateDisplay();
     }
 
-    /* Notes Management */
-    function addNote() {
+    /* Notes with Auto-Save */
+    function autoSaveDraft() {
+        const val = document.getElementById('note-input').value;
+        localStorage.setItem('vault_draft', crypt(val));
+    }
+
+    function commitNote() {
         const input = document.getElementById('note-input');
         if (!input.value.trim()) return;
-        const notes = JSON.parse(localStorage.getItem('vault_v2') || '[]');
+        const notes = JSON.parse(localStorage.getItem('vault_v3') || '[]');
         notes.unshift({ text: crypt(input.value), id: Date.now() });
-        localStorage.setItem('vault_v2', JSON.stringify(notes));
-        input.value = ''; loadNotes();
+        localStorage.setItem('vault_v3', JSON.stringify(notes));
+        localStorage.removeItem('vault_draft');
+        input.value = '';
+        loadNotes();
     }
 
     function loadNotes() {
         const list = document.getElementById('notes-list');
-        const notes = JSON.parse(localStorage.getItem('vault_v2') || '[]');
+        const notes = JSON.parse(localStorage.getItem('vault_v3') || '[]');
         list.innerHTML = notes.map(n => `
             <div class="note-item">
                 ${decrypt(n.text).replace(/\n/g, '<br>')}
@@ -262,9 +204,9 @@
         `).join('');
     }
 
-    function deleteNote(id) { if(confirm("Delete this note?")) { let n = JSON.parse(localStorage.getItem('vault_v2')); localStorage.setItem('vault_v2', JSON.stringify(n.filter(x => x.id !== id))); loadNotes(); } }
-    function exportVault() { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([localStorage.getItem('vault_v2')], {type:'application/json'})); a.download = 'notes_backup.json'; a.click(); }
-    function importVault() { const i = document.createElement('input'); i.type = 'file'; i.onchange = e => { const r = new FileReader(); r.onload = re => { localStorage.setItem('vault_v2', re.target.result); loadNotes(); }; r.readAsText(e.target.files[0]); }; i.click(); }
+    function deleteNote(id) { if(confirm("Delete note?")) { let n = JSON.parse(localStorage.getItem('vault_v3')); localStorage.setItem('vault_v3', JSON.stringify(n.filter(x => x.id !== id))); loadNotes(); } }
+    function exportVault() { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([localStorage.getItem('vault_v3')], {type:'application/json'})); a.download = 'vault_export.json'; a.click(); }
+    function importVault() { const i = document.createElement('input'); i.type = 'file'; i.onchange = e => { const r = new FileReader(); r.onload = re => { localStorage.setItem('vault_v3', re.target.result); loadNotes(); }; r.readAsText(e.target.files[0]); }; i.click(); }
 </script>
 </body>
 </html>
