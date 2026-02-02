@@ -7,7 +7,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="calculator.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     
     <style>
         :root { 
@@ -23,50 +23,127 @@
             flex-direction: column; 
             height: 100vh; 
             margin: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; 
             color: white; 
             overflow: hidden; 
             user-select: none;
         }
 
-        .status-bar { display: flex; justify-content: space-between; width: 100%; padding: 15px 30px; box-sizing: border-box; font-size: 18px; font-weight: 600; }
+        /* Calculator Layout */
+        .calc-container { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-end; 
+            padding: 20px; 
+            padding-bottom: 30px; 
+        }
 
-        /* Calculator Styling */
-        .calc-container { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; padding-bottom: 50px; }
-        #display { font-size: 85px; text-align: right; margin-bottom: 10px; font-weight: 300; padding: 0 15px; overflow: hidden; white-space: nowrap; }
-        .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+        #display { 
+            font-size: 94px; 
+            text-align: right; 
+            margin-bottom: 10px; 
+            font-weight: 300; 
+            padding: 0 10px; 
+            overflow: hidden; 
+            white-space: nowrap; 
+            letter-spacing: -2px;
+        }
+
+        .buttons { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 12px; 
+        }
         
         button { 
-            width: 100%; aspect-ratio: 1/1; border-radius: 50%; border: none; font-size: 34px; 
-            cursor: pointer; display: flex; justify-content: center; align-items: center; transition: filter 0.1s;
+            width: 100%; 
+            aspect-ratio: 1/1; 
+            border-radius: 50%; 
+            border: none; 
+            font-size: 36px; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            transition: background 0.2s;
         }
-        button:active { filter: brightness(1.5); }
+        button:active { filter: brightness(1.6); }
+        
         .num { background-color: var(--ios-grey); color: white; }
-        .op { background-color: var(--ios-orange); color: white; font-size: 40px; }
+        .op { background-color: var(--ios-orange); color: white; font-size: 42px; }
         .spec { background-color: var(--ios-light-grey); color: black; font-weight: 500; }
-        .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 32px; }
+        .zero { 
+            grid-column: span 2; 
+            aspect-ratio: auto; 
+            border-radius: 50px; 
+            justify-content: flex-start; 
+            padding-left: 30px; 
+        }
 
         /* Vault Styling */
-        #secret-vault { display: none; position: fixed; inset: 0; background: #000; z-index: 100; flex-direction: column; user-select: text; }
-        .vault-header { padding: 40px 20px 15px; border-bottom: 1px solid #222; display: flex; justify-content: space-between; align-items: center; background: #111; }
+        #secret-vault { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: #000; 
+            z-index: 100; 
+            flex-direction: column; 
+            user-select: text; 
+        }
+
+        .vault-header { 
+            padding: 50px 20px 15px; 
+            border-bottom: 1px solid #222; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: #111; 
+        }
+
         #notes-container { flex: 1; padding: 20px; overflow-y: auto; }
         
-        .note-item { background: #1c1c1e; padding: 15px; border-radius: 12px; margin-bottom: 15px; position: relative; border-left: 4px solid var(--ios-orange); color: #efefef; }
-        .note-item table { width: 100%; border-collapse: collapse; margin-top: 12px; background: #000; border-radius: 8px; overflow: hidden; }
-        .note-item th, .note-item td { border: 1px solid #333; padding: 10px; text-align: left; font-size: 14px; }
-        .note-item th { background: #333; color: var(--ios-orange); }
+        .note-item { 
+            background: #1c1c1e; 
+            padding: 18px; 
+            border-radius: 14px; 
+            margin-bottom: 15px; 
+            position: relative; 
+            color: #efefef; 
+            line-height: 1.5;
+            font-size: 16px;
+        }
 
-        textarea { width: 100%; height: 140px; background: #1c1c1e; border: 1px solid #333; color: white; border-radius: 12px; padding: 15px; box-sizing: border-box; margin-bottom: 10px; font-size: 16px; outline: none; font-family: inherit; }
-        .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        .action-btn { flex: 1; padding: 14px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; }
+        textarea { 
+            width: 100%; 
+            height: 120px; 
+            background: #1c1c1e; 
+            border: none; 
+            color: white; 
+            border-radius: 14px; 
+            padding: 15px; 
+            box-sizing: border-box; 
+            margin-bottom: 15px; 
+            font-size: 17px; 
+            outline: none; 
+            font-family: inherit;
+        }
+
+        .action-btn { 
+            padding: 16px; 
+            border-radius: 12px; 
+            border: none; 
+            font-weight: 600; 
+            cursor: pointer; 
+            font-size: 15px;
+            width: 100%;
+        }
+
+        .secondary-group { display: flex; gap: 10px; margin-top: 10px; margin-bottom: 20px; }
+        .secondary-btn { flex: 1; background: #2c2c2e; color: white; padding: 12px; border-radius: 10px; border: none; font-size: 13px; }
     </style>
 </head>
 <body>
-
-<div class="status-bar">
-    <span id="clock">14:42</span>
-    <div style="display:flex; gap: 8px;"><span>📶</span><span>🔋</span></div>
-</div>
 
 <div class="calc-container" id="calculator">
     <div id="display">0</div>
@@ -75,18 +152,22 @@
         <button class="spec" onclick="backspace()">⌫</button>
         <button class="spec" onclick="percentage()">%</button>
         <button class="op" onclick="setOp('/')">÷</button>
+        
         <button class="num" onclick="pressNum('7')">7</button>
         <button class="num" onclick="pressNum('8')">8</button>
         <button class="num" onclick="pressNum('9')">9</button>
         <button class="op" onclick="setOp('*')">×</button>
+        
         <button class="num" onclick="pressNum('4')">4</button>
         <button class="num" onclick="pressNum('5')">5</button>
         <button class="num" onclick="pressNum('6')">6</button>
         <button class="op" onclick="setOp('-')">−</button>
+        
         <button class="num" onclick="pressNum('1')">1</button>
         <button class="num" onclick="pressNum('2')">2</button>
         <button class="num" onclick="pressNum('3')">3</button>
         <button class="op" onclick="setOp('+')">+</button>
+        
         <button class="num zero" onclick="pressNum('0')">0</button>
         <button class="num" onclick="pressNum('.')">.</button>
         <button class="op" onclick="calculate()">=</button>
@@ -95,51 +176,49 @@
 
 <div id="secret-vault">
     <div class="vault-header">
-        <h2 style="margin:0">Secure Notes</h2>
-        <button onclick="location.reload()" class="action-btn" style="background:#333; color:white; flex:none; width:80px;">Lock</button>
+        <h2 style="margin:0; font-size: 22px;">My Notes</h2>
+        <button onclick="location.reload()" class="action-btn" style="background:#333; color:white; width:auto; padding: 8px 15px;">Lock</button>
     </div>
     <div id="notes-container">
-        <textarea id="note-input" placeholder="Type a secure note..."></textarea>
-        <button class="action-btn" style="background:var(--ios-orange); color:white; width:100%; margin-bottom:10px;" onclick="addNote()">Save Note</button>
-        <button class="action-btn" style="background:#222; color:var(--ios-orange); width:100%; margin-bottom:20px; border:1px solid var(--ios-orange)" onclick="insertTableTemplate()">+ Insert Table</button>
-        <div class="btn-group">
-            <button class="action-btn" style="background:#444; color:white;" onclick="exportVault()">Export</button>
-            <button class="action-btn" style="background:#444; color:white;" onclick="importVault()">Import</button>
+        <textarea id="note-input" placeholder="New secure note..."></textarea>
+        <button class="action-btn" style="background:var(--ios-orange); color:white;" onclick="addNote()">Save Note</button>
+        
+        <div class="secondary-group">
+            <button class="secondary-btn" onclick="exportVault()">Export Backup</button>
+            <button class="secondary-btn" onclick="importVault()">Import Backup</button>
         </div>
+        
         <div id="notes-list"></div>
     </div>
 </div>
 
 <script>
     let currentVal = "0", prevVal = "", operator = null, resetDisplay = false;
-    const secretCode = "640673", salt = "k3y-vau1t-99";
+    const secretCode = "640673", salt = "s3cr3t-k3y";
     const display = document.getElementById("display");
 
-    /* Encryption Logic */
+    /* Encryption */
     const crypt = (t) => btoa(t.split('').map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ salt.charCodeAt(i % salt.length))).join(''));
     const decrypt = (e) => { try { return atob(e).split('').map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ salt.charCodeAt(i % salt.length))).join(''); } catch(ex) { return "Error"; }};
 
-    /* Shake to Lock Logic */
-    let lastX, lastY, lastZ;
-    let threshold = 15; // Sensitivity level
-
+    /* Shake to Lock */
+    let lx, ly, lz;
     async function initShake() {
-        if (typeof DeviceMotionEvent.requestPermission === 'function') {
-            await DeviceMotionEvent.requestPermission();
+        if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') {
+            DeviceMotionEvent.requestPermission();
         }
         window.addEventListener('devicemotion', (e) => {
-            let acc = e.accelerationIncludingGravity;
-            if (!acc.x) return;
-            let diff = Math.abs(acc.x + acc.y + acc.z - lastX - lastY - lastZ);
-            if (diff > threshold) location.reload();
-            lastX = acc.x; lastY = acc.y; lastZ = acc.z;
+            let a = e.accelerationIncludingGravity;
+            if (!a.x) return;
+            if (Math.abs(a.x + a.y + a.z - lx - ly - lz) > 20) location.reload();
+            lx = a.x; ly = a.y; lz = a.z;
         });
     }
 
-    /* Calculator Actions */
+    /* Calculator */
     function updateDisplay() { 
         display.innerText = currentVal; 
-        display.style.fontSize = currentVal.length > 6 ? '50px' : '85px';
+        display.style.fontSize = currentVal.length > 6 ? '55px' : '94px';
     }
     function pressNum(n) { currentVal = (currentVal === "0" || resetDisplay) ? n : currentVal + n; resetDisplay = false; updateDisplay(); }
     function backspace() { currentVal = currentVal.length > 1 ? currentVal.slice(0, -1) : "0"; updateDisplay(); }
@@ -151,56 +230,41 @@
         if (currentVal === secretCode) {
             document.getElementById("calculator").style.display = "none";
             document.getElementById("secret-vault").style.display = "flex";
-            initShake(); // Request permission & start listening
-            loadNotes();
-            return;
+            initShake(); loadNotes(); return;
         }
         if (!operator || !prevVal) return;
-        let p = parseFloat(prevVal), c = parseFloat(currentVal), res = 0;
-        if(operator === '+') res = p + c; else if(operator === '-') res = p - c;
-        else if(operator === '*') res = p * c; else if(operator === '/') res = p / c;
-        currentVal = res.toString(); operator = null; resetDisplay = true; updateDisplay();
+        let p = parseFloat(prevVal), c = parseFloat(currentVal), r = 0;
+        if(operator === '+') r = p + c; else if(operator === '-') r = p - c;
+        else if(operator === '*') r = p * c; else if(operator === '/') r = p / c;
+        currentVal = r.toString(); operator = null; resetDisplay = true; updateDisplay();
     }
 
-    /* Note Management */
-    function insertTableTemplate() {
-        document.getElementById('note-input').value += "\n| Header | Header |\n|--------|--------|\n| Item   | Data   |";
-    }
-
-    function parseTables(text) {
-        const lines = text.trim().split("\n");
-        let html = "", inTable = false;
-        lines.forEach(line => {
-            if (line.trim().startsWith("|")) {
-                const cells = line.split("|").filter(c => c.trim() !== "").map(c => c.trim());
-                if (!inTable) { html += "<table><thead><tr>" + cells.map(c => `<th>${c}</th>`).join('') + "</tr></thead><tbody>"; inTable = true; }
-                else if (!line.includes("---")) { html += "<tr>" + cells.map(c => `<td>${c}</td>`).join('') + "</tr>"; }
-            } else { if (inTable) { html += "</tbody></table>"; inTable = false; } html += line + "<br>"; }
-        });
-        return inTable ? html + "</tbody></table>" : html;
-    }
-
+    /* Notes Management */
     function addNote() {
         const input = document.getElementById('note-input');
         if (!input.value.trim()) return;
-        const notes = JSON.parse(localStorage.getItem('v_data') || '[]');
+        const notes = JSON.parse(localStorage.getItem('vault_v2') || '[]');
         notes.unshift({ text: crypt(input.value), id: Date.now() });
-        localStorage.setItem('v_data', JSON.stringify(notes));
+        localStorage.setItem('vault_v2', JSON.stringify(notes));
         input.value = ''; loadNotes();
     }
 
     function loadNotes() {
         const list = document.getElementById('notes-list');
-        const notes = JSON.parse(localStorage.getItem('v_data') || '[]');
-        list.innerHTML = notes.map(n => `<div class="note-item">${parseTables(decrypt(n.text))}<button onclick="deleteNote(${n.id})" style="position:absolute; top:12px; right:12px; color:#ff453a; background:none; border:none; font-size:12px; cursor:pointer;">DELETE</button></div>`).join('');
+        const notes = JSON.parse(localStorage.getItem('vault_v2') || '[]');
+        list.innerHTML = notes.map(n => `
+            <div class="note-item">
+                ${decrypt(n.text).replace(/\n/g, '<br>')}
+                <div style="margin-top:10px; text-align:right;">
+                    <span onclick="deleteNote(${n.id})" style="color:#ff453a; font-size:12px; cursor:pointer; font-weight:600;">DELETE</span>
+                </div>
+            </div>
+        `).join('');
     }
 
-    function deleteNote(id) { if(confirm("Delete note?")) { let notes = JSON.parse(localStorage.getItem('v_data') || '[]'); notes = notes.filter(n => n.id !== id); localStorage.setItem('v_data', JSON.stringify(notes)); loadNotes(); } }
-    function exportVault() { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([localStorage.getItem('v_data')], {type:'application/json'})); a.download = 'vault.json'; a.click(); }
-    function importVault() { const i = document.createElement('input'); i.type = 'file'; i.onchange = e => { const r = new FileReader(); r.onload = re => { localStorage.setItem('v_data', re.target.result); loadNotes(); }; r.readAsText(e.target.files[0]); }; i.click(); }
-
-    // Live Clock
-    setInterval(() => { const now = new Date(); document.getElementById('clock').innerText = now.getHours() + ":" + now.getMinutes().toString().padStart(2, '0'); }, 1000);
+    function deleteNote(id) { if(confirm("Delete this note?")) { let n = JSON.parse(localStorage.getItem('vault_v2')); localStorage.setItem('vault_v2', JSON.stringify(n.filter(x => x.id !== id))); loadNotes(); } }
+    function exportVault() { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([localStorage.getItem('vault_v2')], {type:'application/json'})); a.download = 'notes_backup.json'; a.click(); }
+    function importVault() { const i = document.createElement('input'); i.type = 'file'; i.onchange = e => { const r = new FileReader(); r.onload = re => { localStorage.setItem('vault_v2', re.target.result); loadNotes(); }; r.readAsText(e.target.files[0]); }; i.click(); }
 </script>
 </body>
 </html>
