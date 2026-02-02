@@ -11,78 +11,45 @@
     
     <style>
         :root { 
-            /* Calculator Colors (Classic iOS) */
-            --ios-orange: #ff9f0a; 
-            --ios-grey: #333333; 
-            --ios-light-grey: #a5a5a5; 
-            --ios-bg: #000000;
-            
-            /* Mind Garden Colors */
-            --mg-green: #7BA67E;        /* Sage Green */
-            --mg-dark-green: #5A7D5D;
-            --mg-cream: #F9F7F2;        /* Background */
-            --mg-text: #4A4A4A;         /* Charcoal Soft */
-            --mg-card: #FFFFFF;
+            --ios-orange: #ff9f0a; --ios-grey: #333; --ios-light-grey: #a5a5a5; --ios-bg: #000;
+            --mg-green: #7BA67E; --mg-dark-green: #5A7D5D; --mg-cream: #F9F7F2; --mg-text: #4A4A4A; --mg-card: #FFFFFF;
         }
 
-        body { 
-            background-color: var(--ios-bg); 
-            display: flex; 
-            flex-direction: column; 
-            height: 100vh; 
-            margin: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            color: white; 
-            overflow: hidden; 
-            user-select: none;
-        }
+        body { background-color: var(--ios-bg); display: flex; flex-direction: column; height: 100vh; margin: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; color: white; overflow: hidden; user-select: none; }
 
-        /* Stealth Calculator Styling */
-        .calc-container { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; padding-bottom: 30px; }
+        /* Calculator Styling */
+        .calc-container { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px 20px 40px; }
         #display { font-size: 94px; text-align: right; margin-bottom: 10px; font-weight: 300; padding: 0 10px; overflow: hidden; white-space: nowrap; letter-spacing: -2px; }
         .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        button { width: 100%; aspect-ratio: 1/1; border-radius: 50%; border: none; font-size: 36px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
-        button:active { filter: brightness(1.6); }
+        .calc-btn { width: 100%; aspect-ratio: 1/1; border-radius: 50%; border: none; font-size: 36px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
+        .calc-btn:active { filter: brightness(1.6); }
         .num { background-color: var(--ios-grey); color: white; }
         .op { background-color: var(--ios-orange); color: white; font-size: 42px; }
         .spec { background-color: var(--ios-light-grey); color: black; font-weight: 500; }
         .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 30px; }
 
-        /* Mind Garden Vault Styling */
+        /* Vault Styling */
         #secret-vault { display: none; position: fixed; inset: 0; background: var(--mg-cream); z-index: 100; flex-direction: column; user-select: text; color: var(--mg-text); }
-        .vault-header { padding: 50px 20px 20px; display: flex; justify-content: space-between; align-items: center; background: var(--mg-cream); }
+        .vault-header { padding: 50px 20px 20px; display: flex; justify-content: space-between; align-items: center; }
         .vault-header h2 { margin:0; font-weight: 700; color: var(--mg-dark-green); letter-spacing: -0.5px; }
-        
         #notes-container { flex: 1; padding: 0 20px 20px; overflow-y: auto; }
         
-        .note-item { 
-            background: var(--mg-card); padding: 20px; border-radius: 20px; margin-bottom: 15px; 
-            position: relative; color: var(--mg-text); line-height: 1.5; font-size: 16px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer; border: 1px solid rgba(123, 166, 126, 0.1);
-        }
-
+        .note-item { background: var(--mg-card); padding: 20px; border-radius: 20px; margin-bottom: 12px; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer; border: 1px solid rgba(123,166,126,0.1); }
         .note-preview { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 20px; font-weight: 500; }
-        .note-full { display: none; padding-top: 12px; margin-top: 12px; border-top: 1px dashed #eee; color: #666; }
-        .note-item.expanded .note-preview { white-space: normal; color: var(--mg-green); }
+        .note-full { display: none; padding-top: 12px; margin-top: 12px; border-top: 1px dashed #eee; color: #555; }
         .note-item.expanded .note-full { display: block; }
 
-        textarea { 
-            width: 100%; height: 110px; background: var(--mg-card); border: 1.5px solid rgba(123, 166, 126, 0.2); color: var(--mg-text); 
-            border-radius: 20px; padding: 15px; box-sizing: border-box; margin-bottom: 15px; 
-            font-size: 16px; outline: none; font-family: inherit; resize: none;
-        }
+        textarea { width: 100%; height: 110px; background: var(--mg-card); border: 1.5px solid rgba(123,166,126,0.2); color: var(--mg-text); border-radius: 20px; padding: 15px; box-sizing: border-box; margin-bottom: 15px; font-size: 16px; outline: none; font-family: inherit; resize: none; }
 
-        .action-group { display: flex; gap: 10px; margin-bottom: 25px; }
-        .action-btn { 
-            flex: 1; background: var(--mg-green); color: white; padding: 14px; 
-            border-radius: 15px; border: none; font-size: 14px; font-weight: 600; cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .action-btn:active { opacity: 0.8; }
+        .action-group { display: flex; gap: 8px; margin-bottom: 25px; }
+        .action-btn { flex: 1; background: var(--mg-green); color: white; padding: 12px 5px; border-radius: 12px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; }
         .btn-alt { background: white; color: var(--mg-green); border: 1.5px solid var(--mg-green); }
-        
-        .lock-btn { background: #eee; color: #888; flex: none; width: auto; padding: 8px 18px; border-radius: 12px; }
-        .delete-link { color: #d9534f; font-size: 12px; cursor: pointer; font-weight: 600; margin-top: 15px; display: inline-block; }
+        .lock-btn { background: #eee; color: #888; flex: none; width: auto; padding: 8px 18px; }
+
+        .note-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+        .util-link { font-size: 12px; cursor: pointer; font-weight: 600; padding: 5px; }
+        .delete-link { color: #d9534f; }
+        .copy-link { color: var(--mg-green); }
     </style>
 </head>
 <body>
@@ -90,25 +57,25 @@
 <div class="calc-container" id="calculator">
     <div id="display">0</div>
     <div class="buttons">
-        <button class="spec" onclick="clearAll()">AC</button>
-        <button class="spec" onclick="backspace()">⌫</button>
-        <button class="spec" onclick="percentage()">%</button>
-        <button class="op" onclick="setOp('/')">÷</button>
-        <button class="num" onclick="pressNum('7')">7</button>
-        <button class="num" onclick="pressNum('8')">8</button>
-        <button class="num" onclick="pressNum('9')">9</button>
-        <button class="op" onclick="setOp('*')">×</button>
-        <button class="num" onclick="pressNum('4')">4</button>
-        <button class="num" onclick="pressNum('5')">5</button>
-        <button class="num" onclick="pressNum('6')">6</button>
-        <button class="op" onclick="setOp('-')">−</button>
-        <button class="num" onclick="pressNum('1')">1</button>
-        <button class="num" onclick="pressNum('2')">2</button>
-        <button class="num" onclick="pressNum('3')">3</button>
-        <button class="op" onclick="setOp('+')">+</button>
-        <button class="num zero" onclick="pressNum('0')">0</button>
-        <button class="num" onclick="pressNum('.')">.</button>
-        <button class="op" onclick="calculate()">=</button>
+        <button class="calc-btn spec" onclick="clearAll()">AC</button>
+        <button class="calc-btn spec" onclick="backspace()">⌫</button>
+        <button class="calc-btn spec" onclick="percentage()">%</button>
+        <button class="calc-btn op" onclick="setOp('/')">÷</button>
+        <button class="calc-btn num" onclick="pressNum('7')">7</button>
+        <button class="calc-btn num" onclick="pressNum('8')">8</button>
+        <button class="calc-btn num" onclick="pressNum('9')">9</button>
+        <button class="calc-btn op" onclick="setOp('*')">×</button>
+        <button class="calc-btn num" onclick="pressNum('4')">4</button>
+        <button class="calc-btn num" onclick="pressNum('5')">5</button>
+        <button class="calc-btn num" onclick="pressNum('6')">6</button>
+        <button class="calc-btn op" onclick="setOp('-')">−</button>
+        <button class="calc-btn num" onclick="pressNum('1')">1</button>
+        <button class="calc-btn num" onclick="pressNum('2')">2</button>
+        <button class="calc-btn num" onclick="pressNum('3')">3</button>
+        <button class="calc-btn op" onclick="setOp('+')">+</button>
+        <button class="calc-btn num zero" onclick="pressNum('0')">0</button>
+        <button class="calc-btn num" onclick="pressNum('.')">.</button>
+        <button class="calc-btn op" onclick="calculate()">=</button>
     </div>
 </div>
 
@@ -119,29 +86,40 @@
     </div>
     <div id="notes-container">
         <textarea id="note-input" placeholder="Plant a new thought..." oninput="autoSaveDraft()"></textarea>
-        
         <div class="action-group">
-            <button class="action-btn" onclick="commitNote()">Save Note</button>
+            <button class="action-btn" onclick="commitNote()">Save</button>
             <button class="action-btn btn-alt" onclick="exportCSV()">Export</button>
             <button class="action-btn btn-alt" onclick="importCSV()">Import</button>
         </div>
-        
         <div id="notes-list"></div>
     </div>
 </div>
 
 <script>
+    // Service Worker Registration for Offline Use
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            const swCode = `
+                const cacheName = 'vault-v1';
+                const assets = ['./', './index.html', './manifest.json', './calculator.png'];
+                self.addEventListener('install', e => e.waitUntil(caches.open(cacheName).then(c => c.addAll(assets))));
+                self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
+            `;
+            const blob = new Blob([swCode], {type: 'application/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(blob));
+        });
+    }
+
     let currentVal = "0", prevVal = "", operator = null, resetDisplay = false;
-    const secretCode = "640673", salt = "mg-salt-v3";
+    const secretCode = "640673", salt = "mg-salt-v5";
     const display = document.getElementById("display");
 
     const crypt = (t) => btoa(t.split('').map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ salt.charCodeAt(i % salt.length))).join(''));
     const decrypt = (e) => { try { return atob(e).split('').map((c, i) => String.fromCharCode(c.charCodeAt(0) ^ salt.charCodeAt(i % salt.length))).join(''); } catch(ex) { return ""; }};
 
-    /* Shake to Lock */
-    let lx, ly, lz;
-    async function initShake() {
+    function initShake() {
         if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') DeviceMotionEvent.requestPermission();
+        let lx, ly, lz;
         window.addEventListener('devicemotion', (e) => {
             let a = e.accelerationIncludingGravity;
             if (!a || !a.x) return;
@@ -150,11 +128,7 @@
         });
     }
 
-    /* Calculator Actions */
-    function updateDisplay() { 
-        display.innerText = currentVal; 
-        display.style.fontSize = currentVal.length > 6 ? '55px' : '94px';
-    }
+    function updateDisplay() { display.innerText = currentVal; display.style.fontSize = currentVal.length > 6 ? '55px' : '94px'; }
     function pressNum(n) { currentVal = (currentVal === "0" || resetDisplay) ? n : currentVal + n; resetDisplay = false; updateDisplay(); }
     function backspace() { currentVal = currentVal.length > 1 ? currentVal.slice(0, -1) : "0"; updateDisplay(); }
     function clearAll() { currentVal = "0"; prevVal = ""; operator = null; updateDisplay(); }
@@ -165,75 +139,69 @@
         if (currentVal === secretCode) {
             document.getElementById("calculator").style.display = "none";
             document.getElementById("secret-vault").style.display = "flex";
-            initShake(); loadNotes(); 
-            document.getElementById('note-input').value = decrypt(localStorage.getItem('mg_draft') || "");
+            initShake(); loadNotes();
+            const draft = localStorage.getItem('mg_draft');
+            if (draft) document.getElementById('note-input').value = decrypt(draft);
             return;
         }
         if (!operator || !prevVal) return;
-        let p = parseFloat(prevVal), c = parseFloat(currentVal), r = 0;
-        if(operator === '+') r = p + c; else if(operator === '-') r = p - c;
-        else if(operator === '*') r = p * c; else if(operator === '/') r = p / c;
+        let p = parseFloat(prevVal), c = parseFloat(currentVal), r = eval(p + operator + c);
         currentVal = r.toString(); operator = null; resetDisplay = true; updateDisplay();
     }
 
-    /* Note Logic */
     function autoSaveDraft() { localStorage.setItem('mg_draft', crypt(document.getElementById('note-input').value)); }
 
     function commitNote() {
         const input = document.getElementById('note-input');
         if (!input.value.trim()) return;
-        const notes = JSON.parse(localStorage.getItem('mg_v1') || '[]');
+        const notes = JSON.parse(localStorage.getItem('mg_v3') || '[]');
         notes.unshift({ text: crypt(input.value), id: Date.now() });
-        localStorage.setItem('mg_v1', JSON.stringify(notes));
+        localStorage.setItem('mg_v3', JSON.stringify(notes));
         localStorage.removeItem('mg_draft');
         input.value = ''; loadNotes();
     }
 
     function loadNotes() {
         const list = document.getElementById('notes-list');
-        const notes = JSON.parse(localStorage.getItem('mg_v1') || '[]');
+        const notes = JSON.parse(localStorage.getItem('mg_v3') || '[]');
         list.innerHTML = notes.map(n => {
             const fullText = decrypt(n.text);
-            const firstLine = fullText.split('\n')[0];
             return `
                 <div class="note-item" onclick="this.classList.toggle('expanded')">
-                    <div class="note-preview">${firstLine}</div>
+                    <div class="note-preview">${fullText.split('\n')[0]}</div>
                     <div class="note-full">
                         ${fullText.replace(/\n/g, '<br>')}
-                        <br>
-                        <span class="delete-link" onclick="event.stopPropagation(); deleteNote(${n.id})">Remove thought</span>
+                        <div class="note-footer">
+                            <span class="util-link copy-link" onclick="event.stopPropagation(); copyNote('${fullText.replace(/'/g, "\\'")}')">COPY</span>
+                            <span class="util-link delete-link" onclick="event.stopPropagation(); deleteNote(${n.id})">REMOVE</span>
+                        </div>
                     </div>
                 </div>
             `}).join('');
     }
 
-    function deleteNote(id) { if(confirm("Discard this note?")) { let n = JSON.parse(localStorage.getItem('mg_v1')); localStorage.setItem('mg_v1', JSON.stringify(n.filter(x => x.id !== id))); loadNotes(); } }
-
+    function copyNote(txt) { navigator.clipboard.writeText(txt); alert("Copied to clipboard"); }
+    function deleteNote(id) { if(confirm("Discard?")) { let n = JSON.parse(localStorage.getItem('mg_v3')); localStorage.setItem('mg_v3', JSON.stringify(n.filter(x => x.id !== id))); loadNotes(); } }
     function exportCSV() {
-        const notes = JSON.parse(localStorage.getItem('mg_v1') || '[]');
+        const notes = JSON.parse(localStorage.getItem('mg_v3') || '[]');
         let csv = "id,encrypted_text\n" + notes.map(n => `${n.id},"${n.text.replace(/"/g, '""')}"`).join('\n');
         const link = document.createElement("a");
         link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-        link.download = "mind_vault.csv"; link.click();
+        link.download = "vault.csv"; link.click();
     }
-
     function importCSV() {
-        const input = document.createElement('input');
-        input.type = 'file'; input.accept = '.csv';
-        input.onchange = e => {
-            const reader = new FileReader();
-            reader.onload = re => {
+        const i = document.createElement('input'); i.type = 'file'; i.accept = '.csv';
+        i.onchange = e => {
+            const r = new FileReader();
+            r.onload = re => {
                 const lines = re.target.result.split('\n').slice(1);
-                const imported = lines.filter(l => l.trim()).map(l => {
-                    const split = l.split(',');
-                    return { id: split[0], text: split[1].replace(/^"|"$/g, '').replace(/""/g, '"') };
-                });
-                localStorage.setItem('mg_v1', JSON.stringify(imported));
-                loadNotes(); alert("Garden Restored.");
+                const imported = lines.filter(l => l.trim()).map(l => ({ id: l.split(',')[0], text: l.split(',')[1].replace(/^"|"$/g, '').replace(/""/g, '"') }));
+                localStorage.setItem('mg_v3', JSON.stringify(imported));
+                loadNotes();
             };
-            reader.readAsText(e.target.files[0]);
+            r.readAsText(e.target.files[0]);
         };
-        input.click();
+        i.click();
     }
 </script>
 </body>
