@@ -11,38 +11,16 @@
     
     <style>
         :root { 
-            /* Stealth Calculator Colors */
-            --ios-orange: #ff9f0a; 
-            --ios-grey: #333; 
-            --ios-light-grey: #a5a5a5; 
-            --ios-bg: #000;
-
-            /* Mind Garden Colors */
-            --bg: #020617; 
-            --card: rgba(30, 41, 59, 0.5); 
-            --muted: #94a3b8; 
-            --g-pale: #4ade80; 
-            --g-dark: #166534; 
-            --accent: #38bdf8; 
-            --border: rgba(255, 255, 255, 0.1); 
-            --red: #ef4444; 
+            --ios-orange: #ff9f0a; --ios-grey: #333; --ios-light-grey: #a5a5a5; --ios-bg: #000;
+            --bg: #020617; --card: rgba(30, 41, 59, 0.5); --muted: #94a3b8; --g-pale: #4ade80; 
+            --g-dark: #166534; --accent: #38bdf8; --border: rgba(255, 255, 255, 0.1); --red: #ef4444; 
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            background: var(--ios-bg); 
-            display: flex; 
-            flex-direction: column; 
-            height: 100vh; 
-            margin: 0; 
-            font-family: -apple-system, system-ui, sans-serif; 
-            color: white; 
-            overflow: hidden; 
-        }
+        body { background: var(--ios-bg); display: flex; flex-direction: column; height: 100vh; margin: 0; font-family: -apple-system, system-ui, sans-serif; color: white; overflow: hidden; }
 
         /* Calculator Styling */
-        .calc-container { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px 20px 40px; background: #000; }
+        .calc-container { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px 20px 80px; background: #000; }
         #display { font-size: 94px; text-align: right; margin-bottom: 10px; font-weight: 300; padding: 0 10px; overflow: hidden; white-space: nowrap; letter-spacing: -2px; }
         .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
         .calc-btn { width: 100%; aspect-ratio: 1/1; border-radius: 50%; border: none; font-size: 36px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: background 0.2s; }
@@ -52,46 +30,28 @@
         .spec { background-color: var(--ios-light-grey); color: black; font-weight: 500; }
         .zero { grid-column: span 2; aspect-ratio: auto; border-radius: 50px; justify-content: flex-start; padding-left: 30px; }
 
-        /* Vault Styling (Mind Garden Theme) */
-        #secret-vault { 
-            display: none; position: fixed; inset: 0; 
-            background: radial-gradient(circle at top right, #0f172a, #020617); 
-            z-index: 100; flex-direction: column; user-select: text; 
-        }
+        /* Vault Styling */
+        #secret-vault { display: none; position: fixed; inset: 0; background: radial-gradient(circle at top right, #0f172a, #020617); z-index: 100; flex-direction: column; user-select: text; }
         .vault-header { padding: calc(env(safe-area-inset-top) + 20px) 20px 10px; display: flex; justify-content: space-between; align-items: center; }
         .vault-header h2 { margin:0; color: var(--accent); font-weight: 800; font-size: 1.5rem; }
-        
         #notes-container { flex: 1; padding: 20px; overflow-y: auto; padding-bottom: 100px; }
         
-        .card { 
-            background: var(--card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
-            border-radius: 24px; padding: 1.2rem; margin-bottom: 1rem; border: 1px solid var(--border); 
-            cursor: pointer; transition: transform 0.2s ease;
-        }
-        .card:active { transform: scale(0.98); }
-
+        .card { background: var(--card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 24px; padding: 1.2rem; margin-bottom: 1rem; border: 1px solid var(--border); cursor: pointer; }
         .note-preview { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--accent); font-weight: 600; }
         .note-full { display: none; padding-top: 12px; margin-top: 12px; border-top: 1px solid var(--border); color: #fff; line-height: 1.6; }
         .expanded .note-full { display: block; }
         .expanded .note-preview { white-space: normal; }
 
-        textarea { 
-            width: 100%; height: 120px; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border); 
-            color: #fff; border-radius: 18px; padding: 15px; box-sizing: border-box; margin-bottom: 12px; 
-            font-size: 16px; outline: none; font-family: inherit; resize: none;
-        }
-
+        textarea { width: 100%; height: 120px; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border); color: #fff; border-radius: 18px; padding: 15px; box-sizing: border-box; margin-bottom: 12px; font-size: 16px; outline: none; font-family: inherit; resize: none; }
         .action-group { display: flex; gap: 8px; margin-bottom: 20px; }
-        .action-btn { 
-            flex: 1; background: rgba(15, 23, 42, 0.8); color: white; padding: 12px 5px; 
-            border-radius: 14px; border: 1px solid var(--border); font-size: 13px; font-weight: 700; cursor: pointer;
-        }
+        .action-btn { flex: 1; background: rgba(15, 23, 42, 0.8); color: white; padding: 12px 5px; border-radius: 14px; border: 1px solid var(--border); font-size: 13px; font-weight: 700; cursor: pointer; }
         .btn-primary { background: var(--g-pale); color: #020617; border: none; }
         .lock-btn { background: var(--red); color: white; border: none; flex: none; width: auto; padding: 8px 15px; }
 
         .footer { display: flex; justify-content: space-between; margin-top: 15px; }
-        .util-btn { font-size: 11px; font-weight: 800; letter-spacing: 1px; padding: 5px; }
+        .util-btn { font-size: 11px; font-weight: 800; letter-spacing: 1px; padding: 5px; cursor: pointer; }
         .copy { color: var(--accent); }
+        .edit { color: var(--g-pale); }
         .del { color: var(--red); }
     </style>
 </head>
@@ -124,13 +84,13 @@
 
 <div id="secret-vault">
     <div class="vault-header">
-        <h2>Mind Vault</h2>
+        <h2 id="vault-title">Mind Vault</h2>
         <button onclick="location.reload()" class="action-btn lock-btn">Lock</button>
     </div>
     <div id="notes-container">
-        <textarea id="note-input" placeholder="Plant a new thought..." oninput="autoSaveDraft()"></textarea>
+        <textarea id="note-input" placeholder="Enter a new secure thought..." oninput="autoSaveDraft()"></textarea>
         <div class="action-group">
-            <button class="action-btn btn-primary" onclick="commitNote()">Plant</button>
+            <button class="action-btn btn-primary" id="save-btn" onclick="commitNote()">Save Note</button>
             <button class="action-btn" onclick="exportCSV()">Export</button>
             <button class="action-btn" onclick="importCSV()">Import</button>
         </div>
@@ -139,19 +99,14 @@
 </div>
 
 <script>
-    // Offline Service Worker (Blob Method)
     if ('serviceWorker' in navigator) {
-        const swCode = `
-            const cacheName = 'mg-vault-v1';
-            const assets = ['./', './index.html', './manifest.json', './calculator.png'];
-            self.addEventListener('install', e => e.waitUntil(caches.open(cacheName).then(c => c.addAll(assets))));
-            self.addEventListener('fetch', e => e.respondWith(caches.match(e.request).then(r => r || fetch(e.request))));
-        `;
+        const swCode = `const cacheName='mg-vault-v3'; self.addEventListener('install',e=>e.waitUntil(caches.open(cacheName).then(c=>c.addAll(['./','./index.html'])))); self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));`;
         const blob = new Blob([swCode], {type: 'application/javascript'});
         navigator.serviceWorker.register(URL.createObjectURL(blob));
     }
 
     let currentVal = "0", prevVal = "", operator = null, resetDisplay = false;
+    let editingId = null;
     const secretCode = "640673", salt = "mind-garden-vault-v1";
     const display = document.getElementById("display");
 
@@ -164,7 +119,7 @@
         window.addEventListener('devicemotion', (e) => {
             let a = e.accelerationIncludingGravity;
             if (!a || !a.x) return;
-            if (Math.abs(a.x + a.y + a.z - lx - ly - lz) > 30) location.reload();
+            if (Math.abs(a.x + a.y + a.z - lx - ly - lz) > 35) location.reload();
             lx = a.x; ly = a.y; lz = a.z;
         });
     }
@@ -181,8 +136,10 @@
             document.getElementById("calculator").style.display = "none";
             document.getElementById("secret-vault").style.display = "flex";
             initShake(); loadNotes();
-            const draft = localStorage.getItem('mg_draft_secure');
-            if (draft) document.getElementById('note-input').value = decrypt(draft);
+            if(!editingId) {
+                const draft = localStorage.getItem('mg_draft_secure');
+                if (draft) document.getElementById('note-input').value = decrypt(draft);
+            }
             return;
         }
         if (!operator || !prevVal) return;
@@ -192,16 +149,38 @@
         currentVal = r.toString(); operator = null; resetDisplay = true; updateDisplay();
     }
 
-    function autoSaveDraft() { localStorage.setItem('mg_draft_secure', crypt(document.getElementById('note-input').value)); }
+    function autoSaveDraft() { if(!editingId) localStorage.setItem('mg_draft_secure', crypt(document.getElementById('note-input').value)); }
 
     function commitNote() {
         const input = document.getElementById('note-input');
         if (!input.value.trim()) return;
         const notes = JSON.parse(localStorage.getItem('mg_notes_v4') || '[]');
-        notes.unshift({ text: crypt(input.value), id: Date.now() });
+        
+        if (editingId) {
+            const index = notes.findIndex(n => n.id === editingId);
+            if (index !== -1) notes[index].text = crypt(input.value);
+            editingId = null;
+            document.getElementById('save-btn').innerText = "Save Note";
+            document.getElementById('vault-title').innerText = "Mind Vault";
+        } else {
+            notes.unshift({ text: crypt(input.value), id: Date.now() });
+            localStorage.removeItem('mg_draft_secure');
+        }
+        
         localStorage.setItem('mg_notes_v4', JSON.stringify(notes));
-        localStorage.removeItem('mg_draft_secure');
         input.value = ''; loadNotes();
+    }
+
+    function editNote(id) {
+        const notes = JSON.parse(localStorage.getItem('mg_notes_v4') || '[]');
+        const note = notes.find(n => n.id === id);
+        if (note) {
+            editingId = id;
+            document.getElementById('note-input').value = decrypt(note.text);
+            document.getElementById('save-btn').innerText = "Update Note";
+            document.getElementById('vault-title').innerText = "Editing Note";
+            document.getElementById('notes-container').scrollTop = 0;
+        }
     }
 
     function loadNotes() {
@@ -216,6 +195,7 @@
                         ${fullText.replace(/\n/g, '<br>')}
                         <div class="footer">
                             <span class="util-btn copy" onclick="event.stopPropagation(); copyNote('${fullText.replace(/'/g, "\\'")}')">COPY</span>
+                            <span class="util-btn edit" onclick="event.stopPropagation(); editNote(${n.id})">EDIT</span>
                             <span class="util-btn del" onclick="event.stopPropagation(); deleteNote(${n.id})">ERASE</span>
                         </div>
                     </div>
@@ -224,33 +204,9 @@
     }
 
     function copyNote(txt) { navigator.clipboard.writeText(txt); alert("Copied"); }
-    function deleteNote(id) { if(confirm("Erase from garden?")) { let n = JSON.parse(localStorage.getItem('mg_notes_v4')); localStorage.setItem('mg_notes_v4', JSON.stringify(n.filter(x => x.id !== id))); loadNotes(); } }
-
-    function exportCSV() {
-        const notes = JSON.parse(localStorage.getItem('mg_notes_v4') || '[]');
-        let csv = "id,encrypted_text\n" + notes.map(n => `${n.id},"${n.text.replace(/"/g, '""')}"`).join('\n');
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-        link.download = "garden_backup.csv"; link.click();
-    }
-
-    function importCSV() {
-        const i = document.createElement('input'); i.type = 'file'; i.accept = '.csv';
-        i.onchange = e => {
-            const r = new FileReader();
-            reader.onload = re => {
-                const lines = re.target.result.split('\n').slice(1);
-                const imported = lines.filter(l => l.trim()).map(l => {
-                    const firstComma = l.indexOf(',');
-                    return { id: l.substring(0, firstComma), text: l.substring(firstComma + 1).replace(/^"|"$/g, '').replace(/""/g, '"') };
-                });
-                localStorage.setItem('mg_notes_v4', JSON.stringify(imported));
-                loadNotes();
-            };
-            r.readAsText(e.target.files[0]);
-        };
-        i.click();
-    }
+    function deleteNote(id) { if(confirm("Erase this note?")) { let n = JSON.parse(localStorage.getItem('mg_notes_v4')); localStorage.setItem('mg_notes_v4', JSON.stringify(n.filter(x => x.id !== id))); if(editingId === id) { editingId = null; document.getElementById('save-btn').innerText = "Save Note"; document.getElementById('note-input').value = ""; } loadNotes(); } }
+    function exportCSV() { const n = JSON.parse(localStorage.getItem('mg_notes_v4')||'[]'); let csv = "id,encrypted_text\n" + n.map(x => `${x.id},"${x.text.replace(/"/g, '""')}"`).join('\n'); const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); link.download = "garden_backup.csv"; link.click(); }
+    function importCSV() { const i = document.createElement('input'); i.type = 'file'; i.accept = '.csv'; i.onchange = e => { const r = new FileReader(); r.onload = re => { const lines = re.target.result.split('\n').slice(1); const imported = lines.filter(l => l.trim()).map(l => { const comma = l.indexOf(','); return { id: parseInt(l.substring(0, comma)), text: l.substring(comma + 1).replace(/^"|"$/g, '').replace(/""/g, '"') }; }); localStorage.setItem('mg_notes_v4', JSON.stringify(imported)); loadNotes(); }; r.readAsText(e.target.files[0]); }; i.click(); }
 </script>
 </body>
 </html>
