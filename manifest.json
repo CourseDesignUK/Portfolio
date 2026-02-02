@@ -1,9 +1,9 @@
 {
-  "short_name": "AirAsset",
-  "name": "Air Asset Viewer - Tactical",
+  "short_name": "Calculator",
+  "name": "Calculator",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "calculator.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
